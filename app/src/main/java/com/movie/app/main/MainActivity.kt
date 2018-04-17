@@ -1,9 +1,10 @@
-package com.movie.app
+package com.movie.app.main
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.movie.app.BaseActivity
+import com.movie.app.R
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
