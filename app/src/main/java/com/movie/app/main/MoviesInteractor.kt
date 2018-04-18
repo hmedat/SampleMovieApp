@@ -2,6 +2,7 @@ package com.movie.app.main
 
 import com.movie.app.api.ApiClient
 import com.movie.app.api.result.LatestMoviesResult
+import com.movie.app.mapper.MovieMapper
 import com.movie.app.modules.MovieSearchFilter
 
 import io.reactivex.Observer
@@ -16,6 +17,10 @@ class MoviesInteractor(private val scheduler: Scheduler
     fun getLatest(filter: MovieSearchFilter, callBack: CallBack) {
         ApiClient.getInstance()
                 .getLatestMovies(filter.pageNumber)
+                .map { result: LatestMoviesResult ->
+                    MovieMapper.map(result.results!!)
+                    result
+                }
                 .subscribeOn(scheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<LatestMoviesResult> {
