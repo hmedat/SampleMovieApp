@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Sample Movie App</string>
+    <string name="there_are_no_movies">There are no movies</string>
+    <string name="something_unexpected_happened">Something unexpected happened</string>
 </resources>

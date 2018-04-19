@@ -15,4 +15,6 @@ class LatestMoviesResult {
 
     fun isLoadMore(): Boolean = page != MovieSearchFilter.First_PAGE
 
+    fun isFinshed(): Boolean = page == totalPages
+
 }

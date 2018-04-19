@@ -6,4 +6,6 @@ class MovieSearchFilter {
     }
 
     var pageNumber: Int = First_PAGE
+
+    fun isFirstPage(): Boolean = pageNumber == First_PAGE
 }

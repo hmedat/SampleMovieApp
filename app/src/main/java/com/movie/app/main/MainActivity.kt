@@ -2,6 +2,7 @@ package com.movie.app.main
 
 import android.graphics.Color
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +41,8 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         adapter.setOnItemClickListener { _, _, position ->
             presenter.onMovieClicked(adapter.data[position])
         }
+        rvMovies.addItemDecoration(DividerItemDecoration(this
+                , DividerItemDecoration.VERTICAL))
     }
 
     private fun initRefreshLayout() {
