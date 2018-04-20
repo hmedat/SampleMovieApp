@@ -4,8 +4,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
-import android.view.ViewGroup
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
@@ -18,16 +16,12 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
 
     private lateinit var presenter: MainActivityContractor.Presenter
     private lateinit var adapter: MovieAdapter
-    private lateinit var errorView: View
-    private lateinit var notDataView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initRefreshLayout()
         initRecyclerView()
-        initErrorView()
-        initNoDataView()
         presenter = MainPresenter(Schedulers.io(), this)
         presenter.subscribe()
     }
@@ -53,17 +47,8 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         })
     }
 
-    private fun initErrorView() {
-        errorView = layoutInflater.inflate(R.layout.layout_error, rvMovies.parent as ViewGroup, false)
-        errorView.setOnClickListener { presenter.loadFirstPage() }
-    }
-
-    private fun initNoDataView() {
-        notDataView = layoutInflater.inflate(R.layout.layout_no_data, rvMovies.parent as ViewGroup, false)
-        notDataView.setOnClickListener { presenter.loadFirstPage() }
-    }
-
     override fun showProgressBar() {
+        progressView.showLoading()
         swipeLayoutMovies.isRefreshing = true
     }
 
@@ -72,11 +57,16 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     override fun showNoData() {
-        adapter.emptyView = notDataView
+        progressView.showEmpty(R.drawable.ic_cart_24dp_white, getString(R.string.title_no_data)
+                , getString(R.string.desc_no_data));
     }
 
     override fun showData(result: LatestMoviesResult) {
-        adapter.addData(result.results!!)
+        val results = result.results
+        if (results!!.isNotEmpty()) {
+            progressView.showContent()
+            adapter.addData(results)
+        }
         if (result.isFinshed()) {
             adapter.loadMoreEnd(true)
         } else {
@@ -87,7 +77,10 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
 
     override fun showError(isFirstPage: Boolean, throwable: Throwable) {
         if (isFirstPage) {
-            adapter.emptyView = errorView
+            progressView.showError(R.drawable.ic_no_connection_24dp_white
+                    , getString(R.string.title_no_connection)
+                    , getString(R.string.desc_no_connection)
+                    , getString(R.string.btn_no_connection)) { presenter.loadFirstPage() }
         } else {
             adapter.loadMoreFail()
         }

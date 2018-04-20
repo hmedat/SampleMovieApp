@@ -2,4 +2,9 @@
     <string name="app_name">Sample Movie App</string>
     <string name="there_are_no_movies">There are no movies</string>
     <string name="something_unexpected_happened">Something unexpected happened</string>
+    <string name="title_no_connection">No Connection</string>
+    <string name="desc_no_connection">We could not establish a connection with our servers. Try again when you are connected to the internet.</string>
+    <string name="btn_no_connection">Try Again</string>
+    <string name="title_no_data">No Movies</string>
+    <string name="desc_no_data">Try to remove your search filter</string>
 </resources>
