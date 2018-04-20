@@ -1,19 +1,22 @@
 package com.movie.app.main
 
+import com.movie.app.api.ApiClient
 import com.movie.app.api.result.LatestMoviesResult
-import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
+import javax.inject.Inject
 
-class MainPresenter(scheduler: Scheduler, mainView: MainActivityContractor.View) : MainActivityContractor.Presenter {
+class MainPresenter @Inject constructor(scheduler: Scheduler, apiClient: ApiClient
+                                        , mainView: MainActivityContractor.View)
+    : MainActivityContractor.Presenter {
     private var moviesInteractor: MoviesInteractor
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val view: MainActivityContractor.View = mainView
     private val searchFilter: MovieSearchFilter = MovieSearchFilter()
 
     init {
-        moviesInteractor = MoviesInteractor(scheduler, compositeDisposable)
+        moviesInteractor = MoviesInteractor(scheduler, apiClient, compositeDisposable)
     }
 
     override fun subscribe() {
@@ -34,8 +37,7 @@ class MainPresenter(scheduler: Scheduler, mainView: MainActivityContractor.View)
         if (isFirstPage) {
             view.showProgressBar()
         }
-        moviesInteractor.getLatest(searchFilter, object : MoviesInteractor.CallBack {
-
+        moviesInteractor.getLatest(searchFilter, object : MoviesInteractor.OnSuccessLatestMovies {
             override fun onSuccess(result: LatestMoviesResult) {
                 if (result.results!!.isEmpty() && !result.isLoadMore()) {
                     view.showNoData()
@@ -44,18 +46,14 @@ class MainPresenter(scheduler: Scheduler, mainView: MainActivityContractor.View)
                 searchFilter.pageNumber++
                 view.hideProgressBar()
             }
-
+        }, object : MoviesInteractor.OnError {
             override fun onError(throwable: Throwable) {
                 view.hideProgressBar()
                 view.showError(isFirstPage, throwable)
             }
-
         })
     }
 
-    override fun onMovieClicked(movie: Movie) {
-
-    }
 
     override fun unSubscribe() {
         compositeDisposable.clear()

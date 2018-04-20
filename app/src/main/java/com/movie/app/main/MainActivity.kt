@@ -8,13 +8,15 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.api.result.LatestMoviesResult
-import io.reactivex.schedulers.Schedulers
+import com.movie.app.details.DetailsMovieActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 
 class MainActivity : BaseActivity(), MainActivityContractor.View {
 
-    private lateinit var presenter: MainActivityContractor.Presenter
+    @Inject
+    lateinit var presenter: MainActivityContractor.Presenter
     private lateinit var adapter: MovieAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +24,6 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         setContentView(R.layout.activity_main)
         initRefreshLayout()
         initRecyclerView()
-        presenter = MainPresenter(Schedulers.io(), this)
         presenter.subscribe()
     }
 
@@ -33,7 +34,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         adapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
         rvMovies.adapter = adapter
         adapter.setOnItemClickListener { _, _, position ->
-            presenter.onMovieClicked(adapter.data[position])
+            DetailsMovieActivity.startActivity(this, adapter.data[position])
         }
         rvMovies.addItemDecoration(DividerItemDecoration(this
                 , DividerItemDecoration.VERTICAL))

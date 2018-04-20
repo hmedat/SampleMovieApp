@@ -2,7 +2,6 @@ package com.movie.app.main
 
 import com.movie.app.BaseContractor
 import com.movie.app.api.result.LatestMoviesResult
-import com.movie.app.modules.Movie
 
 class MainActivityContractor {
 
@@ -19,8 +18,6 @@ class MainActivityContractor {
     }
 
     interface Presenter : BaseContractor.BasePresenter<View> {
-        fun onMovieClicked(movie: Movie)
-
         fun loadFirstPage()
 
         fun loadNextPage()

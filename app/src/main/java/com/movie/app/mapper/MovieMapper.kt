@@ -7,12 +7,25 @@ object MovieMapper {
 
     fun map(list: List<Movie>) {
         for (movie in list) {
-            if (movie.posterPath != null) {
-                movie.posterPath = IMAGE_URL + movie.posterPath
+            map(movie)
+        }
+    }
+
+    fun map(movie: Movie) {
+        if (movie.posterPath != null) {
+            movie.posterPath = IMAGE_URL + movie.posterPath
+        }
+        if (movie.backdropPath != null) {
+            movie.backdropPath = IMAGE_URL + movie.backdropPath
+        }
+        if (movie.genres != null && movie.genres.isNotEmpty()) {
+            val genresSize = Math.min(movie.genres.size, 3) - 1
+            val genresStringBuilder = StringBuilder()
+            genresStringBuilder.append(movie.genres[0].name)
+            for (index in 1..genresSize) {
+                genresStringBuilder.append(", ").append(movie.genres[index].name)
             }
-            if (movie.backdropPath != null) {
-                movie.backdropPath = IMAGE_URL + movie.backdropPath
-            }
+            movie.genresString = genresStringBuilder.toString()
         }
     }
 }
