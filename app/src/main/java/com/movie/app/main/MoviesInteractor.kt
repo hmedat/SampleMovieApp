@@ -1,7 +1,7 @@
 package com.movie.app.main
 
 import com.movie.app.RxSchedulers
-import com.movie.app.api.ApiClient
+import com.movie.app.api.ApiInterface
 import com.movie.app.api.result.LatestMoviesResult
 import com.movie.app.mapper.MovieMapper
 import com.movie.app.modules.Movie
@@ -10,11 +10,12 @@ import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-class MoviesInteractor(private val rxSchedulers: RxSchedulers, private val apiClient: ApiClient
+class MoviesInteractor(private val rxSchedulers: RxSchedulers
+                       , private val apiInterface: ApiInterface
                        , private val compositeDisposable: CompositeDisposable) {
 
     fun getLatest(filter: MovieSearchFilter, onSuccess: OnSuccessLatestMovies, onError: OnError) {
-        apiClient.instance!!.getLatestMovies(filter.pageNumber)
+        apiInterface.getLatestMovies(filter.pageNumber)
                 .map { result: LatestMoviesResult ->
                     MovieMapper.map(result.results!!)
                     result
@@ -42,7 +43,7 @@ class MoviesInteractor(private val rxSchedulers: RxSchedulers, private val apiCl
 
 
     fun findMovie(movieId: Long, onSuccess: OnSuccessMovie, onError: OnError) {
-        apiClient.instance!!.findMovie(movieId)
+        apiInterface.findMovie(movieId)
                 .map { movie: Movie ->
                     MovieMapper.map(movie)
                     movie

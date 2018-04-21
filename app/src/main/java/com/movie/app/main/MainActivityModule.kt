@@ -1,7 +1,7 @@
 package com.movie.app.main
 
 import com.movie.app.RxSchedulers
-import com.movie.app.api.ApiClient
+import com.movie.app.api.ApiInterface
 import com.movie.app.di.scope.ActivityScope
 import dagger.Binds
 import dagger.Module
@@ -19,10 +19,10 @@ abstract class MainActivityModule {
         @Provides
         @JvmStatic
         @ActivityScope
-        internal fun provideMainPresenter(apiClient: ApiClient, rxSchedulers: RxSchedulers
+        internal fun provideMainPresenter(apiInterface: ApiInterface, rxSchedulers: RxSchedulers
                                           , mainView: MainActivityContractor.View)
                 : MainActivityContractor.Presenter {
-            return MainPresenter(rxSchedulers, apiClient, mainView)
+            return MainPresenter(rxSchedulers, apiInterface, mainView)
         }
     }
 }
