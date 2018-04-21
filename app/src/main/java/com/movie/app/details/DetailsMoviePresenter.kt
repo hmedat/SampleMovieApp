@@ -1,13 +1,13 @@
 package com.movie.app.details
 
 import android.os.Bundle
+import com.movie.app.RxSchedulers
 import com.movie.app.api.ApiClient
 import com.movie.app.main.MoviesInteractor
 import com.movie.app.modules.Movie
-import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 
-class DetailsMoviePresenter(scheduler: Scheduler, apiClient: ApiClient
+class DetailsMoviePresenter(rxSchedulers: RxSchedulers, apiClient: ApiClient
                             , mainView: DetailsActivityContractor.View)
     : DetailsActivityContractor.Presenter {
 
@@ -17,7 +17,7 @@ class DetailsMoviePresenter(scheduler: Scheduler, apiClient: ApiClient
     private lateinit var movie: Movie
 
     init {
-        moviesInteractor = MoviesInteractor(scheduler, apiClient, compositeDisposable)
+        moviesInteractor = MoviesInteractor(rxSchedulers, apiClient, compositeDisposable)
     }
 
     override fun bindBundles(extras: Bundle) {

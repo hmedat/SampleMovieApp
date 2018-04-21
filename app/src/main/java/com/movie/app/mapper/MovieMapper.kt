@@ -12,20 +12,19 @@ object MovieMapper {
     }
 
     fun map(movie: Movie) {
-        if (movie.posterPath != null) {
-            movie.posterPath = IMAGE_URL + movie.posterPath
-        }
-        if (movie.backdropPath != null) {
-            movie.backdropPath = IMAGE_URL + movie.backdropPath
-        }
-        if (movie.genres != null && movie.genres.isNotEmpty()) {
-            val genresSize = Math.min(movie.genres.size, 3) - 1
-            val genresStringBuilder = StringBuilder()
-            genresStringBuilder.append(movie.genres[0].name)
-            for (index in 1..genresSize) {
-                genresStringBuilder.append(", ").append(movie.genres[index].name)
+        movie.apply {
+            posterPath = IMAGE_URL + posterPath
+            backdropPath = IMAGE_URL + backdropPath
+            if (genres == null || genres.isEmpty()) {
+                return
             }
-            movie.genresString = genresStringBuilder.toString()
+            val genresSize = Math.min(genres.size, 3) - 1
+            val genresStringBuilder = StringBuilder()
+            genresStringBuilder.append(genres[0].name)
+            for (index in 1..genresSize) {
+                genresStringBuilder.append(", ").append(genres[index].name)
+            }
+            genresString = genresStringBuilder.toString()
         }
     }
 }

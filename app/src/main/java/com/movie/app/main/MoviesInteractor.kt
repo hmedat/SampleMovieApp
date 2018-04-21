@@ -1,18 +1,16 @@
 package com.movie.app.main
 
+import com.movie.app.RxSchedulers
 import com.movie.app.api.ApiClient
 import com.movie.app.api.result.LatestMoviesResult
 import com.movie.app.mapper.MovieMapper
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
-
 import io.reactivex.Observer
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-class MoviesInteractor(private val scheduler: Scheduler, private val apiClient: ApiClient
+class MoviesInteractor(private val rxSchedulers: RxSchedulers, private val apiClient: ApiClient
                        , private val compositeDisposable: CompositeDisposable) {
 
     fun getLatest(filter: MovieSearchFilter, onSuccess: OnSuccessLatestMovies, onError: OnError) {
@@ -21,8 +19,8 @@ class MoviesInteractor(private val scheduler: Scheduler, private val apiClient: 
                     MovieMapper.map(result.results!!)
                     result
                 }
-                .subscribeOn(scheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(rxSchedulers.io())
+                .observeOn(rxSchedulers.ui())
                 .subscribe(object : Observer<LatestMoviesResult> {
                     override fun onSubscribe(d: Disposable) {
                         compositeDisposable.add(d)
@@ -49,8 +47,8 @@ class MoviesInteractor(private val scheduler: Scheduler, private val apiClient: 
                     MovieMapper.map(movie)
                     movie
                 }
-                .subscribeOn(scheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(rxSchedulers.io())
+                .observeOn(rxSchedulers.ui())
                 .subscribe(object : Observer<Movie> {
                     override fun onSubscribe(d: Disposable) {
                         compositeDisposable.add(d)

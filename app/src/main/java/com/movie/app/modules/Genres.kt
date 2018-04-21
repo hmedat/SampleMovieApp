@@ -3,7 +3,7 @@ package com.movie.app.modules
 import android.os.Parcel
 import android.os.Parcelable
 
-class Genres(var id: Int = 0, var name: String? = null) : Parcelable {
+data class Genres(var id: Int = 0, var name: String? = null) : Parcelable {
     constructor(parcel: Parcel) : this(parcel.readInt(), parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

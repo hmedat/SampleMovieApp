@@ -3,11 +3,10 @@ package com.movie.app.details
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import com.movie.app.BaseActivity
-import com.movie.app.GlideApp
 import com.movie.app.R
+import com.movie.app.loadImage
 import com.movie.app.modules.Movie
 import kotlinx.android.synthetic.main.activity_details_movie.*
 import javax.inject.Inject
@@ -42,17 +41,14 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     }
 
     override fun showData(movie: Movie) {
-        tvMovieTitle.text = movie.title
-        tvReleaseYear.text = movie.releaseDate
-        tvRate.text = movie.voteAverage.toString()
-        tvGenres.text = movie.genresString
-        tvOverView.text = movie.overview
-
-        GlideApp.with(this)
-                .load(movie.posterPath)
-                .placeholder(ColorDrawable(Color.BLACK))
-                .error(ColorDrawable(Color.GRAY))
-                .into(imgPoster)
+        movie.apply {
+            tvMovieTitle.text = title
+            tvReleaseYear.text = releaseDate
+            tvRate.text = voteAverage.toString()
+            tvGenres.text = genresString
+            tvOverView.text = overview
+            imgPoster.loadImage(posterPath, Color.BLACK)
+        }
     }
 
     override fun showError(throwable: Throwable) {

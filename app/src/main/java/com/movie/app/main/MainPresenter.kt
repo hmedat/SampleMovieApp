@@ -1,13 +1,13 @@
 package com.movie.app.main
 
+import com.movie.app.RxSchedulers
 import com.movie.app.api.ApiClient
 import com.movie.app.api.result.LatestMoviesResult
 import com.movie.app.modules.MovieSearchFilter
-import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class MainPresenter @Inject constructor(scheduler: Scheduler, apiClient: ApiClient
+class MainPresenter @Inject constructor(rxSchedulers: RxSchedulers, apiClient: ApiClient
                                         , mainView: MainActivityContractor.View)
     : MainActivityContractor.Presenter {
     private var moviesInteractor: MoviesInteractor
@@ -16,7 +16,7 @@ class MainPresenter @Inject constructor(scheduler: Scheduler, apiClient: ApiClie
     private val searchFilter: MovieSearchFilter = MovieSearchFilter()
 
     init {
-        moviesInteractor = MoviesInteractor(scheduler, apiClient, compositeDisposable)
+        moviesInteractor = MoviesInteractor(rxSchedulers, apiClient, compositeDisposable)
     }
 
     override fun subscribe() {

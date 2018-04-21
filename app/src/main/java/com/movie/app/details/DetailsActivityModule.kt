@@ -1,11 +1,11 @@
 package com.movie.app.details
 
+import com.movie.app.RxSchedulers
 import com.movie.app.api.ApiClient
 import com.movie.app.di.scope.ActivityScope
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import io.reactivex.schedulers.Schedulers
 
 
 @Module
@@ -19,9 +19,10 @@ abstract class DetailsActivityModule {
         @Provides
         @JvmStatic
         @ActivityScope
-        internal fun provideDetailsPresenter(apiClient: ApiClient, mainView
-        : DetailsActivityContractor.View): DetailsActivityContractor.Presenter {
-            return DetailsMoviePresenter(Schedulers.io(), apiClient, mainView)
+        internal fun provideDetailsPresenter(apiClient: ApiClient, rxSchedulers: RxSchedulers
+                                             , mainView: DetailsActivityContractor.View)
+                : DetailsActivityContractor.Presenter {
+            return DetailsMoviePresenter(rxSchedulers, apiClient, mainView)
         }
     }
 }

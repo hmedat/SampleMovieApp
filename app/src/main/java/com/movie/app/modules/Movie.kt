@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
-class Movie(
+data class Movie(
         @SerializedName("vote_count")
         val voteCount: Int = 0,
         var id: Long = 0,
