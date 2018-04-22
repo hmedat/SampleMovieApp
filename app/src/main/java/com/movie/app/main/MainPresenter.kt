@@ -1,7 +1,7 @@
 package com.movie.app.main
 
 import com.movie.app.api.result.LatestMoviesResult
-import com.movie.app.interactor.MoviesInteractor
+import com.movie.app.interactors.IMoviesInteractor
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
@@ -10,7 +10,7 @@ import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(private val schedulerProvider: BaseSchedulerProvider
-                                        , private val moviesInteractor: MoviesInteractor
+                                        , private val moviesInteractor: IMoviesInteractor
                                         , private val view: MainActivityContractor.View)
     : MainActivityContractor.Presenter {
 

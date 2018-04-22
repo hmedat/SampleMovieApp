@@ -6,6 +6,8 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.movie.app.MyApp
 import com.movie.app.api.ApiInterface
 import com.movie.app.api.RequestInterceptor
+import com.movie.app.interactors.IMoviesInteractor
+import com.movie.app.interactors.MoviesInteractor
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import com.movie.app.util.schedulers.SchedulerProvider
 import dagger.Module
@@ -65,5 +67,11 @@ class AppModule {
     @Singleton
     fun provideRxSchedulers(): BaseSchedulerProvider {
         return SchedulerProvider()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMoviesInteractor(apiInterface: ApiInterface): IMoviesInteractor {
+        return MoviesInteractor(apiInterface)
     }
 }

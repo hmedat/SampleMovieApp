@@ -1,4 +1,4 @@
-package com.movie.app.interactor
+package com.movie.app.interactors
 
 import com.movie.app.api.ApiInterface
 import com.movie.app.api.result.LatestMoviesResult
@@ -7,13 +7,12 @@ import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import io.reactivex.Observable
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class MoviesInteractor @Inject constructor(private val apiInterface: ApiInterface) {
+class MoviesInteractor @Inject constructor(private val apiInterface: ApiInterface)
+    : IMoviesInteractor {
 
 
-    fun getLatest(filter: MovieSearchFilter): Observable<LatestMoviesResult> {
+    override fun getLatest(filter: MovieSearchFilter): Observable<LatestMoviesResult> {
         return apiInterface.getLatestMovies(filter.pageNumber)
                 .map {
                     MovieMapper.map(it.results!!)
@@ -22,7 +21,7 @@ class MoviesInteractor @Inject constructor(private val apiInterface: ApiInterfac
 
     }
 
-    fun findMovie(movieId: Long): Observable<Movie> {
+    override fun findMovie(movieId: Long): Observable<Movie> {
         return apiInterface.findMovie(movieId)
                 .map {
                     MovieMapper.map(it)

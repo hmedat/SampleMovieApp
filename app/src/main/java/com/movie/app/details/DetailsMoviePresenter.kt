@@ -1,7 +1,7 @@
 package com.movie.app.details
 
 import android.os.Bundle
-import com.movie.app.interactor.MoviesInteractor
+import com.movie.app.interactors.IMoviesInteractor
 import com.movie.app.modules.Movie
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
@@ -9,7 +9,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
 class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
-                            , private var moviesInteractor: MoviesInteractor
+                            , private var moviesInteractor: IMoviesInteractor
                             , private val view: DetailsActivityContractor.View)
     : DetailsActivityContractor.Presenter {
 
