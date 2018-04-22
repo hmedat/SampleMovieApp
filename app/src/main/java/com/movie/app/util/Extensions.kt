@@ -1,4 +1,4 @@
-package com.movie.app
+package com.movie.app.util
 
 import android.graphics.drawable.ColorDrawable
 import android.widget.ImageView

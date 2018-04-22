@@ -1,26 +1,22 @@
 package com.movie.app.details
 
 import android.os.Bundle
-import com.movie.app.RxSchedulers
-import com.movie.app.api.ApiInterface
-import com.movie.app.main.MoviesInteractor
+import com.movie.app.interactor.MoviesInteractor
 import com.movie.app.modules.Movie
+import com.movie.app.util.schedulers.BaseSchedulerProvider
+import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
-class DetailsMoviePresenter(rxSchedulers: RxSchedulers, apiInterface: ApiInterface
-                            , mainView: DetailsActivityContractor.View)
+class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
+                            , private var moviesInteractor: MoviesInteractor
+                            , private val view: DetailsActivityContractor.View)
     : DetailsActivityContractor.Presenter {
 
-    private var moviesInteractor: MoviesInteractor
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private val view: DetailsActivityContractor.View = mainView
     private lateinit var movie: Movie
 
-    init {
-        moviesInteractor = MoviesInteractor(rxSchedulers, apiInterface, compositeDisposable)
-    }
-
-    override fun bindBundles(extras: Bundle) {
+    override fun setExtraBundles(extras: Bundle) {
         movie = extras.getParcelable(DetailsMovieActivity.EXTRA_MOVIE)
     }
 
@@ -30,17 +26,28 @@ class DetailsMoviePresenter(rxSchedulers: RxSchedulers, apiInterface: ApiInterfa
 
     private fun loadData() {
         view.showProgressBar()
-        moviesInteractor.findMovie(movie.id, object : MoviesInteractor.OnSuccessMovie {
-            override fun onSuccess(movie: Movie) {
-                view.hideProgressBar()
-                view.showData(movie)
-            }
-        }, object : MoviesInteractor.OnError {
-            override fun onError(throwable: Throwable) {
-                view.hideProgressBar()
-                view.showError(throwable)
-            }
-        })
+        moviesInteractor.findMovie(movieId = movie.id)
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
+                .subscribe(object : Observer<Movie> {
+                    override fun onSubscribe(d: Disposable) {
+                        compositeDisposable.add(d)
+                    }
+
+                    override fun onNext(movie: Movie) {
+                        view.hideProgressBar()
+                        view.showData(movie)
+                    }
+
+                    override fun onError(throwable: Throwable) {
+                        view.hideProgressBar()
+                        view.showError(throwable)
+                    }
+
+                    override fun onComplete() {
+
+                    }
+                })
     }
 
     override fun unSubscribe() {

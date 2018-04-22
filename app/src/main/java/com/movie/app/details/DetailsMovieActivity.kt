@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import com.movie.app.BaseActivity
 import com.movie.app.R
-import com.movie.app.loadImage
+import com.movie.app.util.loadImage
 import com.movie.app.modules.Movie
 import kotlinx.android.synthetic.main.activity_details_movie.*
 import javax.inject.Inject
@@ -28,7 +28,7 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details_movie)
-        presenter.bindBundles(intent.extras)
+        presenter.setExtraBundles(intent.extras)
         presenter.subscribe()
     }
 

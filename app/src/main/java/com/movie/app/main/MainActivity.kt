@@ -68,7 +68,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
             progressView.showContent()
             adapter.addData(results)
         }
-        if (result.isFinshed()) {
+        if (result.isFinished()) {
             adapter.loadMoreEnd(true)
         } else {
             adapter.loadMoreComplete()

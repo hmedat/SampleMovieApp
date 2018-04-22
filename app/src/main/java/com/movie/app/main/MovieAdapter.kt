@@ -6,8 +6,8 @@ import android.widget.ImageView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.movie.app.R
-import com.movie.app.loadImage
 import com.movie.app.modules.Movie
+import com.movie.app.util.loadImage
 
 
 class MovieAdapter : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.row_movie, null) {

@@ -17,7 +17,7 @@ class DetailsActivityContractor {
     }
 
     interface Presenter : BaseContractor.BasePresenter<View> {
-        fun bindBundles(extras: Bundle)
+        fun setExtraBundles(extras: Bundle)
     }
 
 }

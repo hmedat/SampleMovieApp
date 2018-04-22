@@ -4,9 +4,10 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.movie.app.MyApp
-import com.movie.app.RxSchedulers
 import com.movie.app.api.ApiInterface
 import com.movie.app.api.RequestInterceptor
+import com.movie.app.util.schedulers.BaseSchedulerProvider
+import com.movie.app.util.schedulers.SchedulerProvider
 import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
@@ -62,7 +63,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideRxSchedulers(): RxSchedulers {
-        return RxSchedulers()
+    fun provideRxSchedulers(): BaseSchedulerProvider {
+        return SchedulerProvider()
     }
 }
