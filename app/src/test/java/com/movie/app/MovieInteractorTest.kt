@@ -16,7 +16,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 
 
-class TestMovieInteractor {
+class MovieInteractorTest {
 
     private lateinit var moviesInteractor: IMoviesInteractor
     @Mock

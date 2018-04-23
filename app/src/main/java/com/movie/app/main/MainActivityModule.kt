@@ -2,6 +2,7 @@ package com.movie.app.main
 
 import com.movie.app.di.scope.ActivityScope
 import com.movie.app.interactors.IMoviesInteractor
+import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.util.schedulers.SchedulerProvider
 import dagger.Binds
 import dagger.Module
@@ -23,7 +24,7 @@ abstract class MainActivityModule {
                                           , moviesInteractor: IMoviesInteractor
                                           , mainView: MainActivityContractor.View)
                 : MainActivityContractor.Presenter {
-            return MainPresenter(schedulerProvider, moviesInteractor, mainView)
+            return MainPresenter(schedulerProvider, moviesInteractor, mainView, MovieSearchFilter())
         }
 
     }

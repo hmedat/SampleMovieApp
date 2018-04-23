@@ -1,11 +1,9 @@
 package com.movie.app.modules
 
-class MovieSearchFilter {
+open class MovieSearchFilter(open var pageNumber: Int = First_PAGE) {
     companion object {
         const val First_PAGE: Int = 1
     }
-
-    var pageNumber: Int = First_PAGE
 
     fun isFirstPage(): Boolean = pageNumber == First_PAGE
 }
