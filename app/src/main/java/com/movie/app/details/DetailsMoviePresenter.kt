@@ -1,5 +1,7 @@
 package com.movie.app.details
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import com.movie.app.interactors.IMoviesInteractor
 import com.movie.app.modules.Movie
@@ -34,7 +36,8 @@ class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
                         compositeDisposable.add(d)
                     }
 
-                    override fun onNext(movie: Movie) {
+                    override fun onNext(item: Movie) {
+                        movie = item
                         view.hideProgressBar()
                         view.showData(movie)
                     }
@@ -48,6 +51,12 @@ class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
 
                     }
                 })
+    }
+
+    override fun showTrailerVideo() {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(movie.firstVideoUrl))
+        val chooser: Intent = Intent.createChooser(intent, "")
+        view.startYoutubeActivity(chooser)
     }
 
     override fun unSubscribe() {

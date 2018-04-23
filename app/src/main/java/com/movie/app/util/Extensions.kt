@@ -8,5 +8,6 @@ fun ImageView.loadImage(url: String?, colorPlaceholder: Int) {
             .load(url)
             .placeholder(ColorDrawable(colorPlaceholder))
             .error(ColorDrawable(colorPlaceholder))
+            .centerCrop()
             .into(this)
 }

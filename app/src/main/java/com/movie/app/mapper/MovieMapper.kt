@@ -15,6 +15,12 @@ object MovieMapper {
         movie.apply {
             posterPath = IMAGE_URL + posterPath
             backdropPath = IMAGE_URL + backdropPath
+
+            if (videos != null && videos?.results != null && videos?.results!!.isNotEmpty()) {
+                val key = videos?.results!![0].key
+                firstVideoImageUrl = "http://img.youtube.com/vi/$key/0.jpg"
+                firstVideoUrl = "https://www.youtube.com/watch?v=$key"
+            }
             if (genres == null || genres.isEmpty()) {
                 return
             }

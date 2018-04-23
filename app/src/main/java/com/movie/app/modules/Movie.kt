@@ -3,6 +3,8 @@ package com.movie.app.modules
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import com.movie.app.api.result.ReviewResult
+import com.movie.app.api.result.VideoResult
 
 data class Movie(
         @SerializedName("vote_count")
@@ -21,7 +23,12 @@ data class Movie(
         var releaseDate: String? = null,
         val homepage: String? = null,
         val genres: List<Genres>? = null,
-        var genresString: String? = null
+        var genresString: String? = null,
+        var videos: VideoResult? = null,
+        var firstVideoUrl: String? = null,
+        var firstVideoImageUrl: String? = null,
+        var reviews: ReviewResult? = null
+
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readInt(),

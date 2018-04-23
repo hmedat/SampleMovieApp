@@ -66,7 +66,11 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         val results = result.results
         if (results!!.isNotEmpty()) {
             progressView.showContent()
-            adapter.addData(results)
+            if (result.isLoadMore()) {
+                adapter.addData(results)
+            } else {
+                adapter.setNewData(results)
+            }
         }
         if (result.isFinished()) {
             adapter.loadMoreEnd(true)

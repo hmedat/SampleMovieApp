@@ -4,10 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import com.movie.app.BaseActivity
 import com.movie.app.R
-import com.movie.app.util.loadImage
 import com.movie.app.modules.Movie
+import com.movie.app.util.loadImage
 import kotlinx.android.synthetic.main.activity_details_movie.*
 import javax.inject.Inject
 
@@ -28,8 +29,16 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details_movie)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
         presenter.setExtraBundles(intent.extras)
         presenter.subscribe()
+        imgVideo.setOnClickListener {
+            presenter.showTrailerVideo()
+        }
+        imgIconVideo.setOnClickListener {
+            presenter.showTrailerVideo()
+        }
     }
 
     override fun showProgressBar() {
@@ -41,14 +50,16 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     }
 
     override fun showData(movie: Movie) {
-        movie.apply {
-            tvMovieTitle.text = title
-            tvReleaseYear.text = releaseDate
-            tvRate.text = voteAverage.toString()
-            tvGenres.text = genresString
-            tvOverView.text = overview
-            imgPoster.loadImage(posterPath, Color.BLACK)
-        }
+        tvMovieTitle.text = movie.title
+        tvReleaseYear.text = movie.releaseDate
+        tvRate.text = movie.voteAverage.toString()
+        tvGenres.text = movie.genresString
+        tvOverView.text = movie.overview
+        imgPoster.loadImage(movie.posterPath, Color.BLACK)
+        imgVideo.loadImage(movie.firstVideoImageUrl, Color.BLACK)
+        imgIconVideo.visibility = View.VISIBLE
+        imgRate.visibility = View.VISIBLE
+        supportActionBar?.title = movie.title;
     }
 
     override fun showError(throwable: Throwable) {
@@ -56,6 +67,12 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
                 , getString(R.string.title_no_connection)
                 , getString(R.string.desc_no_connection)
                 , getString(R.string.btn_no_connection)) { presenter.subscribe() }
+    }
+
+    override fun startYoutubeActivity(chooser: Intent) {
+        if (chooser.resolveActivity(packageManager) != null) {
+            startActivity(chooser)
+        }
     }
 
 }

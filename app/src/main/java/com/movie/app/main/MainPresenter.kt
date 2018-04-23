@@ -48,7 +48,7 @@ class MainPresenter @Inject constructor(private val schedulerProvider: BaseSched
                             view.showNoData()
                         }
                         view.showData(result)
-                        searchFilter.pageNumber = searchFilter.pageNumber++
+                        searchFilter.pageNumber = searchFilter.pageNumber + 1
                         view.hideProgressBar()
                     }
 
