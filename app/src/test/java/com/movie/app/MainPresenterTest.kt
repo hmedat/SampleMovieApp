@@ -8,6 +8,7 @@ import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import com.movie.app.util.schedulers.ImmediateSchedulerProvider
+import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
@@ -15,10 +16,10 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import java.io.IOException
 
 
 class MainPresenterTest {
-
 
     private lateinit var schedulerProvider: BaseSchedulerProvider
     @Mock
@@ -35,36 +36,139 @@ class MainPresenterTest {
         MockitoAnnotations.initMocks(this)
         schedulerProvider = ImmediateSchedulerProvider()
         presenter = MainPresenter(schedulerProvider, moviesInteractor, view, movieSearchFilter)
-
     }
 
     @Test
     fun loadFirstPageIntoView() {
-        val movie01: Movie = Movie().apply {
+        val result = LatestMoviesResult()
+        result.page = MovieSearchFilter.First_PAGE
+        result.results = listOf(Movie().apply {
             id = 1
             title = "Avengers 01"
-        }
-        val movie02: Movie = Movie().apply {
+        }, Movie().apply {
             id = 2
             title = "Avengers 02"
-        }
-        val movie03: Movie = Movie().apply {
+        }, Movie().apply {
             id = 3
             title = "Avengers 03"
-        }
-
-        val result = LatestMoviesResult()
-        result.results = listOf(movie01, movie02, movie03)
+        })
         whenever(movieSearchFilter.pageNumber)
                 .thenReturn(MovieSearchFilter.First_PAGE)
         whenever(movieSearchFilter.isFirstPage())
                 .thenReturn(true)
         whenever(moviesInteractor.getLatest(movieSearchFilter))
                 .thenReturn(Observable.just(result))
-
         presenter.loadFirstPage()
         verify(view).showProgressBar()
         verify(view).hideProgressBar()
+        verify(view, never()).showNoData()
+        verify(view, never()).showError(true, IllegalAccessException())
+        verify(view).showData(result)
+    }
+
+    @Test
+    fun loadFirstPageIntoViewWithEmptyData() {
+        val result = LatestMoviesResult()
+        result.page = MovieSearchFilter.First_PAGE
+        whenever(movieSearchFilter.pageNumber)
+                .thenReturn(MovieSearchFilter.First_PAGE)
+        whenever(movieSearchFilter.isFirstPage())
+                .thenReturn(true)
+        whenever(moviesInteractor.getLatest(movieSearchFilter))
+                .thenReturn(Observable.just(result))
+        presenter.loadFirstPage()
+        verify(view).showProgressBar()
+        verify(view).hideProgressBar()
+        verify(view, never()).showError(true, IllegalAccessException())
+        verify(view).showNoData()
+    }
+
+    @Test
+    fun loadFirstPageIntoViewWithError() {
+        val result = LatestMoviesResult()
+        val ioException = IOException()
+        result.page = MovieSearchFilter.First_PAGE
+        whenever(movieSearchFilter.pageNumber)
+                .thenReturn(MovieSearchFilter.First_PAGE)
+        whenever(movieSearchFilter.isFirstPage())
+                .thenReturn(true)
+        whenever(moviesInteractor.getLatest(movieSearchFilter))
+                .thenReturn(Observable.error(ioException))
+        presenter.loadFirstPage()
+        verify(view).showProgressBar()
+        verify(view).hideProgressBar()
+        verify(view).showError(true, ioException)
+        verify(view, never()).showNoData()
+        verify(view, never()).showData(result)
+    }
+
+
+    @Test
+    fun loadNextPageIntoView() {
+        val pageNumber = 2
+        val result = LatestMoviesResult()
+        result.page = pageNumber;
+        result.results = listOf(Movie().apply {
+            id = 1
+            title = "Avengers 04"
+        }, Movie().apply {
+            id = 2
+            title = "Avengers 05"
+        }, Movie().apply {
+            id = 3
+            title = "Avengers 06"
+        })
+        whenever(movieSearchFilter.pageNumber)
+                .thenReturn(pageNumber)
+        whenever(movieSearchFilter.isFirstPage())
+                .thenReturn(false)
+        whenever(moviesInteractor.getLatest(movieSearchFilter))
+                .thenReturn(Observable.just(result))
+        presenter.loadNextPage()
+        verify(view, never()).showProgressBar()
+        verify(view).hideProgressBar()
+        verify(view, never()).showNoData()
+        verify(view, never()).showError(true, IllegalAccessException())
+        verify(view).showData(result)
+    }
+
+    @Test
+    fun loadNextPageIntoViewWithEmptyData() {
+        val pageNumber = 2
+        val result = LatestMoviesResult()
+        result.page = pageNumber;
+        whenever(movieSearchFilter.pageNumber)
+                .thenReturn(pageNumber)
+        whenever(movieSearchFilter.isFirstPage())
+                .thenReturn(false)
+        whenever(moviesInteractor.getLatest(movieSearchFilter))
+                .thenReturn(Observable.just(result))
+        presenter.loadNextPage()
+        verify(view, never()).showProgressBar()
+        verify(view).hideProgressBar()
+        verify(view, never()).showNoData()
+        verify(view, never()).showError(true, IllegalAccessException())
+        verify(view).showData(result)
+    }
+
+    @Test
+    fun loadNextPageIntoViewWithError() {
+        val ioException = IOException()
+        val pageNumber = 2
+        val result = LatestMoviesResult()
+        result.page = pageNumber;
+        whenever(movieSearchFilter.pageNumber)
+                .thenReturn(pageNumber)
+        whenever(movieSearchFilter.isFirstPage())
+                .thenReturn(false)
+        whenever(moviesInteractor.getLatest(movieSearchFilter))
+                .thenReturn(Observable.error(ioException))
+        presenter.loadNextPage()
+        verify(view, never()).showProgressBar()
+        verify(view).hideProgressBar()
+        verify(view, never()).showNoData()
+        verify(view).showError(false, ioException)
+        verify(view, never()).showData(result)
     }
 
 }
