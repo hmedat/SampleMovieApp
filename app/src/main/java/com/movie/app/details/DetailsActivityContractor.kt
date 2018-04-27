@@ -1,7 +1,6 @@
 package com.movie.app.details
 
 import android.content.Intent
-import android.os.Bundle
 import com.movie.app.BaseContractor
 import com.movie.app.modules.Movie
 
@@ -20,7 +19,7 @@ class DetailsActivityContractor {
     }
 
     interface Presenter : BaseContractor.BasePresenter<View> {
-        fun setExtraBundles(extras: Bundle)
+        fun setMovieId(movieId: Long)
 
         fun showTrailerVideo()
     }
