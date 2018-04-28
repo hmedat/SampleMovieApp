@@ -2,7 +2,6 @@ package com.movie.app.details
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import com.movie.app.interactors.IMoviesInteractor
 import com.movie.app.modules.Movie
 import com.movie.app.util.schedulers.BaseSchedulerProvider
@@ -16,10 +15,11 @@ class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
     : DetailsActivityContractor.Presenter {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private lateinit var movie: Movie
+    private var movieId: Long = 0
+    private var movie: Movie? = null
 
-    override fun setExtraBundles(extras: Bundle) {
-        movie = extras.getParcelable(DetailsMovieActivity.EXTRA_MOVIE)
+    override fun setMovieId(movieId: Long) {
+        this.movieId = movieId
     }
 
     override fun subscribe() {
@@ -28,7 +28,7 @@ class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
 
     private fun loadData() {
         view.showProgressBar()
-        moviesInteractor.findMovie(movieId = movie.id)
+        moviesInteractor.findMovie(movieId)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .subscribe(object : Observer<Movie> {
@@ -39,7 +39,7 @@ class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
                     override fun onNext(item: Movie) {
                         movie = item
                         view.hideProgressBar()
-                        view.showData(movie)
+                        view.showData(movie!!)
                     }
 
                     override fun onError(throwable: Throwable) {
@@ -54,7 +54,7 @@ class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
     }
 
     override fun showTrailerVideo() {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(movie.firstVideoUrl))
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(movie?.firstVideoUrl))
         val chooser: Intent = Intent.createChooser(intent, "")
         view.startYoutubeActivity(chooser)
     }

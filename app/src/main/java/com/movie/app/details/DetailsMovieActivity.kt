@@ -31,7 +31,8 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         setContentView(R.layout.activity_details_movie)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
-        presenter.setExtraBundles(intent.extras)
+        val movie : Movie = intent.extras.getParcelable(EXTRA_MOVIE)
+        presenter.setMovieId(movie.id)
         presenter.subscribe()
         imgVideo.setOnClickListener {
             presenter.showTrailerVideo()

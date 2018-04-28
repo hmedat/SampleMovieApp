@@ -44,7 +44,8 @@ class MainPresenter @Inject constructor(private val schedulerProvider: BaseSched
                     }
 
                     override fun onNext(result: LatestMoviesResult) {
-                        if (result.results!!.isEmpty() && !result.isLoadMore()) {
+                        if (!result.isLoadMore() && (result.results == null
+                                        || result.results?.isEmpty()!!)) {
                             view.showNoData()
                         }
                         view.showData(result)
