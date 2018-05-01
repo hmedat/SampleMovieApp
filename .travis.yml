@@ -32,7 +32,7 @@ android:
  - android-$EMULATOR_API
  - extra-google-m2repository
  - extra-android-m2repository # for design library
- - addon-google_apis-google-19 # google play services
+ - addon-google_apis-google-$ANDROID_API # google play services
  - sys-img-$ABI-addon-google_apis-google-$ANDROID_API
  - sys-img-$ABI-addon-google_apis-google-$EMULATOR_API
 
@@ -50,7 +50,7 @@ before_install:
 #Source: https://medium.com/@oldergod/constraint-layout-and-circleci-travis-d50342696d2
 
 before_script:
-- echo no | android create avd --force -n test -t android-$EMULATOR_API --abi $ABI
+- echo no | android create avd --force -n test -t android-$EMULATOR_API --abi google_apis/$ABI
 - emulator -avd test -no-skin -no-audio -no-window &
 - android-wait-for-emulator
 - adb shell input keyevent 82 &
