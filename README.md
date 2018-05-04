@@ -19,7 +19,11 @@ Sample test cases are implemented by mockito
 - [BaseRecyclerViewAdapterHelper](https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
 - [progress-activity](https://github.com/vlonjatg/progress-activity)
 
-
+## How To Use it
+In your gradle.properties file add this field
+```
+MovieAPIKey = "Your API Key"
+```
 
 
 ## Screenshots
