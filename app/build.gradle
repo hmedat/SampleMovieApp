@@ -28,7 +28,7 @@ android {
         if (propsFile.exists()) {
             it.buildConfigField 'String', 'MOVIE_API_KEY', MovieAPIKey
         }else{
-            it.buildConfigField 'String', 'MOVIE_API_KEY', "InvalidKey"
+            it.buildConfigField 'String', 'MOVIE_API_KEY', '"InvalidKey"'
         }
     }
 }
