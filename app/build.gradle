@@ -24,7 +24,12 @@ android {
         abortOnError false
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'MOVIE_API_KEY', MovieAPIKey
+        def propsFile = rootProject.file('gradle.properties')
+        if (propsFile.exists()) {
+            it.buildConfigField 'String', 'MOVIE_API_KEY', MovieAPIKey
+        }else{
+            it.buildConfigField 'String', 'MOVIE_API_KEY', '"InvalidKey"'
+        }
     }
 }
 
