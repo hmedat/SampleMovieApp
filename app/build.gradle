@@ -23,6 +23,9 @@ android {
     lintOptions {
         abortOnError false
     }
+    buildTypes.each {
+        it.buildConfigField 'String', 'MOVIE_API_KEY', MovieAPIKey
+    }
 }
 
 tasks.withType(Test) {
