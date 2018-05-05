@@ -19,9 +19,9 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
 
     companion object {
         const val EXTRA_MOVIE: String = "Extra.movie"
-        fun startActivity(context: Context, movie: Movie) {
+        fun startActivity(context: Context, movieId: Long) {
             val intent = Intent(context, DetailsMovieActivity::class.java)
-            intent.putExtra(EXTRA_MOVIE, movie)
+            intent.putExtra(EXTRA_MOVIE, movieId)
             context.startActivity(intent)
         }
     }
@@ -31,8 +31,8 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         setContentView(R.layout.activity_details_movie)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
-        val movie : Movie = intent.extras.getParcelable(EXTRA_MOVIE)
-        presenter.setMovieId(movie.id)
+        val movieId : Long = intent.extras.getLong(EXTRA_MOVIE)
+        presenter.setMovieId(movieId)
         presenter.subscribe()
         imgVideo.setOnClickListener {
             presenter.showTrailerVideo()

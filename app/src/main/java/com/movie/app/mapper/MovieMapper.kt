@@ -21,14 +21,14 @@ object MovieMapper {
                 firstVideoImageUrl = "http://img.youtube.com/vi/$key/0.jpg"
                 firstVideoUrl = "https://www.youtube.com/watch?v=$key"
             }
-            if (genres == null || genres.isEmpty()) {
+            if (genres == null || genres!!.isEmpty()) {
                 return
             }
-            val genresSize = Math.min(genres.size, 3) - 1
+            val genresSize = Math.min(genres!!.size, 3) - 1
             val genresStringBuilder = StringBuilder()
-            genresStringBuilder.append(genres[0].name)
+            genresStringBuilder.append(genres!![0].name)
             for (index in 1..genresSize) {
-                genresStringBuilder.append(", ").append(genres[index].name)
+                genresStringBuilder.append(", ").append(genres!![index].name)
             }
             genresString = genresStringBuilder.toString()
         }

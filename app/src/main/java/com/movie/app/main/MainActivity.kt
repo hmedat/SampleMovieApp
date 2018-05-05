@@ -34,7 +34,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         adapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
         rvMovies.adapter = adapter
         adapter.setOnItemClickListener { _, _, position ->
-            DetailsMovieActivity.startActivity(this, adapter.data[position])
+            DetailsMovieActivity.startActivity(this, adapter.data[position].id)
         }
         rvMovies.addItemDecoration(DividerItemDecoration(this
                 , DividerItemDecoration.VERTICAL))
