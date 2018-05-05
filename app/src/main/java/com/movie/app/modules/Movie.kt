@@ -41,11 +41,13 @@ data class Movie(
         @Ignore
         var genresString: String? = null,
         @Ignore
-        var videos: VideoResult? = null,
+        var videoResult: VideoResult? = null,
+        @Ignore
+        var videos: List<Video>? = null,
         @Ignore
         var firstVideoUrl: String? = null,
         @Ignore
         var firstVideoImageUrl: String? = null,
         @Ignore
-        var reviews: ReviewResult? = null
+        var reviewResult: ReviewResult? = null
 )

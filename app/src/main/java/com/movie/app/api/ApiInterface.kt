@@ -13,7 +13,7 @@ interface ApiInterface {
     @GET("discover/movie")
     fun getLatestMovies(@Query("page") pageNumber: Int): Observable<LatestMoviesResult>
 
-    @GET("movie/{movieId}?append_to_response=videos,reviews")
+    @GET("movie/{movieId}?append_to_response=videoResult,reviewResult")
     fun findMovie(@Path("movieId") id: Long): Observable<Movie>
 
 }

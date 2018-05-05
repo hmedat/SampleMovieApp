@@ -16,8 +16,8 @@ object MovieMapper {
             posterPath = IMAGE_URL + posterPath
             backdropPath = IMAGE_URL + backdropPath
 
-            if (videos != null && videos?.results != null && videos?.results!!.isNotEmpty()) {
-                val key = videos?.results!![0].key
+            if (videoResult != null && videoResult?.videos != null && videoResult?.videos!!.isNotEmpty()) {
+                val key = videoResult?.videos!![0].key
                 firstVideoImageUrl = "http://img.youtube.com/vi/$key/0.jpg"
                 firstVideoUrl = "https://www.youtube.com/watch?v=$key"
             }

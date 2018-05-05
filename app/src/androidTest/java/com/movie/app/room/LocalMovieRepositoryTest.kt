@@ -7,18 +7,20 @@ import com.movie.app.api.result.VideoResult
 import com.movie.app.modules.Genre
 import com.movie.app.modules.Movie
 import com.movie.app.modules.Video
-import com.movie.app.room.repositories.MovieRepository
+import com.movie.app.repositories.LocalMovieRepository
+import com.movie.app.repositories.LocalMovieRepositoryImp
+import io.reactivex.observers.TestObserver
 import org.junit.After
-import org.junit.Assert
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class UserDaoTest {
+class LocalMovieRepositoryTest {
 
     private lateinit var database: AppDatabase
-    private lateinit var movieRepository: MovieRepository
+    private lateinit var movieRepository: LocalMovieRepository
     private lateinit var genresList: List<Genre>
     private lateinit var movies: List<Movie>
     @Before
@@ -35,7 +37,7 @@ class UserDaoTest {
             title = "Avengers 01"
             releaseDate = "2010"
             this.genres = genresList
-            videos = VideoResult(Video().apply {
+            videoResult = VideoResult(Video().apply {
                 id = 1001
                 key = "sdfkjshd"
             }, Video().apply {
@@ -50,7 +52,7 @@ class UserDaoTest {
         })
         database = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
                 AppDatabase::class.java).build()
-        movieRepository = MovieRepository(database)
+        movieRepository = LocalMovieRepositoryImp(database)
     }
 
     @After
@@ -61,10 +63,38 @@ class UserDaoTest {
     @Test
     fun insertMovies() {
         movieRepository.insertMovies(movies)
-        Assert.assertEquals(database.movieDao().getMovies().size, movies.size)
-        Assert.assertEquals(database.genreDao().getGenres().size, genresList.size)
-        Assert.assertEquals(database.movieGenreDao().getAll().size, genresList.size * movies.size)
-        Assert.assertEquals(database.videoDao().getVideos().size, 2)
+        assertEquals(database.movieDao().getMovies().size, movies.size)
+        assertEquals(database.genreDao().getGenres().size, genresList.size)
+        assertEquals(database.movieGenreDao().getAll().size, genresList.size * movies.size)
+        assertEquals(database.videoDao().getVideos().size, 2)
+    }
+
+    @Test
+    fun getMovies() {
+        val testObserver = TestObserver<List<Movie>>()
+        movieRepository.insertMovies(movies)
+        movieRepository.getMovies().subscribe(testObserver)
+        testObserver.assertNoErrors()
+        testObserver.assertComplete()
+        val list = testObserver.values()[0]
+        assertEquals(list.size, movies.size)
+        assertEquals(list[0].videos?.size, 2)
+        assertEquals(list[0].genres?.size, 2)
+        assertEquals(list[1].genres?.size, 2)
+    }
+
+
+    @Test
+    fun findMovie() {
+        movieRepository.insertMovies(movies)
+        val testObserver = TestObserver<Movie>()
+        movieRepository.getMovie(11).subscribe(testObserver)
+        testObserver.assertNoErrors()
+        testObserver.assertComplete()
+        val movie = testObserver.values()[0]
+        assertNotNull(movie)
+        assertEquals(movie.videos?.size, 0)
+        assertEquals(movie.genres?.size, 2)
     }
 
     @Test
@@ -76,6 +106,6 @@ class UserDaoTest {
         }
         database.movieDao().insert(movie)
         database.movieDao().delete(movie)
-        Assert.assertNull(database.movieDao().getMovie(movie.id))
+        assertNull(database.movieDao().getMovie(movie.id))
     }
 }
