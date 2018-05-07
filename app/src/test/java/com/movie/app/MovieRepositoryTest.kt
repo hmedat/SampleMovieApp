@@ -1,10 +1,11 @@
 package com.movie.app
 
+import com.movie.app.api.result.LatestMoviesResult
 import com.movie.app.modules.Movie
-import com.movie.app.repositories.LocalMovieRepository
+import com.movie.app.modules.MovieSearchFilter
+import com.movie.app.repositories.MovieDataSource
 import com.movie.app.repositories.MovieRepository
-import com.movie.app.repositories.MovieRepositoryImp
-import com.movie.app.repositories.RemoteMovieRepository
+import com.movie.app.repositories.remote.RemoteMovieRepository
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
@@ -18,7 +19,7 @@ import org.mockito.MockitoAnnotations
 class MovieRepositoryTest {
 
     @Mock
-    private lateinit var localRep: LocalMovieRepository
+    private lateinit var localRep: MovieDataSource
     @Mock
     private lateinit var remoteRep: RemoteMovieRepository
 
@@ -27,7 +28,7 @@ class MovieRepositoryTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        movieRep = MovieRepositoryImp(localRep, remoteRep)
+        movieRep = MovieRepository(localRep, remoteRep)
     }
 
     @Test
@@ -51,7 +52,10 @@ class MovieRepositoryTest {
 
     @Test
     fun testGetMovies() {
-        val movies = listOf(Movie().apply {
+        val searchFilter = MovieSearchFilter()
+        searchFilter.pageNumber = 1
+        val latestMoviesResult = LatestMoviesResult()
+        latestMoviesResult.results = listOf(Movie().apply {
             id = 1
             title = "Avengers 01"
         }, Movie().apply {
@@ -61,15 +65,17 @@ class MovieRepositoryTest {
             id = 3
             title = "Avengers 03"
         })
-        val testSubscriber = TestObserver<List<Movie>>()
-        whenever(localRep.getMovies())
-                .thenReturn(Observable.just(movies))
-        whenever(remoteRep.getMovies())
-                .thenReturn(Observable.just(movies))
-        movieRep.getMovies().subscribe(testSubscriber)
+        val testSubscriber = TestObserver<LatestMoviesResult>()
+        whenever(localRep.getMovies(searchFilter))
+                .thenReturn(Observable.just(latestMoviesResult))
+        whenever(remoteRep.getMovies(searchFilter))
+                .thenReturn(Observable.just(latestMoviesResult))
+
+        movieRep.getMovies(searchFilter).subscribe(testSubscriber)
         testSubscriber.assertNoErrors()
         testSubscriber.assertComplete()
-        assertEquals(testSubscriber.values()[0], movies)
-        assertEquals(testSubscriber.values()[1], movies)
+
+        assertEquals(testSubscriber.values()[0], latestMoviesResult)
+        assertEquals(testSubscriber.values()[1], latestMoviesResult)
     }
 }

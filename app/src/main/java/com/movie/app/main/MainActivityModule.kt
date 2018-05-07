@@ -1,8 +1,8 @@
 package com.movie.app.main
 
 import com.movie.app.di.scope.ActivityScope
-import com.movie.app.interactors.IMoviesInteractor
 import com.movie.app.modules.MovieSearchFilter
+import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.SchedulerProvider
 import dagger.Binds
 import dagger.Module
@@ -21,10 +21,10 @@ abstract class MainActivityModule {
         @JvmStatic
         @ActivityScope
         internal fun provideMainPresenter(schedulerProvider: SchedulerProvider
-                                          , moviesInteractor: IMoviesInteractor
+                                          , movieRepository: MovieDataSource
                                           , mainView: MainActivityContractor.View)
                 : MainActivityContractor.Presenter {
-            return MainPresenter(schedulerProvider, moviesInteractor, mainView, MovieSearchFilter())
+            return MainPresenter(schedulerProvider, movieRepository, mainView, MovieSearchFilter())
         }
 
     }
