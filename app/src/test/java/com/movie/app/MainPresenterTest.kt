@@ -1,11 +1,11 @@
 package com.movie.app
 
 import com.movie.app.api.result.LatestMoviesResult
-import com.movie.app.interactors.IMoviesInteractor
 import com.movie.app.main.MainActivityContractor
 import com.movie.app.main.MainPresenter
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
+import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import com.movie.app.util.schedulers.ImmediateSchedulerProvider
 import com.nhaarman.mockito_kotlin.never
@@ -25,7 +25,7 @@ class MainPresenterTest {
     @Mock
     private lateinit var view: MainActivityContractor.View
     @Mock
-    private lateinit var moviesInteractor: IMoviesInteractor
+    private lateinit var movieDataSource: MovieDataSource
     @Mock
     private lateinit var movieSearchFilter: MovieSearchFilter
 
@@ -35,7 +35,7 @@ class MainPresenterTest {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         schedulerProvider = ImmediateSchedulerProvider()
-        presenter = MainPresenter(schedulerProvider, moviesInteractor, view, movieSearchFilter)
+        presenter = MainPresenter(schedulerProvider, movieDataSource, view, movieSearchFilter)
     }
 
     @Test
@@ -56,7 +56,7 @@ class MainPresenterTest {
                 .thenReturn(MovieSearchFilter.First_PAGE)
         whenever(movieSearchFilter.isFirstPage())
                 .thenReturn(true)
-        whenever(moviesInteractor.getLatest(movieSearchFilter))
+        whenever(movieDataSource.getMovies(movieSearchFilter))
                 .thenReturn(Observable.just(result))
         presenter.loadFirstPage()
         verify(view).showProgressBar()
@@ -74,7 +74,7 @@ class MainPresenterTest {
                 .thenReturn(MovieSearchFilter.First_PAGE)
         whenever(movieSearchFilter.isFirstPage())
                 .thenReturn(true)
-        whenever(moviesInteractor.getLatest(movieSearchFilter))
+        whenever(movieDataSource.getMovies(movieSearchFilter))
                 .thenReturn(Observable.just(result))
         presenter.loadFirstPage()
         verify(view).showProgressBar()
@@ -92,7 +92,7 @@ class MainPresenterTest {
                 .thenReturn(MovieSearchFilter.First_PAGE)
         whenever(movieSearchFilter.isFirstPage())
                 .thenReturn(true)
-        whenever(moviesInteractor.getLatest(movieSearchFilter))
+        whenever(movieDataSource.getMovies(movieSearchFilter))
                 .thenReturn(Observable.error(ioException))
         presenter.loadFirstPage()
         verify(view).showProgressBar()
@@ -122,7 +122,7 @@ class MainPresenterTest {
                 .thenReturn(pageNumber)
         whenever(movieSearchFilter.isFirstPage())
                 .thenReturn(false)
-        whenever(moviesInteractor.getLatest(movieSearchFilter))
+        whenever(movieDataSource.getMovies(movieSearchFilter))
                 .thenReturn(Observable.just(result))
         presenter.loadNextPage()
         verify(view, never()).showProgressBar()
@@ -141,7 +141,7 @@ class MainPresenterTest {
                 .thenReturn(pageNumber)
         whenever(movieSearchFilter.isFirstPage())
                 .thenReturn(false)
-        whenever(moviesInteractor.getLatest(movieSearchFilter))
+        whenever(movieDataSource.getMovies(movieSearchFilter))
                 .thenReturn(Observable.just(result))
         presenter.loadNextPage()
         verify(view, never()).showProgressBar()
@@ -161,7 +161,7 @@ class MainPresenterTest {
                 .thenReturn(pageNumber)
         whenever(movieSearchFilter.isFirstPage())
                 .thenReturn(false)
-        whenever(moviesInteractor.getLatest(movieSearchFilter))
+        whenever(movieDataSource.getMovies(movieSearchFilter))
                 .thenReturn(Observable.error(ioException))
         presenter.loadNextPage()
         verify(view, never()).showProgressBar()

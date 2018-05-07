@@ -82,7 +82,7 @@ class MovieDataSourceTest {
         testObserver.assertComplete()
         val list = testObserver.values()[0].results
         assertEquals(list?.size, movies.size)
-        assertEquals(list!![0].videos?.size, 2)
+        assertEquals(list!![0].videosList?.size, 2)
         assertEquals(list[0].genres?.size, 2)
         assertEquals(list[1].genres?.size, 2)
     }
@@ -97,7 +97,7 @@ class MovieDataSourceTest {
         testObserver.assertComplete()
         val movie = testObserver.values()[0]
         assertNotNull(movie)
-        assertEquals(movie.videos?.size, 0)
+        assertEquals(movie.videosList?.size, 0)
         assertEquals(movie.genres?.size, 2)
     }
 

@@ -46,7 +46,7 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
             val movies = database.movieDao().getMovies()
             for (movie in movies) {
                 movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
-                movie.videos = database.videoDao().getVideosForMovies(movieId = movie.id)
+                movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
             }
             latestMoviesResult.results = movies
             latestMoviesResult.page = MovieSearchFilter.First_PAGE
@@ -63,7 +63,7 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
         return Observable.fromCallable {
             val movie = database.movieDao().getMovie(movieId)
             movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
-            movie.videos = database.videoDao().getVideosForMovies(movieId = movie.id)
+            movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
             movie
         }
     }

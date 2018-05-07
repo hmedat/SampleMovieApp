@@ -82,6 +82,9 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
 
     override fun showError(isFirstPage: Boolean, throwable: Throwable) {
         if (isFirstPage) {
+            if (adapter.itemCount > 0) {
+                return
+            }
             progressView.showError(R.drawable.ic_no_connection_24dp_white
                     , getString(R.string.title_no_connection)
                     , getString(R.string.desc_no_connection)

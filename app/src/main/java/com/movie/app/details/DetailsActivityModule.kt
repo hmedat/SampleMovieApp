@@ -1,7 +1,7 @@
 package com.movie.app.details
 
 import com.movie.app.di.scope.ActivityScope
-import com.movie.app.interactors.IMoviesInteractor
+import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import dagger.Binds
 import dagger.Module
@@ -20,10 +20,10 @@ abstract class DetailsActivityModule {
         @JvmStatic
         @ActivityScope
         internal fun provideDetailsPresenter(schedulerProvider: BaseSchedulerProvider
-                                             , moviesInteractor: IMoviesInteractor
+                                             , movieDataSource: MovieDataSource
                                              , mainView: DetailsActivityContractor.View)
                 : DetailsActivityContractor.Presenter {
-            return DetailsMoviePresenter(schedulerProvider, moviesInteractor, mainView)
+            return DetailsMoviePresenter(schedulerProvider, movieDataSource, mainView)
         }
     }
 }

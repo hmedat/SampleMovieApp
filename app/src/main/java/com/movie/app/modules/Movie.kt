@@ -39,15 +39,11 @@ data class Movie(
         @Ignore
         var genres: List<Genre>? = null,
         @Ignore
-        var genresString: String? = null,
-        @Ignore
+        @SerializedName("videos")
         var videoResult: VideoResult? = null,
         @Ignore
-        var videos: List<Video>? = null,
+        var videosList: List<Video>? = null,
         @Ignore
-        var firstVideoUrl: String? = null,
-        @Ignore
-        var firstVideoImageUrl: String? = null,
-        @Ignore
+        @SerializedName("reviews")
         var reviewResult: ReviewResult? = null
 )

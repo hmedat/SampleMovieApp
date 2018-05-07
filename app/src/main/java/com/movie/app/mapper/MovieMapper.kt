@@ -13,24 +13,22 @@ object MovieMapper {
 
     fun map(movie: Movie) {
         movie.apply {
-            posterPath = IMAGE_URL + posterPath
-            backdropPath = IMAGE_URL + backdropPath
-
-            if (videoResult != null && videoResult?.videos != null && videoResult?.videos!!.isNotEmpty()) {
-                val key = videoResult?.videos!![0].key
-                firstVideoImageUrl = "http://img.youtube.com/vi/$key/0.jpg"
-                firstVideoUrl = "https://www.youtube.com/watch?v=$key"
+            posterPath?.let {
+                posterPath = IMAGE_URL + it
             }
-            if (genres == null || genres!!.isEmpty()) {
-                return
+            backdropPath?.let {
+                backdropPath = IMAGE_URL + it
             }
-            val genresSize = Math.min(genres!!.size, 3) - 1
-            val genresStringBuilder = StringBuilder()
-            genresStringBuilder.append(genres!![0].name)
-            for (index in 1..genresSize) {
-                genresStringBuilder.append(", ").append(genres!![index].name)
+            videoResult?.let {
+                it.videos?.let {
+                    for (video in it) {
+                        val key = video.key
+                        video.thumbVideoPath = "http://img.youtube.com/vi/$key/0.jpg"
+                        video.videoPath = "https://www.youtube.com/watch?v=$key"
+                    }
+                }
+                videosList = it.videos
             }
-            genresString = genresStringBuilder.toString()
         }
     }
 }
