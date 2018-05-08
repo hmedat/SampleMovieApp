@@ -83,7 +83,7 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     }
 
     override fun startYoutubeActivity(chooser: Intent) {
-        if (chooser.resolveActivity(packageManager) != null) {
+        chooser.resolveActivity(packageManager)?.let {
             startActivity(chooser)
         }
     }

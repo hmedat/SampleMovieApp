@@ -28,16 +28,23 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     private fun initRecyclerView() {
-        rvMovies.layoutManager = LinearLayoutManager(this)
-        adapter = MovieAdapter()
-        adapter.setOnLoadMoreListener({ presenter.loadNextPage() }, rvMovies)
-        adapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
-        rvMovies.adapter = adapter
-        adapter.setOnItemClickListener { _, _, position ->
-            DetailsMovieActivity.startActivity(this, adapter.data[position].id)
+        adapter = MovieAdapter().apply {
+            openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
+            setOnItemClickListener { _, _, position ->
+                val movie = adapter.data[position]
+                DetailsMovieActivity.startActivity(context, movie.id)
+            }
         }
-        rvMovies.addItemDecoration(DividerItemDecoration(this
-                , DividerItemDecoration.VERTICAL))
+        rvMovies.apply {
+            layoutManager = LinearLayoutManager(context)
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        }
+        rvMovies.adapter = adapter
+        setLoadMore()
+    }
+
+    private fun setLoadMore() {
+        adapter.setOnLoadMoreListener({ presenter.loadNextPage() }, rvMovies)
     }
 
     private fun initRefreshLayout() {
@@ -63,13 +70,15 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     override fun showData(result: LatestMoviesResult) {
-        val results = result.results
-        if (results!!.isNotEmpty()) {
+        val list = result.results
+        if (list!!.isNotEmpty()) {
             progressView.showContent()
             if (result.isLoadMore()) {
-                adapter.addData(results)
+                adapter.addData(list)
             } else {
-                adapter.setNewData(results)
+                adapter.setNewData(list)
+                setLoadMore()
+                rvMovies.smoothScrollToPosition(0)
             }
         }
         if (result.isFinished()) {

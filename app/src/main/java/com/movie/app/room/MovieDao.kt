@@ -9,7 +9,7 @@ interface MovieDao {
     @Query("SELECT * FROM movie")
     fun getMovies(): List<Movie>
 
-    @Query("SELECT * FROM movie WHERE id = :id")
+    @Query("SELECT * FROM movie WHERE id = :id limit 20")
     fun getMovie(id: Long): Movie
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
