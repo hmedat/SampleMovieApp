@@ -1,8 +1,8 @@
 package com.movie.app.main
 
 import com.movie.app.api.result.LatestMoviesResult
-import com.movie.app.interactors.IMoviesInteractor
 import com.movie.app.modules.MovieSearchFilter
+import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
@@ -10,7 +10,7 @@ import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(private val schedulerProvider: BaseSchedulerProvider
-                                        , private val moviesInteractor: IMoviesInteractor
+                                        , private val movieRepository: MovieDataSource
                                         , private val view: MainActivityContractor.View
                                         , private val searchFilter: MovieSearchFilter)
     : MainActivityContractor.Presenter {
@@ -35,7 +35,7 @@ class MainPresenter @Inject constructor(private val schedulerProvider: BaseSched
         if (isFirstPage) {
             view.showProgressBar()
         }
-        moviesInteractor.getLatest(searchFilter)
+        movieRepository.getMovies(searchFilter)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .subscribe(object : Observer<LatestMoviesResult> {

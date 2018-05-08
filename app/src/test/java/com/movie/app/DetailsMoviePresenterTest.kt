@@ -2,8 +2,8 @@ package com.movie.app
 
 import com.movie.app.details.DetailsActivityContractor
 import com.movie.app.details.DetailsMoviePresenter
-import com.movie.app.interactors.IMoviesInteractor
 import com.movie.app.modules.Movie
+import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import com.movie.app.util.schedulers.ImmediateSchedulerProvider
 import com.nhaarman.mockito_kotlin.never
@@ -23,14 +23,14 @@ class DetailsMoviePresenterTest {
     @Mock
     private lateinit var view: DetailsActivityContractor.View
     @Mock
-    private lateinit var moviesInteractor: IMoviesInteractor
+    private lateinit var movieDataSource: MovieDataSource
     private lateinit var movie: Movie
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         schedulerProvider = ImmediateSchedulerProvider()
-        presenter = DetailsMoviePresenter(schedulerProvider, moviesInteractor, view)
+        presenter = DetailsMoviePresenter(schedulerProvider, movieDataSource, view)
         movie = Movie().apply {
             id = 10
             title = "Avengers 01"
@@ -43,7 +43,7 @@ class DetailsMoviePresenterTest {
         val ioException = IOException()
         movie.id = 0
         presenter.setMovieId(movie.id)
-        whenever(moviesInteractor.findMovie(0))
+        whenever(movieDataSource.getMovie(0))
                 .thenReturn(Observable.error(ioException))
         presenter.subscribe()
         verify(view).showProgressBar()
@@ -54,7 +54,7 @@ class DetailsMoviePresenterTest {
 
     @Test
     fun testSubscribe() {
-        whenever(moviesInteractor.findMovie(movie.id))
+        whenever(movieDataSource.getMovie(movie.id))
                 .thenReturn(Observable.just(movie))
         presenter.subscribe()
         verify(view).showProgressBar()

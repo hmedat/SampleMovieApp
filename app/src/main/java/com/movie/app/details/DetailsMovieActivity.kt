@@ -8,6 +8,7 @@ import android.view.View
 import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.modules.Movie
+import com.movie.app.util.GenreUtil
 import com.movie.app.util.loadImage
 import kotlinx.android.synthetic.main.activity_details_movie.*
 import javax.inject.Inject
@@ -19,9 +20,9 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
 
     companion object {
         const val EXTRA_MOVIE: String = "Extra.movie"
-        fun startActivity(context: Context, movie: Movie) {
+        fun startActivity(context: Context, movieId: Long) {
             val intent = Intent(context, DetailsMovieActivity::class.java)
-            intent.putExtra(EXTRA_MOVIE, movie)
+            intent.putExtra(EXTRA_MOVIE, movieId)
             context.startActivity(intent)
         }
     }
@@ -31,8 +32,8 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         setContentView(R.layout.activity_details_movie)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
-        val movie : Movie = intent.extras.getParcelable(EXTRA_MOVIE)
-        presenter.setMovieId(movie.id)
+        val movieId: Long = intent.extras.getLong(EXTRA_MOVIE)
+        presenter.setMovieId(movieId)
         presenter.subscribe()
         imgVideo.setOnClickListener {
             presenter.showTrailerVideo()
@@ -54,13 +55,24 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         tvMovieTitle.text = movie.title
         tvReleaseYear.text = movie.releaseDate
         tvRate.text = movie.voteAverage.toString()
-        tvGenres.text = movie.genresString
+        tvGenres.text = GenreUtil.getGenreString(movie.genres)
         tvOverView.text = movie.overview
-        imgPoster.loadImage(movie.posterPath, Color.BLACK)
-        imgVideo.loadImage(movie.firstVideoImageUrl, Color.BLACK)
-        imgIconVideo.visibility = View.VISIBLE
         imgRate.visibility = View.VISIBLE
-        supportActionBar?.title = movie.title;
+        supportActionBar?.title = movie.title
+        imgPoster.loadImage(movie.posterPath, Color.BLACK)
+        handleVideoData(movie)
+    }
+
+    private fun handleVideoData(movie: Movie) {
+        if (movie.videosList == null || movie.videosList!!.isEmpty()) {
+            imgVideo.visibility = View.GONE
+            imgIconVideo.visibility = View.GONE
+            return
+        }
+        val video = movie.videosList!![0]
+        imgVideo.visibility = View.VISIBLE
+        imgVideo.loadImage(video.thumbVideoPath, Color.BLACK)
+        imgIconVideo.visibility = View.VISIBLE
     }
 
     override fun showError(throwable: Throwable) {
@@ -71,7 +83,7 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     }
 
     override fun startYoutubeActivity(chooser: Intent) {
-        if (chooser.resolveActivity(packageManager) != null) {
+        chooser.resolveActivity(packageManager)?.let {
             startActivity(chooser)
         }
     }

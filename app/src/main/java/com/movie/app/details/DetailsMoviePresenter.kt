@@ -2,15 +2,15 @@ package com.movie.app.details
 
 import android.content.Intent
 import android.net.Uri
-import com.movie.app.interactors.IMoviesInteractor
 import com.movie.app.modules.Movie
+import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
 class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
-                            , private var moviesInteractor: IMoviesInteractor
+                            , private var movieDataSource: MovieDataSource
                             , private val view: DetailsActivityContractor.View)
     : DetailsActivityContractor.Presenter {
 
@@ -28,7 +28,7 @@ class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
 
     private fun loadData() {
         view.showProgressBar()
-        moviesInteractor.findMovie(movieId)
+        movieDataSource.getMovie(movieId)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .subscribe(object : Observer<Movie> {
@@ -54,7 +54,8 @@ class DetailsMoviePresenter(private val schedulerProvider: BaseSchedulerProvider
     }
 
     override fun showTrailerVideo() {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(movie?.firstVideoUrl))
+        val videoPath = movie!!.videosList!![0].videoPath
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoPath))
         val chooser: Intent = Intent.createChooser(intent, "")
         view.startYoutubeActivity(chooser)
     }
