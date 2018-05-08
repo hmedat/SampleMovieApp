@@ -11,6 +11,7 @@ Sample test cases are implemented by mockito
 - [Kotlin](https://developer.android.com/kotlin/index.html)
 - [Android Support Libraries](https://developer.android.com/topic/libraries/support-library/packages.html) 
 - [RxJava + RxAndroid](https://github.com/ReactiveX/RxJava)
+- [Room](https://developer.android.com/topic/libraries/architecture/room)
 - [Dagger](https://github.com/google/dagger)
 - [Mockito](https://github.com/mockito/mockito)
 - [Retrofit](http://square.github.io/retrofit/)
@@ -18,6 +19,7 @@ Sample test cases are implemented by mockito
 - [Glide](https://github.com/bumptech/glide)
 - [BaseRecyclerViewAdapterHelper](https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
 - [progress-activity](https://github.com/vlonjatg/progress-activity)
+
 
 ## How To Use it
 In your gradle.properties file add this field
