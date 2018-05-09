@@ -27,7 +27,7 @@ android {
         def propsFile = rootProject.file('gradle.properties')
         if (propsFile.exists()) {
             it.buildConfigField 'String', 'MOVIE_API_KEY', MovieAPIKey
-        }else{
+        } else {
             it.buildConfigField 'String', 'MOVIE_API_KEY', '"InvalidKey"'
         }
     }
