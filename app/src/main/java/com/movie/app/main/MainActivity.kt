@@ -7,7 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
-import com.movie.app.api.result.LatestMoviesResult
+import com.movie.app.api.result.MoviesResult
 import com.movie.app.details.DetailsMovieActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
@@ -69,7 +69,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
                 , getString(R.string.desc_no_data));
     }
 
-    override fun showData(result: LatestMoviesResult) {
+    override fun showData(result: MoviesResult) {
         val list = result.results
         if (list!!.isNotEmpty()) {
             progressView.showContent()

@@ -1,6 +1,6 @@
 package com.movie.app.main
 
-import com.movie.app.api.result.LatestMoviesResult
+import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.BaseSchedulerProvider
@@ -38,12 +38,12 @@ class MainPresenter @Inject constructor(private val schedulerProvider: BaseSched
         movieRepository.getMovies(searchFilter)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
-                .subscribe(object : Observer<LatestMoviesResult> {
+                .subscribe(object : Observer<MoviesResult> {
                     override fun onSubscribe(d: Disposable) {
                         compositeDisposable.add(d)
                     }
 
-                    override fun onNext(result: LatestMoviesResult) {
+                    override fun onNext(result: MoviesResult) {
                         if (!result.isLoadMore() && (result.results == null
                                         || result.results?.isEmpty()!!)) {
                             view.showNoData()

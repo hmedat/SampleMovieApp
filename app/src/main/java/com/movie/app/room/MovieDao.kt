@@ -6,10 +6,10 @@ import com.movie.app.modules.Movie
 @Dao
 interface MovieDao {
 
-    @Query("SELECT * FROM movie")
+    @Query("SELECT * FROM movie limit 20")
     fun getMovies(): List<Movie>
 
-    @Query("SELECT * FROM movie WHERE id = :id limit 20")
+    @Query("SELECT * FROM movie WHERE id = :id ")
     fun getMovie(id: Long): Movie
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

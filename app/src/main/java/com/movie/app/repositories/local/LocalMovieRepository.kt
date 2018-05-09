@@ -1,6 +1,6 @@
 package com.movie.app.repositories.local
 
-import com.movie.app.api.result.LatestMoviesResult
+import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Genre
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
@@ -40,9 +40,9 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
         database.movieGenreDao().insert(movieGenreJoinList)
     }
 
-    override fun getMovies(searchFilter: MovieSearchFilter): Observable<LatestMoviesResult> {
+    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
         return Observable.fromCallable {
-            val latestMoviesResult = LatestMoviesResult()
+            val latestMoviesResult = MoviesResult()
             val movies = database.movieDao().getMovies()
             for (movie in movies) {
                 movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)

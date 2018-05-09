@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.movie.app.BaseActivity
 import com.movie.app.R
@@ -19,10 +20,10 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     lateinit var presenter: DetailsActivityContractor.Presenter
 
     companion object {
-        const val EXTRA_MOVIE: String = "Extra.movie"
+        const val EXTRA_MOVIE_ID: String = "Extra.Movie.Id"
         fun startActivity(context: Context, movieId: Long) {
             val intent = Intent(context, DetailsMovieActivity::class.java)
-            intent.putExtra(EXTRA_MOVIE, movieId)
+            intent.putExtra(EXTRA_MOVIE_ID, movieId)
             context.startActivity(intent)
         }
     }
@@ -32,7 +33,7 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         setContentView(R.layout.activity_details_movie)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
-        val movieId: Long = intent.extras.getLong(EXTRA_MOVIE)
+        val movieId: Long = intent.extras.getLong(EXTRA_MOVIE_ID)
         presenter.setMovieId(movieId)
         presenter.subscribe()
         imgVideo.setOnClickListener {
@@ -85,6 +86,19 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     override fun startYoutubeActivity(chooser: Intent) {
         chooser.resolveActivity(packageManager)?.let {
             startActivity(chooser)
+        }
+    }
+
+    override fun showSimilarMovies(list: List<Movie>) {
+        val similarAdapter = SimilarMoviesAdapter(list)
+        rvSimilarMovies.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = similarAdapter
+            visibility = View.VISIBLE
+        }
+        similarAdapter.setOnItemClickListener { _, _, position ->
+            val movie = similarAdapter.data[position]
+            DetailsMovieActivity.startActivity(context, movie.id)
         }
     }
 

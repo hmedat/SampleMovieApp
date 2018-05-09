@@ -1,7 +1,7 @@
 package com.movie.app.main
 
 import com.movie.app.BaseContractor
-import com.movie.app.api.result.LatestMoviesResult
+import com.movie.app.api.result.MoviesResult
 
 class MainActivityContractor {
 
@@ -12,7 +12,7 @@ class MainActivityContractor {
 
         fun showNoData()
 
-        fun showData(result: LatestMoviesResult)
+        fun showData(result: MoviesResult)
 
         fun showError(isFirstPage: Boolean, throwable: Throwable)
     }

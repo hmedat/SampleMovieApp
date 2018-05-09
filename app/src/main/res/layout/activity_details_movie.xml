@@ -96,6 +96,18 @@
             tools:text="Set in a post-apocalyptic world, young Thomas is deposited in a community of boys after his memory is erased, soon learning they're all trapped in a maze that will require him to join forces with fellow “runners” for a shot at escape." />
 
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvSimilarMovies"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvOverView" />
+
         <com.vlonjatg.progressactivity.ProgressRelativeLayout
             android:id="@+id/progressView"
             android:layout_width="match_parent"
@@ -104,19 +116,17 @@
             progressActivity:errorBackgroundColor="#42a5f5"
             progressActivity:loadingBackgroundColor="#FFFFFF" />
 
-
         <ImageView
             android:id="@+id/imgVideo"
             android:layout_width="0dp"
             android:layout_height="200dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvOverView" />
+            app:layout_constraintTop_toBottomOf="@+id/rvSimilarMovies" />
 
         <ImageView
             android:id="@+id/imgIconVideo"

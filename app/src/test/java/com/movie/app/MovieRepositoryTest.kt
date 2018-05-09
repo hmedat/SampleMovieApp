@@ -1,6 +1,6 @@
 package com.movie.app
 
-import com.movie.app.api.result.LatestMoviesResult
+import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.MovieDataSource
@@ -54,7 +54,7 @@ class MovieRepositoryTest {
     fun testGetMovies() {
         val searchFilter = MovieSearchFilter()
         searchFilter.pageNumber = 1
-        val latestMoviesResult = LatestMoviesResult()
+        val latestMoviesResult = MoviesResult()
         latestMoviesResult.results = listOf(Movie().apply {
             id = 1
             title = "Avengers 01"
@@ -65,7 +65,7 @@ class MovieRepositoryTest {
             id = 3
             title = "Avengers 03"
         })
-        val testSubscriber = TestObserver<LatestMoviesResult>()
+        val testSubscriber = TestObserver<MoviesResult>()
         whenever(localRep.getMovies(searchFilter))
                 .thenReturn(Observable.just(latestMoviesResult))
         whenever(remoteRep.getMovies(searchFilter))

@@ -3,7 +3,7 @@ package com.movie.app.room
 import android.arch.persistence.room.Room
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
-import com.movie.app.api.result.LatestMoviesResult
+import com.movie.app.api.result.MoviesResult
 import com.movie.app.api.result.VideoResult
 import com.movie.app.modules.Genre
 import com.movie.app.modules.Movie
@@ -75,7 +75,7 @@ class MovieDataSourceTest {
     fun getMovies() {
         val searchFilter = MovieSearchFilter()
         searchFilter.pageNumber = 1
-        val testObserver = TestObserver<LatestMoviesResult>()
+        val testObserver = TestObserver<MoviesResult>()
         movieDataSource.insertMovies(movies)
         movieDataSource.getMovies(searchFilter).subscribe(testObserver)
         testObserver.assertNoErrors()

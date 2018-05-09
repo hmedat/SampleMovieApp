@@ -1,6 +1,6 @@
 package com.movie.app.repositories
 
-import com.movie.app.api.result.LatestMoviesResult
+import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.remote.RemoteMovieRepository
@@ -14,10 +14,10 @@ class MovieRepository @Inject constructor(private val local: MovieDataSource
     : MovieDataSource {
 
     override fun insertMovies(movies: List<Movie>) {
-
+        local.insertMovies(movies)
     }
 
-    override fun getMovies(searchFilter: MovieSearchFilter): Observable<LatestMoviesResult> {
+    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
         if (searchFilter.pageNumber > 1) {
             return getAndSaveRemoteMovies(searchFilter)
         }
@@ -26,10 +26,10 @@ class MovieRepository @Inject constructor(private val local: MovieDataSource
     }
 
     private fun getAndSaveRemoteMovies(searchFilter: MovieSearchFilter)
-            : Observable<LatestMoviesResult> {
+            : Observable<MoviesResult> {
         return remote.getMovies(searchFilter).doOnNext {
             it.results?.let {
-                local.insertMovies(it)
+                insertMovies(it)
                 Timber.d("Dispatching ${it.size} users from API...")
             }
         }
