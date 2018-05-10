@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
@@ -24,10 +25,12 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         setContentView(R.layout.activity_main)
         initRefreshLayout()
         initRecyclerView()
+        emptyView.error().setOnClickListener { presenter.subscribe() }
         presenter.subscribe()
     }
 
     private fun initRecyclerView() {
+        rvMovies.visibility = View.GONE
         adapter = MovieAdapter().apply {
             openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
             setOnItemClickListener { _, _, position ->
@@ -48,6 +51,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     private fun initRefreshLayout() {
+        swipeLayoutMovies.visibility = View.GONE
         swipeLayoutMovies.setColorSchemeColors(Color.rgb(47, 223, 189))
         swipeLayoutMovies.setOnRefreshListener({
             adapter.setEnableLoadMore(false)
@@ -56,7 +60,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     override fun showProgressBar() {
-        progressView.showLoading()
+        emptyView.showLoading()
         swipeLayoutMovies.isRefreshing = true
     }
 
@@ -65,14 +69,15 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     override fun showNoData() {
-        progressView.showEmpty(R.drawable.ic_cart_24dp_white, getString(R.string.title_no_data)
-                , getString(R.string.desc_no_data));
+        emptyView.showEmpty()
     }
 
     override fun showData(result: MoviesResult) {
         val list = result.results
         if (list!!.isNotEmpty()) {
-            progressView.showContent()
+            emptyView.showContent()
+            rvMovies.visibility = View.VISIBLE
+            swipeLayoutMovies.visibility = View.VISIBLE
             if (result.isLoadMore()) {
                 adapter.addData(list)
             } else {
@@ -94,10 +99,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
             if (adapter.itemCount > 0) {
                 return
             }
-            progressView.showError(R.drawable.ic_no_connection_24dp_white
-                    , getString(R.string.title_no_connection)
-                    , getString(R.string.desc_no_connection)
-                    , getString(R.string.btn_no_connection)) { presenter.loadFirstPage() }
+            emptyView.showError()
         } else {
             adapter.loadMoreFail()
         }

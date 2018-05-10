@@ -46,4 +46,8 @@ data class Movie(
         @Ignore
         @SerializedName("reviews")
         var reviewResult: ReviewResult? = null
-)
+) {
+    companion object {
+        const val ID_NOT_SET: Long = -1L
+    }
+}

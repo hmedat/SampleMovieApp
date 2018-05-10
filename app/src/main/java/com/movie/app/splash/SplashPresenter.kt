@@ -12,7 +12,7 @@ class SplashPresenter constructor(private val view: SplashActivityContractor.Vie
 
     override fun subscribe() {
         Completable.complete()
-                .delay(3, TimeUnit.SECONDS)
+                .delay(1, TimeUnit.SECONDS)
                 .doOnComplete { view.startNextActivity(null) }
                 .subscribe()
     }

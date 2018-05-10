@@ -4,7 +4,6 @@ import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.remote.RemoteMovieRepository
-
 import io.reactivex.Observable
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,6 +21,11 @@ class MovieRepository @Inject constructor(private val local: MovieDataSource
             return getAndSaveRemoteMovies(searchFilter)
         }
         return Observable.concatArray(local.getMovies(searchFilter)
+                .onErrorReturn {
+                    val moviesResult = MoviesResult()
+                    moviesResult
+                }
+                .filter { it.results != null && it.results!!.isNotEmpty() }
                 , getAndSaveRemoteMovies(searchFilter))
     }
 
@@ -36,6 +40,10 @@ class MovieRepository @Inject constructor(private val local: MovieDataSource
     }
 
     override fun getMovie(movieId: Long): Observable<Movie> {
-        return Observable.concatArray(local.getMovie(movieId), remote.getMovie(movieId))
+        return Observable.concatArray(local.getMovie(movieId)
+                .onErrorReturn {
+                    Movie(Movie.ID_NOT_SET)
+                }.filter { it.id != Movie.ID_NOT_SET }
+                , remote.getMovie(movieId))
     }
 }

@@ -35,21 +35,22 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         supportActionBar?.setHomeButtonEnabled(true)
         val movieId: Long = intent.extras.getLong(EXTRA_MOVIE_ID)
         presenter.setMovieId(movieId)
-        presenter.subscribe()
         imgVideo.setOnClickListener {
             presenter.showTrailerVideo()
         }
         imgIconVideo.setOnClickListener {
             presenter.showTrailerVideo()
         }
+        emptyViewDetails.error().setOnClickListener { presenter.subscribe() }
+        presenter.subscribe()
     }
 
     override fun showProgressBar() {
-        progressView.showLoading()
+        emptyViewDetails.showLoading()
     }
 
     override fun hideProgressBar() {
-        progressView.showContent()
+        emptyViewDetails.showContent()
     }
 
     override fun showData(movie: Movie) {
@@ -77,10 +78,7 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     }
 
     override fun showError(throwable: Throwable) {
-        progressView.showError(R.drawable.ic_no_connection_24dp_white
-                , getString(R.string.title_no_connection)
-                , getString(R.string.desc_no_connection)
-                , getString(R.string.btn_no_connection)) { presenter.subscribe() }
+        emptyViewDetails.showError()
     }
 
     override fun startYoutubeActivity(chooser: Intent) {

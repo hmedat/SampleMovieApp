@@ -61,9 +61,13 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
 
     override fun getMovie(movieId: Long): Observable<Movie> {
         return Observable.fromCallable {
-            val movie = database.movieDao().getMovie(movieId)
-            movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
-            movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
+            var movie = database.movieDao().getMovie(movieId)
+            if (movie == null) {
+                movie = Movie(Movie.ID_NOT_SET)
+            } else {
+                movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
+                movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
+            }
             movie
         }
     }
