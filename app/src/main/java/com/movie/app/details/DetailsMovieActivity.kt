@@ -4,14 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.modules.Movie
 import com.movie.app.util.GenreUtil
 import com.movie.app.util.loadImage
+import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener
 import kotlinx.android.synthetic.main.activity_details_movie.*
 import javax.inject.Inject
+
 
 class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
 
@@ -19,10 +22,10 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     lateinit var presenter: DetailsActivityContractor.Presenter
 
     companion object {
-        const val EXTRA_MOVIE: String = "Extra.movie"
+        const val EXTRA_MOVIE_ID: String = "Extra.Movie.Id"
         fun startActivity(context: Context, movieId: Long) {
             val intent = Intent(context, DetailsMovieActivity::class.java)
-            intent.putExtra(EXTRA_MOVIE, movieId)
+            intent.putExtra(EXTRA_MOVIE_ID, movieId)
             context.startActivity(intent)
         }
     }
@@ -32,23 +35,18 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         setContentView(R.layout.activity_details_movie)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
-        val movieId: Long = intent.extras.getLong(EXTRA_MOVIE)
+        val movieId: Long = intent.extras.getLong(EXTRA_MOVIE_ID)
         presenter.setMovieId(movieId)
+        emptyViewDetails.error().setOnClickListener { presenter.subscribe() }
         presenter.subscribe()
-        imgVideo.setOnClickListener {
-            presenter.showTrailerVideo()
-        }
-        imgIconVideo.setOnClickListener {
-            presenter.showTrailerVideo()
-        }
     }
 
     override fun showProgressBar() {
-        progressView.showLoading()
+        emptyViewDetails.showLoading()
     }
 
     override fun hideProgressBar() {
-        progressView.showContent()
+        emptyViewDetails.showContent()
     }
 
     override fun showData(movie: Movie) {
@@ -65,27 +63,39 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
 
     private fun handleVideoData(movie: Movie) {
         if (movie.videosList == null || movie.videosList!!.isEmpty()) {
-            imgVideo.visibility = View.GONE
-            imgIconVideo.visibility = View.GONE
             return
         }
+        youtubePlayerView.visibility = View.VISIBLE
         val video = movie.videosList!![0]
-        imgVideo.visibility = View.VISIBLE
-        imgVideo.loadImage(video.thumbVideoPath, Color.BLACK)
-        imgIconVideo.visibility = View.VISIBLE
+        youtubePlayerView.initialize({ player ->
+            player.addListener(object : AbstractYouTubePlayerListener() {
+                override fun onReady() {
+                    player.loadVideo(video.key, 0f)
+                }
+            })
+        }, true)
     }
 
     override fun showError(throwable: Throwable) {
-        progressView.showError(R.drawable.ic_no_connection_24dp_white
-                , getString(R.string.title_no_connection)
-                , getString(R.string.desc_no_connection)
-                , getString(R.string.btn_no_connection)) { presenter.subscribe() }
+        emptyViewDetails.showError()
     }
 
-    override fun startYoutubeActivity(chooser: Intent) {
-        chooser.resolveActivity(packageManager)?.let {
-            startActivity(chooser)
+    override fun showSimilarMovies(list: List<Movie>) {
+        val similarAdapter = SimilarMoviesAdapter(list)
+        rvSimilarMovies.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = similarAdapter
+            visibility = View.VISIBLE
         }
+        similarAdapter.setOnItemClickListener { _, _, position ->
+            val movie = similarAdapter.data[position]
+            DetailsMovieActivity.startActivity(context, movie.id)
+        }
+    }
+
+    public override fun onDestroy() {
+        super.onDestroy()
+        youtubePlayerView.release()
     }
 
 }

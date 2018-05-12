@@ -1,5 +1,6 @@
 package com.movie.app.details
 
+import com.movie.app.api.ApiInterface
 import com.movie.app.di.scope.ActivityScope
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.BaseSchedulerProvider
@@ -21,9 +22,10 @@ abstract class DetailsActivityModule {
         @ActivityScope
         internal fun provideDetailsPresenter(schedulerProvider: BaseSchedulerProvider
                                              , movieDataSource: MovieDataSource
+                                             , apiInterface: ApiInterface
                                              , mainView: DetailsActivityContractor.View)
                 : DetailsActivityContractor.Presenter {
-            return DetailsMoviePresenter(schedulerProvider, movieDataSource, mainView)
+            return DetailsMoviePresenter(schedulerProvider, movieDataSource, apiInterface, mainView)
         }
     }
 }

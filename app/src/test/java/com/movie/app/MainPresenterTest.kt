@@ -1,6 +1,6 @@
 package com.movie.app
 
-import com.movie.app.api.result.LatestMoviesResult
+import com.movie.app.api.result.MoviesResult
 import com.movie.app.main.MainActivityContractor
 import com.movie.app.main.MainPresenter
 import com.movie.app.modules.Movie
@@ -40,7 +40,7 @@ class MainPresenterTest {
 
     @Test
     fun loadFirstPageIntoView() {
-        val result = LatestMoviesResult()
+        val result = MoviesResult()
         result.page = MovieSearchFilter.First_PAGE
         result.results = listOf(Movie().apply {
             id = 1
@@ -68,7 +68,7 @@ class MainPresenterTest {
 
     @Test
     fun loadFirstPageIntoViewWithEmptyData() {
-        val result = LatestMoviesResult()
+        val result = MoviesResult()
         result.page = MovieSearchFilter.First_PAGE
         whenever(movieSearchFilter.pageNumber)
                 .thenReturn(MovieSearchFilter.First_PAGE)
@@ -85,7 +85,7 @@ class MainPresenterTest {
 
     @Test
     fun loadFirstPageIntoViewWithError() {
-        val result = LatestMoviesResult()
+        val result = MoviesResult()
         val ioException = IOException()
         result.page = MovieSearchFilter.First_PAGE
         whenever(movieSearchFilter.pageNumber)
@@ -106,7 +106,7 @@ class MainPresenterTest {
     @Test
     fun loadNextPageIntoView() {
         val pageNumber = 2
-        val result = LatestMoviesResult()
+        val result = MoviesResult()
         result.page = pageNumber;
         result.results = listOf(Movie().apply {
             id = 1
@@ -135,7 +135,7 @@ class MainPresenterTest {
     @Test
     fun loadNextPageIntoViewWithEmptyData() {
         val pageNumber = 2
-        val result = LatestMoviesResult()
+        val result = MoviesResult()
         result.page = pageNumber;
         whenever(movieSearchFilter.pageNumber)
                 .thenReturn(pageNumber)
@@ -155,7 +155,7 @@ class MainPresenterTest {
     fun loadNextPageIntoViewWithError() {
         val ioException = IOException()
         val pageNumber = 2
-        val result = LatestMoviesResult()
+        val result = MoviesResult()
         result.page = pageNumber;
         whenever(movieSearchFilter.pageNumber)
                 .thenReturn(pageNumber)

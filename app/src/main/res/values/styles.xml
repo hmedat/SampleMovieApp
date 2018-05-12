@@ -8,4 +8,30 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="splashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
+
+    <style name="EmptyViewStyle">
+        <item name="ev_gravity">center</item>
+        <item name="ev_empty_drawable">@drawable/ic_sentiment_dissatisfied_black</item>
+        <item name="ev_empty_drawableTint">@color/colorPrimary</item>
+        <item name="ev_empty_text">@string/desc_no_data</item>
+        <item name="ev_empty_title">@string/title_no_data</item>
+        <item name="ev_error_backgroundColor">#42a5f5</item>
+        <item name="ev_error_button">@string/btn_try_again</item>
+        <item name="ev_error_buttonTextColor">#FFFFFF</item>
+        <item name="ev_error_drawable">@drawable/ic_sentiment_very_dissatisfied_black</item>
+        <item name="ev_error_drawableTint">#FFFFFF</item>
+        <item name="ev_error_text">@string/error_unknown</item>
+        <item name="ev_error_textColor">#FFFFFF</item>
+        <item name="ev_error_title">@string/error_unknown_title</item>
+        <item name="ev_error_titleTextColor">#FFFFFF</item>
+        <item name="ev_loading">circular</item>
+        <item name="ev_loading_drawable">@drawable/ic_sentiment_satisfied_black</item>
+        <item name="ev_loading_drawableTint">@color/colorPrimary</item>
+        <item name="ev_loading_title">@string/brvah_loading</item>
+        <item name="ev_transition">slide</item>
+    </style>
+
 </resources>

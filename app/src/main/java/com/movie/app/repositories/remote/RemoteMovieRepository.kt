@@ -1,7 +1,7 @@
 package com.movie.app.repositories.remote
 
 import com.movie.app.api.ApiInterface
-import com.movie.app.api.result.LatestMoviesResult
+import com.movie.app.api.result.MoviesResult
 import com.movie.app.mapper.MovieMapper
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
@@ -14,7 +14,7 @@ class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInt
     override fun insertMovies(movies: List<Movie>) {
     }
 
-    override fun getMovies(searchFilter: MovieSearchFilter): Observable<LatestMoviesResult> {
+    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
         return apiInterface.getLatestMovies(searchFilter.pageNumber)
                 .map {
                     MovieMapper.map(it.results!!)
