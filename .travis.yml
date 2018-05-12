@@ -62,7 +62,7 @@ before_install:
 
 script:
 — ./gradlew build jacocoTestReport
-- "./gradlew clean build testDebugUnitTest -PdisablePreDex --stacktrace"
+- ./gradlew clean build testDebugUnitTest -PdisablePreDex --stacktrace
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
