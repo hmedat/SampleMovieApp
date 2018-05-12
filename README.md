@@ -18,7 +18,8 @@ Sample test cases are implemented by mockito
 - [Gson](https://github.com/google/gson)
 - [Glide](https://github.com/bumptech/glide)
 - [BaseRecyclerViewAdapterHelper](https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
-- [progress-activity](https://github.com/vlonjatg/progress-activity)
+- [Empty View](https://github.com/santalu/emptyview)
+- [Android YouTube Player](https://github.com/PierfrancescoSoffritti/Android-YouTube-Player)
 
 
 ## How To Use it
