@@ -112,30 +112,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvOverView" />
 
-
-            <ImageView
-                android:id="@+id/imgVideo"
-                android:layout_width="0dp"
-                android:layout_height="200dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
+            <com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView
+                android:id="@+id/youtubePlayerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rvSimilarMovies" />
-
-            <ImageView
-                android:id="@+id/imgIconVideo"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_play_circle_filled_orange_a200_24dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/imgVideo"
-                app:layout_constraintEnd_toEndOf="@+id/imgVideo"
-                app:layout_constraintStart_toStartOf="@+id/imgVideo"
-                app:layout_constraintTop_toTopOf="@+id/imgVideo" />
-
 
         </android.support.constraint.ConstraintLayout>
 

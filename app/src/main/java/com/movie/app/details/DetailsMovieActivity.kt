@@ -11,8 +11,10 @@ import com.movie.app.R
 import com.movie.app.modules.Movie
 import com.movie.app.util.GenreUtil
 import com.movie.app.util.loadImage
+import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener
 import kotlinx.android.synthetic.main.activity_details_movie.*
 import javax.inject.Inject
+
 
 class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
 
@@ -35,12 +37,6 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         supportActionBar?.setHomeButtonEnabled(true)
         val movieId: Long = intent.extras.getLong(EXTRA_MOVIE_ID)
         presenter.setMovieId(movieId)
-        imgVideo.setOnClickListener {
-            presenter.showTrailerVideo()
-        }
-        imgIconVideo.setOnClickListener {
-            presenter.showTrailerVideo()
-        }
         emptyViewDetails.error().setOnClickListener { presenter.subscribe() }
         presenter.subscribe()
     }
@@ -67,24 +63,21 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
 
     private fun handleVideoData(movie: Movie) {
         if (movie.videosList == null || movie.videosList!!.isEmpty()) {
-            imgVideo.visibility = View.GONE
-            imgIconVideo.visibility = View.GONE
             return
         }
+        youtubePlayerView.visibility = View.VISIBLE
         val video = movie.videosList!![0]
-        imgVideo.visibility = View.VISIBLE
-        imgVideo.loadImage(video.thumbVideoPath, Color.BLACK)
-        imgIconVideo.visibility = View.VISIBLE
+        youtubePlayerView.initialize({ player ->
+            player.addListener(object : AbstractYouTubePlayerListener() {
+                override fun onReady() {
+                    player.loadVideo(video.key, 0f)
+                }
+            })
+        }, true)
     }
 
     override fun showError(throwable: Throwable) {
         emptyViewDetails.showError()
-    }
-
-    override fun startYoutubeActivity(chooser: Intent) {
-        chooser.resolveActivity(packageManager)?.let {
-            startActivity(chooser)
-        }
     }
 
     override fun showSimilarMovies(list: List<Movie>) {
@@ -98,6 +91,11 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
             val movie = similarAdapter.data[position]
             DetailsMovieActivity.startActivity(context, movie.id)
         }
+    }
+
+    public override fun onDestroy() {
+        super.onDestroy()
+        youtubePlayerView.release()
     }
 
 }
