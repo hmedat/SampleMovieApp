@@ -61,6 +61,9 @@ class DetailsMoviePresenterTest {
     fun testSubscribe() {
         whenever(movieDataSource.getMovie(movie.id))
                 .thenReturn(Observable.just(movie))
+        whenever(apiInterface.getSimilarMovies(movie.id))
+                .thenReturn(Observable.just(MoviesResult()))
+
         presenter.subscribe()
         verify(view).showProgressBar()
         verify(view).hideProgressBar()
