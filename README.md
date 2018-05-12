@@ -7,6 +7,7 @@ The Application implemented and structured bases on the MVP pattern best practic
 Whole application functionality is implemented in pure Kotlin
 Layers communications are managed by RxJava & RxAndroid contributed by ReactiveX.
 Sample test cases are implemented by mockito
+
 ## Libraries and SDKs Used
 - [Kotlin](https://developer.android.com/kotlin/index.html)
 - [Android Support Libraries](https://developer.android.com/topic/libraries/support-library/packages.html) 
