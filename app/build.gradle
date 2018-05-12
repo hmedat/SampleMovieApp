@@ -45,11 +45,16 @@ tasks.withType(Test) {
     }
 }
 
-// Finally add this block
 jacocoAndroidUnitTestReport {
     csv.enabled false
     html.enabled true
     xml.enabled true
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.codehaus.groovy:groovy-all:2.4.4'
+    }
 }
 
 dependencies {
@@ -57,7 +62,7 @@ dependencies {
     testImplementation "org.mockito:mockito-core:2.18.3"
     testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$android_support_version"
     implementation "com.android.support:support-annotations:$android_support_version"
     implementation "com.android.support:support-v4:$android_support_version"
