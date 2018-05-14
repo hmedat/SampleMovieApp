@@ -23,12 +23,17 @@ before_install:
 install:
   - true
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
-
 script:
-  - ./gradlew clean build test jacocoTestReport check
+  - ./gradlew clean build test jacocoTestReport coveralls -Dscan --stacktrace
+
+sudo: false
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 cache:
   directories:
-    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
