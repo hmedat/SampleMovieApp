@@ -24,7 +24,7 @@ install:
   - true
 
 script:
-  - ./gradlew clean build test jacocoTestReport coveralls -Dscan --stacktrace
+  - ./gradlew clean build test  -Dscan --stacktrace
 
 sudo: false
 
