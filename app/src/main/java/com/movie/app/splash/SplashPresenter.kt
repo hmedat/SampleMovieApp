@@ -4,7 +4,6 @@ import io.reactivex.Completable
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 
-
 class SplashPresenter constructor(private val view: SplashActivityContractor.View)
     : SplashActivityContractor.Presenter {
 
@@ -20,5 +19,4 @@ class SplashPresenter constructor(private val view: SplashActivityContractor.Vie
     override fun unSubscribe() {
         compositeDisposable.clear()
     }
-
 }

@@ -22,5 +22,4 @@ class DetailsActivityContractor {
 
         fun getSimilarMovies()
     }
-
 }

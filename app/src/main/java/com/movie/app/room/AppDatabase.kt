@@ -8,8 +8,10 @@ import com.movie.app.modules.Movie
 import com.movie.app.modules.Video
 import com.movie.app.room.entities.MovieGenreJoin
 
-@Database(entities = [(Movie::class), (MovieGenreJoin::class), (Video::class), (Genre::class)]
-        , version = 1)
+@Database(
+    entities = [(Movie::class), (MovieGenreJoin::class), (Video::class), (Genre::class)],
+    version = 1
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun movieDao(): MovieDao
@@ -19,5 +21,4 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun movieGenreDao(): MovieGenreDao
 
     abstract fun videoDao(): VideoDao
-
 }

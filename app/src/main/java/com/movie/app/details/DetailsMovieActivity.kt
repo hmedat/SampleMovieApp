@@ -15,7 +15,6 @@ import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerList
 import kotlinx.android.synthetic.main.activity_details_movie.*
 import javax.inject.Inject
 
-
 class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
 
     @Inject
@@ -97,5 +96,4 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         super.onDestroy()
         youtubePlayerView.release()
     }
-
 }

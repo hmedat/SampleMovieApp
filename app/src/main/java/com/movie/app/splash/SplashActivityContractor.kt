@@ -9,7 +9,5 @@ class SplashActivityContractor {
         fun startNextActivity(bundle: Bundle?)
     }
 
-    interface Presenter : BaseContractor.BasePresenter<View> {
-    }
-
+    interface Presenter : BaseContractor.BasePresenter<View>
 }

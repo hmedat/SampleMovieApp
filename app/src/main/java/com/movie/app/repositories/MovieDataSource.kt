@@ -11,5 +11,5 @@ interface MovieDataSource {
 
     fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult>
 
-    fun getMovie(movieId: Long) : Observable<Movie>
+    fun getMovie(movieId: Long): Observable<Movie>
 }

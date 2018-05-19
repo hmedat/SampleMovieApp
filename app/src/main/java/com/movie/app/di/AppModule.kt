@@ -16,7 +16,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -27,11 +27,11 @@ class AppModule {
     @Singleton
     fun provideApiService(gson: Gson, okHttpClient: OkHttpClient): ApiInterface {
         return Retrofit.Builder()
-                .baseUrl("https://api.themoviedb.org/3/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(okHttpClient)
-                .build().create(ApiInterface::class.java)
+            .baseUrl("https://api.themoviedb.org/3/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .client(okHttpClient)
+            .build().create(ApiInterface::class.java)
     }
 
     @Provides
@@ -51,20 +51,18 @@ class AppModule {
         val cache = Cache(cacheDir, 10 * 1024 * 1024)
 
         return OkHttpClient.Builder()
-                .cache(cache)
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .addInterceptor(interceptor)
-                .addInterceptor(RequestInterceptor())
-                .build()
+            .cache(cache)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(interceptor)
+            .addInterceptor(RequestInterceptor())
+            .build()
     }
-
 
     @Provides
     @Singleton
     fun provideRxSchedulers(): BaseSchedulerProvider {
         return SchedulerProvider()
     }
-
 }

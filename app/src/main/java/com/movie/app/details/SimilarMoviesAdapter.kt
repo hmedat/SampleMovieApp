@@ -16,4 +16,3 @@ class SimilarMoviesAdapter(data: List<Movie>?) : BaseQuickAdapter<Movie, BaseVie
         imageView.loadImage(item.posterPath, Color.BLACK)
     }
 }
-

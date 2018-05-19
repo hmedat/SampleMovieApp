@@ -13,7 +13,6 @@ import com.movie.app.details.DetailsMovieActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-
 class MainActivity : BaseActivity(), MainActivityContractor.View {
 
     @Inject

@@ -24,7 +24,7 @@ install:
   - true
 
 script:
-  - ./gradlew clean build test  -Dscan --stacktrace
+  - ./gradlew clean build test ktlint  -Dscan --stacktrace
 
 sudo: false
 

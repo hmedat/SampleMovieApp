@@ -71,7 +71,6 @@ class DetailsMoviePresenterTest {
         verify(view).showData(movie)
     }
 
-
     @Test
     fun testGetSimilarMovie() {
         val result = MoviesResult()

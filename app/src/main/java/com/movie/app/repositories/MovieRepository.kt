@@ -8,9 +8,10 @@ import io.reactivex.Observable
 import timber.log.Timber
 import javax.inject.Inject
 
-class MovieRepository @Inject constructor(private val local: MovieDataSource
-                                          , private var remote: RemoteMovieRepository)
-    : MovieDataSource {
+class MovieRepository @Inject constructor(
+    private val local: MovieDataSource,
+    private var remote: RemoteMovieRepository
+) : MovieDataSource {
 
     override fun insertMovies(movies: List<Movie>) {
         local.insertMovies(movies)
@@ -21,16 +22,17 @@ class MovieRepository @Inject constructor(private val local: MovieDataSource
             return getAndSaveRemoteMovies(searchFilter)
         }
         return Observable.concatArray(local.getMovies(searchFilter)
-                .onErrorReturn {
-                    val moviesResult = MoviesResult()
-                    moviesResult
-                }
-                .filter { it.results != null && it.results!!.isNotEmpty() }
-                , getAndSaveRemoteMovies(searchFilter))
+            .onErrorReturn {
+                val moviesResult = MoviesResult()
+                moviesResult
+            }
+            .filter { it.results != null && it.results!!.isNotEmpty() },
+            getAndSaveRemoteMovies(searchFilter)
+        )
     }
 
-    private fun getAndSaveRemoteMovies(searchFilter: MovieSearchFilter)
-            : Observable<MoviesResult> {
+    private fun getAndSaveRemoteMovies(searchFilter: MovieSearchFilter):
+            Observable<MoviesResult> {
         return remote.getMovies(searchFilter).doOnNext {
             it.results?.let {
                 insertMovies(it)
@@ -41,9 +43,10 @@ class MovieRepository @Inject constructor(private val local: MovieDataSource
 
     override fun getMovie(movieId: Long): Observable<Movie> {
         return Observable.concatArray(local.getMovie(movieId)
-                .onErrorReturn {
-                    Movie(Movie.ID_NOT_SET)
-                }.filter { it.id != Movie.ID_NOT_SET }
-                , remote.getMovie(movieId))
+            .onErrorReturn {
+                Movie(Movie.ID_NOT_SET)
+            }.filter { it.id != Movie.ID_NOT_SET },
+            remote.getMovie(movieId)
+        )
     }
 }

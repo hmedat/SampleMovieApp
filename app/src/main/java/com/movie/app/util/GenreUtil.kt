@@ -16,5 +16,4 @@ object GenreUtil {
         }
         return genresStringBuilder.toString()
     }
-
 }

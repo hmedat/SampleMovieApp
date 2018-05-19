@@ -23,5 +23,4 @@ interface MovieGenreDao {
 
     @Query("SELECT * FROM genre INNER JOIN movie_genre_join ON genre.id=movie_genre_join.genre_id WHERE movie_genre_join.movie_id=:movieId")
     fun getGenresForMovie(movieId: Long): List<Genre>
-
 }

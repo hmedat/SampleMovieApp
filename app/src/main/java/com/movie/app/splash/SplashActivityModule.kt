@@ -5,7 +5,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 
-
 @Module
 abstract class SplashActivityModule {
 
@@ -17,10 +16,9 @@ abstract class SplashActivityModule {
         @Provides
         @JvmStatic
         @ActivityScope
-        internal fun provideMainPresenter(mainView: SplashActivityContractor.View)
-                : SplashActivityContractor.Presenter {
+        internal fun provideMainPresenter(mainView: SplashActivityContractor.View):
+                SplashActivityContractor.Presenter {
             return SplashPresenter(mainView)
         }
-
     }
 }
