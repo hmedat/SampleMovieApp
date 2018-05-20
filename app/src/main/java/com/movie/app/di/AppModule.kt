@@ -22,6 +22,11 @@ import javax.inject.Singleton
 
 @Module
 class AppModule {
+    companion object {
+        const val CACHE_SIZE: Long = 10 * 1024 * 1024
+        const val CONNECT_TIMEOUT: Long = 30
+        const val READ_TIMEOUT: Long = 60
+    }
 
     @Provides
     @Singleton
@@ -48,13 +53,13 @@ class AppModule {
 
         val cacheDir = File(application.cacheDir, UUID.randomUUID().toString())
         // 10 MiB cache
-        val cache = Cache(cacheDir, 10 * 1024 * 1024)
+        val cache = Cache(cacheDir, CACHE_SIZE)
 
         return OkHttpClient.Builder()
             .cache(cache)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor(interceptor)
             .addInterceptor(RequestInterceptor())
             .build()

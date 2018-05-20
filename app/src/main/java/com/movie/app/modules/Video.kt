@@ -19,7 +19,5 @@ class Video(
     @ColumnInfo(name = "key") var key: String? = null,
     @ColumnInfo(name = "size") var size: Int = 0,
     @ColumnInfo(name = "type") var type: String? = null,
-    @ColumnInfo(name = "video_path") var videoPath: String? = null,
-    @ColumnInfo(name = "thumb_video_path") var thumbVideoPath: String? = null,
     @ColumnInfo(name = "movie_id") var movieId: Long = 0
 )

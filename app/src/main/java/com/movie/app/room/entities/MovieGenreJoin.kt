@@ -16,4 +16,7 @@ import com.movie.app.modules.Movie
         parentColumns = arrayOf("id"), childColumns = arrayOf("genre_id")
     ))]
 )
-data class MovieGenreJoin(@ColumnInfo(name = "movie_id") var movieId: Long, @ColumnInfo(name = "genre_id") var genreId: Long)
+data class MovieGenreJoin(
+    @ColumnInfo(name = "movie_id") var movieId: Long,
+    @ColumnInfo(name = "genre_id") var genreId: Long
+)

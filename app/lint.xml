@@ -3,6 +3,7 @@
     <!-- Ignore everything in the test source set -->
     <issue id="all">
         <ignore path="*/test/*" />
+        <ignore path="*/androidTest/*" />
     </issue>
 
     <!-- Disable this given check in this project -->
