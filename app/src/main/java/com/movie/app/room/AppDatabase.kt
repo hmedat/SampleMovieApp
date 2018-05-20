@@ -10,7 +10,8 @@ import com.movie.app.room.entities.MovieGenreJoin
 
 @Database(
     entities = [(Movie::class), (MovieGenreJoin::class), (Video::class), (Genre::class)],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 

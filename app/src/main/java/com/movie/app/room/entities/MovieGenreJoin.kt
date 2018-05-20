@@ -3,6 +3,7 @@ package com.movie.app.room.entities
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Index
 import com.movie.app.modules.Genre
 import com.movie.app.modules.Movie
 
@@ -14,7 +15,8 @@ import com.movie.app.modules.Movie
     )), (ForeignKey(
         entity = Genre::class,
         parentColumns = arrayOf("id"), childColumns = arrayOf("genre_id")
-    ))]
+    ))],
+    indices = [Index("genre_id")]
 )
 data class MovieGenreJoin(
     @ColumnInfo(name = "movie_id") var movieId: Long,
