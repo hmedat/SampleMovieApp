@@ -44,20 +44,6 @@ class DetailsMoviePresenterTest {
     }
 
     @Test
-    fun testSubscribeIdNotSetTheMovieId() {
-        val ioException = IOException()
-        movie.id = 0
-        presenter.setMovieId(movie.id)
-        whenever(movieDataSource.getMovie(0))
-                .thenReturn(Observable.error(ioException))
-        presenter.subscribe()
-        verify(view).showProgressBar()
-        verify(view).hideProgressBar()
-        verify(view).showError(ioException)
-        verify(view, never()).showData(movie)
-    }
-
-    @Test
     fun testSubscribe() {
         whenever(movieDataSource.getMovie(movie.id))
                 .thenReturn(Observable.just(movie))

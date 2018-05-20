@@ -46,7 +46,6 @@ class DetailsMoviePresenter(
 
                 override fun onError(throwable: Throwable) {
                     view.hideProgressBar()
-                    view.showError(throwable)
                 }
 
                 override fun onComplete() {
