@@ -15,7 +15,6 @@ import javax.inject.Inject
 class LocalMovieRepository @Inject constructor(private val database: AppDatabase)
     : MovieDataSource {
 
-
     override fun insertMovies(movies: List<Movie>) {
         val movieGenreJoinList = ArrayList<MovieGenreJoin>()
         val genreList = ArrayList<Genre>()
@@ -56,7 +55,6 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
                 .doOnNext {
                     Timber.d("Dispatching ${it.results?.size} users from DB...")
                 }
-
     }
 
     override fun getMovie(movieId: Long): Observable<Movie> {
@@ -71,5 +69,4 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
             movie
         }
     }
-
 }

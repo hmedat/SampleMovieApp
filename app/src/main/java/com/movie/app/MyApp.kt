@@ -4,7 +4,6 @@ import com.movie.app.di.DaggerAppComponent
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 
-
 /**
  * Created by mohammedhmedat on 12/15/17.
  */
@@ -25,5 +24,4 @@ class MyApp : DaggerApplication() {
         appComponent.inject(this)
         return appComponent
     }
-
 }

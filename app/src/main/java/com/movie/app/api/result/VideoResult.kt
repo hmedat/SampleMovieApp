@@ -14,5 +14,4 @@ class VideoResult @VisibleForTesting constructor(vararg videos: Video) {
             this.videos?.add(video)
         }
     }
-
 }

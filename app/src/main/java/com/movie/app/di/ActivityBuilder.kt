@@ -17,14 +17,11 @@ abstract class ActivityBuilder {
     @ContributesAndroidInjector(modules = [(SplashActivityModule::class)])
     internal abstract fun bindSplashActivity(): SplashActivity
 
-
     @ActivityScope
     @ContributesAndroidInjector(modules = [(MainActivityModule::class)])
     internal abstract fun bindMainActivity(): MainActivity
 
-
     @ActivityScope
     @ContributesAndroidInjector(modules = [(DetailsActivityModule::class)])
     internal abstract fun bindDetailsMovieActivity(): DetailsMovieActivity
-
 }

@@ -8,7 +8,8 @@ import com.movie.app.R
 import com.movie.app.modules.Movie
 import com.movie.app.util.loadImage
 
-class SimilarMoviesAdapter(data: List<Movie>?) : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.row_similar_movie, data) {
+class SimilarMoviesAdapter(data: List<Movie>?) : BaseQuickAdapter<Movie,
+        BaseViewHolder>(R.layout.row_similar_movie, data) {
 
     override fun convert(helper: BaseViewHolder, item: Movie) {
         helper.setText(R.id.tvMovieTitle, item.title)
@@ -16,4 +17,3 @@ class SimilarMoviesAdapter(data: List<Movie>?) : BaseQuickAdapter<Movie, BaseVie
         imageView.loadImage(item.posterPath, Color.BLACK)
     }
 }
-

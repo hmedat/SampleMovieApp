@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
+import android.arch.persistence.room.RoomWarnings
 import android.support.annotation.VisibleForTesting
 import com.movie.app.modules.Genre
 import com.movie.app.room.entities.MovieGenreJoin
@@ -21,7 +22,8 @@ interface MovieGenreDao {
     @Query("SELECT * FROM movie_genre_join")
     fun getAll(): List<MovieGenreJoin>
 
-    @Query("SELECT * FROM genre INNER JOIN movie_genre_join ON genre.id=movie_genre_join.genre_id WHERE movie_genre_join.movie_id=:movieId")
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @Query("SELECT * FROM genre INNER JOIN movie_genre_join " +
+            "ON genre.id=movie_genre_join.genre_id WHERE movie_genre_join.movie_id=:movieId")
     fun getGenresForMovie(movieId: Long): List<Genre>
-
 }

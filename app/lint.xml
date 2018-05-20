@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Ignore everything in the test source set -->
+    <issue id="all">
+        <ignore path="*/test/*" />
+        <ignore path="*/androidTest/*" />
+    </issue>
+
+    <!-- Disable this given check in this project -->
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+    <issue id="ContentDescription" severity="ignore" />
+    <issue id="GoogleAppIndexingWarning" severity="ignore" />
+    <issue id="AllowBackup" severity="ignore" />
+    <issue id="IconLocation" severity="ignore" />
+
+    <!-- Ignore the ObsoleteLayoutParam issue in the given files -->
+    <!--  <issue id="ObsoleteLayoutParam">
+        <ignore path="res/layout/activation.xml" />
+        <ignore path="res/layout-xlarge/activation.xml" />
+        <ignore regexp="(foo|bar).java" />
+    </issue> -->
+
+    <!-- Ignore the UselessLeaf issue in the given file -->
+    <!--  <issue id="UselessLeaf">
+       <ignore path="res/layout/main.xml" />
+   </issue>-->
+
+    <!-- Change the severity of hardcoded strings to "error" -->
+    <issue id="HardcodedText" severity="error" />
+
+</lint>

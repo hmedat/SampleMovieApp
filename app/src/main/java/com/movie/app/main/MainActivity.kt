@@ -13,7 +13,6 @@ import com.movie.app.details.DetailsMovieActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-
 class MainActivity : BaseActivity(), MainActivityContractor.View {
 
     @Inject
@@ -52,7 +51,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
 
     private fun initRefreshLayout() {
         swipeLayoutMovies.visibility = View.GONE
-        swipeLayoutMovies.setColorSchemeColors(Color.rgb(47, 223, 189))
+        swipeLayoutMovies.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
         swipeLayoutMovies.setOnRefreshListener({
             adapter.setEnableLoadMore(false)
             presenter.loadFirstPage()

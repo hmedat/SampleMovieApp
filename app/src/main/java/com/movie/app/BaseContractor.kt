@@ -4,7 +4,7 @@ package com.movie.app
  * Created by mohammedhmedat on 12/16/17.
  */
 
-class BaseContractor{
+class BaseContractor {
     interface BasePresenter<T> {
         fun subscribe()
 

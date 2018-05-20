@@ -49,7 +49,6 @@ class MovieRepositoryTest {
         assertEquals(testSubscriber.values()[1], movie)
     }
 
-
     @Test
     fun testGetMovies() {
         val searchFilter = MovieSearchFilter()
@@ -63,7 +62,7 @@ class MovieRepositoryTest {
             title = "Avengers 02"
         }, Movie().apply {
             id = 3
-            title = "Avengers 03"
+            title = "Avenge§rs 03"
         })
         val testSubscriber = TestObserver<MoviesResult>()
         whenever(localRep.getMovies(searchFilter))

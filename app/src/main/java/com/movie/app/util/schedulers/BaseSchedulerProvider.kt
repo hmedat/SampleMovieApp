@@ -1,8 +1,6 @@
 package com.movie.app.util.schedulers
 
-
 import io.reactivex.Scheduler
-
 
 interface BaseSchedulerProvider {
 

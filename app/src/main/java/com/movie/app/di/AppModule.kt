@@ -16,22 +16,27 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
 class AppModule {
+    companion object {
+        const val CACHE_SIZE: Long = 10 * 1024 * 1024
+        const val CONNECT_TIMEOUT: Long = 30
+        const val READ_TIMEOUT: Long = 60
+    }
 
     @Provides
     @Singleton
     fun provideApiService(gson: Gson, okHttpClient: OkHttpClient): ApiInterface {
         return Retrofit.Builder()
-                .baseUrl("https://api.themoviedb.org/3/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(okHttpClient)
-                .build().create(ApiInterface::class.java)
+            .baseUrl("https://api.themoviedb.org/3/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .client(okHttpClient)
+            .build().create(ApiInterface::class.java)
     }
 
     @Provides
@@ -48,23 +53,21 @@ class AppModule {
 
         val cacheDir = File(application.cacheDir, UUID.randomUUID().toString())
         // 10 MiB cache
-        val cache = Cache(cacheDir, 10 * 1024 * 1024)
+        val cache = Cache(cacheDir, CACHE_SIZE)
 
         return OkHttpClient.Builder()
-                .cache(cache)
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .addInterceptor(interceptor)
-                .addInterceptor(RequestInterceptor())
-                .build()
+            .cache(cache)
+            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+            .addInterceptor(interceptor)
+            .addInterceptor(RequestInterceptor())
+            .build()
     }
-
 
     @Provides
     @Singleton
     fun provideRxSchedulers(): BaseSchedulerProvider {
         return SchedulerProvider()
     }
-
 }

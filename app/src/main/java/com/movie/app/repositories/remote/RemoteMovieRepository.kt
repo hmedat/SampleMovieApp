@@ -28,5 +28,4 @@ class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInt
             it
         }
     }
-
 }

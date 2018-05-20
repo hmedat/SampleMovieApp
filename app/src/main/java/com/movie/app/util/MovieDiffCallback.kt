@@ -4,8 +4,10 @@ import android.support.annotation.Nullable
 import android.support.v7.util.DiffUtil
 import com.movie.app.modules.Movie
 
-class MovieDiffCallback(private val mOldList: List<Movie>
-                        , private val mNewList: List<Movie>) : DiffUtil.Callback() {
+class MovieDiffCallback(
+    private val mOldList: List<Movie>,
+    private val mNewList: List<Movie>
+) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int {
         return mOldList.size

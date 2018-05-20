@@ -9,11 +9,12 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
-class MainPresenter @Inject constructor(private val schedulerProvider: BaseSchedulerProvider
-                                        , private val movieRepository: MovieDataSource
-                                        , private val view: MainActivityContractor.View
-                                        , private val searchFilter: MovieSearchFilter)
-    : MainActivityContractor.Presenter {
+class MainPresenter @Inject constructor(
+    private val schedulerProvider: BaseSchedulerProvider,
+    private val movieRepository: MovieDataSource,
+    private val view: MainActivityContractor.View,
+    private val searchFilter: MovieSearchFilter
+) : MainActivityContractor.Presenter {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -36,37 +37,35 @@ class MainPresenter @Inject constructor(private val schedulerProvider: BaseSched
             view.showProgressBar()
         }
         movieRepository.getMovies(searchFilter)
-                .subscribeOn(schedulerProvider.io())
-                .observeOn(schedulerProvider.ui())
-                .subscribe(object : Observer<MoviesResult> {
-                    override fun onSubscribe(d: Disposable) {
-                        compositeDisposable.add(d)
-                    }
+            .subscribeOn(schedulerProvider.io())
+            .observeOn(schedulerProvider.ui())
+            .subscribe(object : Observer<MoviesResult> {
+                override fun onSubscribe(d: Disposable) {
+                    compositeDisposable.add(d)
+                }
 
-                    override fun onNext(result: MoviesResult) {
-                        if (!result.isLoadMore() && (result.results == null
-                                        || result.results?.isEmpty()!!)) {
-                            view.showNoData()
-                        }
-                        view.showData(result)
-                        searchFilter.pageNumber = searchFilter.pageNumber + 1
-                        view.hideProgressBar()
+                override fun onNext(result: MoviesResult) {
+                    if (!result.isLoadMore() && (result.results == null ||
+                                result.results?.isEmpty()!!)
+                    ) {
+                        view.showNoData()
                     }
+                    view.showData(result)
+                    searchFilter.pageNumber = searchFilter.pageNumber + 1
+                    view.hideProgressBar()
+                }
 
-                    override fun onError(throwable: Throwable) {
-                        view.hideProgressBar()
-                        view.showError(isFirstPage, throwable)
-                    }
+                override fun onError(throwable: Throwable) {
+                    view.hideProgressBar()
+                    view.showError(isFirstPage, throwable)
+                }
 
-                    override fun onComplete() {
-
-                    }
-                })
+                override fun onComplete() {
+                }
+            })
     }
-
 
     override fun unSubscribe() {
         compositeDisposable.clear()
     }
-
 }

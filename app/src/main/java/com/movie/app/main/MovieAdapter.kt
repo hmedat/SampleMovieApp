@@ -1,6 +1,5 @@
 package com.movie.app.main
 
-
 import android.graphics.Color
 import android.support.v7.util.DiffUtil
 import android.widget.ImageView
@@ -10,7 +9,6 @@ import com.movie.app.R
 import com.movie.app.modules.Movie
 import com.movie.app.util.MovieDiffCallback
 import com.movie.app.util.loadImage
-
 
 class MovieAdapter : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.row_movie, null) {
 
@@ -22,7 +20,6 @@ class MovieAdapter : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.row_movie,
         val imageView = helper.getView<ImageView>(R.id.imgPoster)
         imageView.loadImage(item.posterPath, Color.BLACK)
     }
-
 
     override fun setNewData(newData: List<Movie>?) {
         if (newData == null) {

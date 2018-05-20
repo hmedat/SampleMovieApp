@@ -39,8 +39,8 @@ class RoomModule {
 
     @Provides
     @Singleton
-    fun provideMovieRepository(local: LocalMovieRepository, remote: RemoteMovieRepository)
-            : MovieDataSource {
+    fun provideMovieRepository(local: LocalMovieRepository, remote: RemoteMovieRepository):
+            MovieDataSource {
         return MovieRepository(local, remote)
     }
 }

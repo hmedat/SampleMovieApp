@@ -3,7 +3,6 @@ package com.movie.app.util.schedulers
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 
-
 /**
  * Provides various threading schedulers.
  */

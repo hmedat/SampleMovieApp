@@ -5,12 +5,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-
-
 /**
  * Provides various threading schedulers.
  */
-
 class SchedulerProvider @Inject constructor() : BaseSchedulerProvider {
     /**
      * IO thread pool scheduler

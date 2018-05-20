@@ -8,7 +8,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 
-
 @Module
 abstract class MainActivityModule {
 
@@ -20,12 +19,12 @@ abstract class MainActivityModule {
         @Provides
         @JvmStatic
         @ActivityScope
-        internal fun provideMainPresenter(schedulerProvider: SchedulerProvider
-                                          , movieRepository: MovieDataSource
-                                          , mainView: MainActivityContractor.View)
-                : MainActivityContractor.Presenter {
+        internal fun provideMainPresenter(
+            schedulerProvider: SchedulerProvider,
+            movieRepository: MovieDataSource,
+            mainView: MainActivityContractor.View
+        ): MainActivityContractor.Presenter {
             return MainPresenter(schedulerProvider, movieRepository, mainView, MovieSearchFilter())
         }
-
     }
 }

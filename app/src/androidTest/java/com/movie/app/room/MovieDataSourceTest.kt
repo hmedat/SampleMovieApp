@@ -12,8 +12,10 @@ import com.movie.app.modules.Video
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.repositories.local.LocalMovieRepository
 import io.reactivex.observers.TestObserver
+import junit.framework.Assert.assertNull
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,11 +41,9 @@ class MovieDataSourceTest {
             title = "Avengers 01"
             releaseDate = "2010"
             this.genres = genresList
-            videoResult = VideoResult(Video().apply {
-                id = 1001
+            videoResult = VideoResult(Video("1001").apply {
                 key = "sdfkjshd"
-            }, Video().apply {
-                id = 1003
+            }, Video("1003").apply {
                 key = "sdfkjshd"
             })
         }, Movie().apply {
@@ -52,8 +52,10 @@ class MovieDataSourceTest {
             releaseDate = "2010"
             this.genres = genresList
         })
-        database = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
-                AppDatabase::class.java).build()
+        database = Room.inMemoryDatabaseBuilder(
+            InstrumentationRegistry.getContext(),
+            AppDatabase::class.java
+        ).build()
         movieDataSource = LocalMovieRepository(database)
     }
 
@@ -86,7 +88,6 @@ class MovieDataSourceTest {
         assertEquals(list[0].genres?.size, 2)
         assertEquals(list[1].genres?.size, 2)
     }
-
 
     @Test
     fun findMovie() {

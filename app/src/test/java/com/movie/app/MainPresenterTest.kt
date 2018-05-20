@@ -17,8 +17,6 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.io.IOException
-
-
 class MainPresenterTest {
 
     private lateinit var schedulerProvider: BaseSchedulerProvider
@@ -102,12 +100,11 @@ class MainPresenterTest {
         verify(view, never()).showData(result)
     }
 
-
     @Test
     fun loadNextPageIntoView() {
         val pageNumber = 2
         val result = MoviesResult()
-        result.page = pageNumber;
+        result.page = pageNumber
         result.results = listOf(Movie().apply {
             id = 1
             title = "Avengers 04"
@@ -136,7 +133,7 @@ class MainPresenterTest {
     fun loadNextPageIntoViewWithEmptyData() {
         val pageNumber = 2
         val result = MoviesResult()
-        result.page = pageNumber;
+        result.page = pageNumber
         whenever(movieSearchFilter.pageNumber)
                 .thenReturn(pageNumber)
         whenever(movieSearchFilter.isFirstPage())
@@ -156,7 +153,7 @@ class MainPresenterTest {
         val ioException = IOException()
         val pageNumber = 2
         val result = MoviesResult()
-        result.page = pageNumber;
+        result.page = pageNumber
         whenever(movieSearchFilter.pageNumber)
                 .thenReturn(pageNumber)
         whenever(movieSearchFilter.isFirstPage())
@@ -170,5 +167,4 @@ class MainPresenterTest {
         verify(view).showError(false, ioException)
         verify(view, never()).showData(result)
     }
-
 }
