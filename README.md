@@ -21,6 +21,8 @@ Sample test cases are implemented by mockito
 - [BaseRecyclerViewAdapterHelper](https://github.com/CymChad/BaseRecyclerViewAdapterHelper)
 - [Empty View](https://github.com/santalu/emptyview)
 - [Android YouTube Player](https://github.com/PierfrancescoSoffritti/Android-YouTube-Player)
+- [Detekt](https://github.com/arturbosch/detekt)
+- [Ktlint](https://github.com/shyiko/ktlint)
 
 
 ## How To Use it
