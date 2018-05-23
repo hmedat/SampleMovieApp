@@ -26,7 +26,7 @@ Sample test cases are implemented by mockito
 
 
 ## How To Use it
-In your gradle.properties file add this field
+In your gradle.properties file add your API key, and you can generate it from [here](https://developers.themoviedb.org/4/getting-started)
 ```
 MovieAPIKey = "Your API Key"
 ```
