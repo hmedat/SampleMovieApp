@@ -33,8 +33,8 @@ MovieAPIKey = "Your API Key"
 
 
 ## Screenshots
-<img src="screenshots/1.png" height="640" width="360"> 
-<img src="screenshots/2.png" height="640" width="360">
+<img src="screenshots/gif_1.gif" height="640" width="360">
+<figcaption>Normal behavior</figcaption>
 
 ## License
 
