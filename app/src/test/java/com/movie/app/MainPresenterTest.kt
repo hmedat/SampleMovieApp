@@ -37,6 +37,34 @@ class MainPresenterTest {
     }
 
     @Test
+    fun getFirstPageForFirstRunWithNoInternetAndNoDataCached() {
+        val result = MoviesResult()
+        result.page = MovieSearchFilter.First_PAGE
+        result.results = listOf(Movie().apply {
+            id = 1
+            title = "Avengers 01"
+        }, Movie().apply {
+            id = 2
+            title = "Avengers 02"
+        }, Movie().apply {
+            id = 3
+            title = "Avengers 03"
+        })
+        whenever(movieSearchFilter.pageNumber)
+                .thenReturn(MovieSearchFilter.First_PAGE)
+        whenever(movieSearchFilter.isFirstPage())
+                .thenReturn(true)
+        whenever(movieDataSource.getMovies(movieSearchFilter))
+                .thenReturn(Observable.just(result))
+        presenter.loadFirstPage()
+        verify(view).showProgressBar()
+        verify(view).hideProgressBar()
+        verify(view, never()).showNoData()
+        verify(view, never()).showError(true, IllegalAccessException())
+        verify(view).showData(result)
+    }
+
+    @Test
     fun loadFirstPageIntoView() {
         val result = MoviesResult()
         result.page = MovieSearchFilter.First_PAGE

@@ -72,15 +72,14 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     override fun showData(result: MoviesResult) {
-        val list = result.results
-        if (list!!.isNotEmpty()) {
+        result.results?.let {
             emptyView.showContent()
             rvMovies.visibility = View.VISIBLE
             swipeLayoutMovies.visibility = View.VISIBLE
             if (result.isLoadMore()) {
-                adapter.addData(list)
+                adapter.addData(it)
             } else {
-                adapter.setNewData(list)
+                adapter.setNewData(it)
                 setLoadMore()
                 rvMovies.smoothScrollToPosition(0)
             }

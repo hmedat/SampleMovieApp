@@ -6,7 +6,6 @@ import com.movie.app.mapper.MovieMapper
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.MovieDataSource
-import io.reactivex.Flowable
 import io.reactivex.Observable
 import javax.inject.Inject
 
@@ -15,7 +14,7 @@ class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInt
     override fun insertMovies(movies: List<Movie>) {
     }
 
-    override fun getMovies(searchFilter: MovieSearchFilter): Flowable<MoviesResult> {
+    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
         return apiInterface.getLatestMovies(searchFilter.pageNumber)
                 .map {
                     MovieMapper.map(it.results!!)
