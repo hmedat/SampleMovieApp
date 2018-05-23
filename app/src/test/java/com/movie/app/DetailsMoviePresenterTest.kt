@@ -7,9 +7,12 @@ import com.movie.app.details.DetailsMoviePresenter
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.MovieDataSource
+import com.movie.app.repositories.MovieRepository
+import com.movie.app.repositories.remote.RemoteMovieRepository
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import com.movie.app.util.schedulers.ImmediateSchedulerProvider
 import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
@@ -26,16 +29,26 @@ class DetailsMoviePresenterTest {
     @Mock
     private lateinit var view: DetailsActivityContractor.View
     @Mock
-    private lateinit var movieDataSource: MovieDataSource
-    @Mock
     private lateinit var apiInterface: ApiInterface
     private lateinit var movie: Movie
+    @Mock
+    private lateinit var localRep: MovieDataSource
+    @Mock
+    private lateinit var remoteRep: RemoteMovieRepository
+
+    private lateinit var movieRep: MovieRepository
+
+    @Mock
+    private lateinit var networkException: IOException
+    @Mock
+    private lateinit var diskException: IOException
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         schedulerProvider = ImmediateSchedulerProvider()
-        presenter = DetailsMoviePresenter(schedulerProvider, movieDataSource, apiInterface, view)
+        movieRep = MovieRepository(localRep, remoteRep)
+        presenter = DetailsMoviePresenter(schedulerProvider, movieRep, apiInterface, view)
         movie = Movie().apply {
             id = 10
             title = "Avengers 01"
@@ -44,16 +57,37 @@ class DetailsMoviePresenterTest {
     }
 
     @Test
-    fun testSubscribe() {
-        whenever(movieDataSource.getMovie(movie.id))
-                .thenReturn(Observable.just(movie))
+    fun testSubscribeWithInternet() {
+        whenever(localRep.getMovie(movie.id))
+            .thenReturn(Observable.just(movie))
+        whenever(remoteRep.getMovie(movie.id))
+            .thenReturn(Observable.just(movie))
         whenever(apiInterface.getSimilarMovies(movie.id))
-                .thenReturn(Observable.just(MoviesResult()))
+            .thenReturn(Observable.just(MoviesResult()))
 
         presenter.subscribe()
         verify(view).showProgressBar()
         verify(view).hideProgressBar()
-        verify(view, never()).showError(IOException())
+        verify(view, never()).showError(networkException)
+        verify(view, never()).showError(diskException)
+        verify(view, times(2)).showData(movie)
+    }
+
+    @Test
+    fun testSubscribeWithNoInternet() {
+        whenever(localRep.getMovie(movie.id))
+            .thenReturn(Observable.just(movie))
+        whenever(remoteRep.getMovie(movie.id))
+            .thenReturn(Observable.error(networkException))
+
+        whenever(apiInterface.getSimilarMovies(movie.id))
+            .thenReturn(Observable.just(MoviesResult()))
+
+        presenter.subscribe()
+        verify(view).showProgressBar()
+        verify(view).hideProgressBar()
+        //we don't want to show any kind of error
+        verify(view, never()).showError(diskException)
         verify(view).showData(movie)
     }
 
@@ -72,7 +106,7 @@ class DetailsMoviePresenterTest {
             title = "Avengers 03"
         })
         whenever(apiInterface.getSimilarMovies(movie.id))
-                .thenReturn(Observable.just(result))
+            .thenReturn(Observable.just(result))
         presenter.getSimilarMovies()
 
         verify(view, never()).showProgressBar()

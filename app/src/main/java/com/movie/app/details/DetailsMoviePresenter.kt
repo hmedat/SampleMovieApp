@@ -32,7 +32,7 @@ class DetailsMoviePresenter(
         view.showProgressBar()
         movieDataSource.getMovie(movieId)
             .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+            .observeOn(schedulerProvider.ui(), true)
             .subscribe(object : Observer<Movie> {
                 override fun onSubscribe(d: Disposable) {
                     compositeDisposable.add(d)
@@ -40,7 +40,6 @@ class DetailsMoviePresenter(
 
                 override fun onNext(item: Movie) {
                     movie = item
-                    view.hideProgressBar()
                     view.showData(movie!!)
                 }
 
@@ -49,6 +48,7 @@ class DetailsMoviePresenter(
                 }
 
                 override fun onComplete() {
+                    view.hideProgressBar()
                     getSimilarMovies()
                 }
             })
