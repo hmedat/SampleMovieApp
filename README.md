@@ -40,7 +40,7 @@ MovieAPIKey = "Your API Key"
      
    | ![screen.jpg](screenshots/gif_1.gif) | 
    |:--:| 
-   | *Normal Behaviour * |
+   | *Normal Behaviour* |
    
    </td>
     <td>
