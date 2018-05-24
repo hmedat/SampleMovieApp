@@ -69,7 +69,7 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         youtubePlayerView.initialize({ player ->
             player.addListener(object : AbstractYouTubePlayerListener() {
                 override fun onReady() {
-                    player.loadVideo(video.key, 0f)
+                    player.cueVideo(video.key, 0f)
                 }
             })
         }, true)

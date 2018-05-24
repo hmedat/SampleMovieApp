@@ -38,21 +38,18 @@ class MainPresenter @Inject constructor(
         }
         movieRepository.getMovies(searchFilter)
             .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+            .observeOn(schedulerProvider.ui(), true)
             .subscribe(object : Observer<MoviesResult> {
                 override fun onSubscribe(d: Disposable) {
                     compositeDisposable.add(d)
                 }
 
                 override fun onNext(result: MoviesResult) {
-                    if (!result.isLoadMore() && (result.results == null ||
-                                result.results?.isEmpty()!!)
-                    ) {
+                    if (!result.isLoadMore() && result.isEmptyResult()) {
                         view.showNoData()
                     }
                     view.showData(result)
                     searchFilter.pageNumber = searchFilter.pageNumber + 1
-                    view.hideProgressBar()
                 }
 
                 override fun onError(throwable: Throwable) {
@@ -61,6 +58,7 @@ class MainPresenter @Inject constructor(
                 }
 
                 override fun onComplete() {
+                    view.hideProgressBar()
                 }
             })
     }

@@ -49,10 +49,9 @@ class AppModule {
     @Singleton
     fun provideOkHttpClient(application: MyApp): OkHttpClient {
         val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BASIC
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
 
         val cacheDir = File(application.cacheDir, UUID.randomUUID().toString())
-        // 10 MiB cache
         val cache = Cache(cacheDir, CACHE_SIZE)
 
         return OkHttpClient.Builder()
