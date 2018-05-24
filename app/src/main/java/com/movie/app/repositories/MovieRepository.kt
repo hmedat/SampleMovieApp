@@ -25,8 +25,8 @@ class MovieRepository @Inject constructor(
                 .onErrorReturn {
                     val moviesResult = MoviesResult()
                     moviesResult
-                }
-            , getAndSaveRemoteMovies(searchFilter)
+                },
+            getAndSaveRemoteMovies(searchFilter)
         )
     }
 

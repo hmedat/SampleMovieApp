@@ -86,7 +86,7 @@ class DetailsMoviePresenterTest {
         presenter.subscribe()
         verify(view).showProgressBar()
         verify(view).hideProgressBar()
-        //we don't want to show any kind of error
+        // we don't want to show any kind of error
         verify(view, never()).showError(diskException)
         verify(view).showData(movie)
     }

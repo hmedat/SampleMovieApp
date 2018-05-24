@@ -9,7 +9,8 @@ import com.movie.app.repositories.remote.RemoteMovieRepository
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
-import org.junit.Assert.*
+import org.junit.Assert
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -50,13 +51,13 @@ class MovieRepositoryTest {
 
         movieRep.getMovies(searchFilter).subscribe(testSubscriber)
 
-        //Check if the db only deliver data
-        assertEquals(testSubscriber.valueCount(), 1)
-        assertNotNull(testSubscriber.values()[0])
-        assertNotEquals(testSubscriber.errors()[0], diskException)
-        //Check if the network only deliver an error
-        assertEquals(testSubscriber.errorCount(), 1)
-        assertEquals(testSubscriber.errors()[0], networkException)
+        // Check if the db only deliver data
+        Assert.assertEquals(testSubscriber.valueCount(), 1)
+        Assert.assertNotNull(testSubscriber.values()[0])
+        Assert.assertNotEquals(testSubscriber.errors()[0], diskException)
+        // Check if the network only deliver an error
+        Assert.assertEquals(testSubscriber.errorCount(), 1)
+        Assert.assertEquals(testSubscriber.errors()[0], networkException)
     }
 
     @Test
@@ -73,14 +74,14 @@ class MovieRepositoryTest {
 
         movieRep.getMovies(searchFilter).subscribe(testSubscriber)
 
-        //Check if the db only deliver data
-        assertEquals(testSubscriber.valueCount(), 2)
-        assertNotNull(testSubscriber.values()[0])
-        assertNotNull(testSubscriber.values()[1])
+        // Check if the db only deliver data
+        Assert.assertEquals(testSubscriber.valueCount(), 2)
+        Assert.assertNotNull(testSubscriber.values()[0])
+        Assert.assertNotNull(testSubscriber.values()[1])
 
-        //Check there are no errors
+        // Check there are no errors
         testSubscriber.assertNoErrors()
-        assertEquals(testSubscriber.errorCount(), 0)
+        Assert.assertEquals(testSubscriber.errorCount(), 0)
     }
 
     @Test
@@ -97,13 +98,13 @@ class MovieRepositoryTest {
 
         movieRep.getMovies(searchFilter).subscribe(testSubscriber)
 
-        //Check if the db only deliver data
-        assertEquals(testSubscriber.valueCount(), 1)
+        // Check if the db only deliver data
+        Assert.assertEquals(testSubscriber.valueCount(), 1)
         assertNotNull(testSubscriber.values()[0])
 
-        //Check if the network only deliver an error
-        assertEquals(testSubscriber.errorCount(), 1)
-        assertEquals(testSubscriber.errors()[0], networkException)
+        // Check if the network only deliver an error
+        Assert.assertEquals(testSubscriber.errorCount(), 1)
+        Assert.assertEquals(testSubscriber.errors()[0], networkException)
     }
 
     @Test
@@ -120,13 +121,13 @@ class MovieRepositoryTest {
 
         movieRep.getMovie(movie.id).subscribe(testSubscriber)
 
-        //Check if the db only deliver data
-        assertEquals(testSubscriber.valueCount(), 1)
-        assertNotNull(testSubscriber.values()[0])
+        // Check if the db only deliver data
+        Assert.assertEquals(testSubscriber.valueCount(), 1)
+        Assert.assertNotNull(testSubscriber.values()[0])
 
-        //Check if the network only deliver an error
-        assertEquals(testSubscriber.errorCount(), 1)
-        assertEquals(testSubscriber.errors()[0], networkException)
+        // Check if the network only deliver an error
+        Assert.assertEquals(testSubscriber.errorCount(), 1)
+        Assert.assertEquals(testSubscriber.errors()[0], networkException)
     }
 
     @Test
@@ -143,13 +144,13 @@ class MovieRepositoryTest {
 
         movieRep.getMovie(movie.id).subscribe(testSubscriber)
 
-        //Check if the db only deliver data
-        assertEquals(testSubscriber.valueCount(), 2)
-        assertNotNull(testSubscriber.values()[0])
-        assertNotNull(testSubscriber.values()[1])
+        // Check if the db only deliver data
+        Assert.assertEquals(testSubscriber.valueCount(), 2)
+        Assert.assertNotNull(testSubscriber.values()[0])
+        Assert.assertNotNull(testSubscriber.values()[1])
 
-        //Check there are no errors
+        // Check there are no errors
         testSubscriber.assertNoErrors()
-        assertEquals(testSubscriber.errorCount(), 0)
+        Assert.assertEquals(testSubscriber.errorCount(), 0)
     }
 }
