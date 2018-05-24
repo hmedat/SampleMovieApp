@@ -52,6 +52,9 @@ MovieAPIKey = "Your API Key"
   </tr>
 </table>
 
+## Main Activity Flow
+<img src="screenshots/main_flow_chart.png" >
+
 ## License
 
 * [Apache Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
