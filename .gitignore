@@ -36,3 +36,4 @@ gradle.properties
 #NDK
 obj/
 .externalNativeBuild
+.hprof
