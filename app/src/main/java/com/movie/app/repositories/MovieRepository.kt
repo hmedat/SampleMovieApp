@@ -49,4 +49,12 @@ class MovieRepository @Inject constructor(
             remote.getMovie(movieId)
         )
     }
+
+    override fun getFavMovies(): Observable<MoviesResult> {
+        return local.getFavMovies()
+    }
+
+    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
+        return local.removeAddFavMovie(movieId, isFav)
+    }
 }

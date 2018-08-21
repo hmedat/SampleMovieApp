@@ -2,6 +2,7 @@ package com.movie.app.main
 
 import com.movie.app.BaseContractor
 import com.movie.app.api.result.MoviesResult
+import com.movie.app.modules.Movie
 
 class MainActivityContractor {
 
@@ -21,5 +22,7 @@ class MainActivityContractor {
         fun loadFirstPage()
 
         fun loadNextPage()
+
+        fun addRemoveFavMovie(movie: Movie)
     }
 }

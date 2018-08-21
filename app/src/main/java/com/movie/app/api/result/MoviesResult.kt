@@ -14,4 +14,6 @@ class MoviesResult {
     fun isLoadMore(): Boolean = page != MovieSearchFilter.First_PAGE
 
     fun isFinished(): Boolean = page == totalPages
+
+    fun isEmptyData(): Boolean = results == null || results!!.isEmpty()
 }

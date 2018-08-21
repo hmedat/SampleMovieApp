@@ -1,43 +1,27 @@
-package com.movie.app.main
+package com.movie.app.fav
 
 import com.movie.app.api.result.MoviesResult
-import com.movie.app.modules.Movie
-import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import javax.inject.Inject
 
-class MainPresenter @Inject constructor(
+class FavouritesMoviesPresenter(
     private val schedulerProvider: BaseSchedulerProvider,
-    private val movieRepository: MovieDataSource,
-    private val view: MainActivityContractor.View,
-    private val searchFilter: MovieSearchFilter
-) : MainActivityContractor.Presenter {
+    private var movieDataSource: MovieDataSource,
+    private val view: FavouritesActivityContractor.View
+) : FavouritesActivityContractor.Presenter {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun subscribe() {
-        loadFirstPage()
-    }
-
-    override fun loadFirstPage() {
-        searchFilter.pageNumber = MovieSearchFilter.First_PAGE
-        loadData()
-    }
-
-    override fun loadNextPage() {
         loadData()
     }
 
     private fun loadData() {
-        val isFirstPage = searchFilter.isFirstPage()
-        if (isFirstPage) {
-            view.showProgressBar()
-        }
-        movieRepository.getMovies(searchFilter)
+        view.showProgressBar()
+        movieDataSource.getFavMovies()
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
             .subscribe(object : Observer<MoviesResult> {
@@ -46,28 +30,26 @@ class MainPresenter @Inject constructor(
                 }
 
                 override fun onNext(result: MoviesResult) {
-                    if (!result.isLoadMore() && (result.results == null ||
-                                result.results?.isEmpty()!!)
-                    ) {
+                    if (result.isEmptyData()) {
                         view.showNoData()
+                    } else {
+                        view.showData(result.results!!)
                     }
-                    view.showData(result)
-                    searchFilter.pageNumber = searchFilter.pageNumber + 1
-                    view.hideProgressBar()
                 }
 
                 override fun onError(throwable: Throwable) {
                     view.hideProgressBar()
-                    view.showError(isFirstPage, throwable)
+                    view.showError(throwable)
                 }
 
                 override fun onComplete() {
+                    view.hideProgressBar()
                 }
             })
     }
 
-    override fun addRemoveFavMovie(movie: Movie) {
-        movieRepository.removeAddFavMovie(movie.id, movie.isFav)
+    override fun removeFromList(movieId: Long) {
+        movieDataSource.removeAddFavMovie(movieId, false)
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
             .ignoreElements()

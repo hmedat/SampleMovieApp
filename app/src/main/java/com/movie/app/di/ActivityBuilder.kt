@@ -3,6 +3,8 @@ package com.movie.app.di
 import com.movie.app.details.DetailsActivityModule
 import com.movie.app.details.DetailsMovieActivity
 import com.movie.app.di.scope.ActivityScope
+import com.movie.app.fav.FavouritesActivity
+import com.movie.app.fav.FavouritesActivityModule
 import com.movie.app.main.MainActivity
 import com.movie.app.main.MainActivityModule
 import com.movie.app.splash.SplashActivity
@@ -12,7 +14,6 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class ActivityBuilder {
-
     @ActivityScope
     @ContributesAndroidInjector(modules = [(SplashActivityModule::class)])
     internal abstract fun bindSplashActivity(): SplashActivity
@@ -24,4 +25,8 @@ abstract class ActivityBuilder {
     @ActivityScope
     @ContributesAndroidInjector(modules = [(DetailsActivityModule::class)])
     internal abstract fun bindDetailsMovieActivity(): DetailsMovieActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [(FavouritesActivityModule::class)])
+    internal abstract fun bindFavouritesActivity(): FavouritesActivity
 }

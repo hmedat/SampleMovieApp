@@ -13,6 +13,9 @@ interface MovieDao {
     @Query("SELECT * FROM movie limit 20")
     fun getMovies(): List<Movie>
 
+    @Query("SELECT * FROM movie WHERE is_Fav = 1")
+    fun getFavMovies(): List<Movie>
+
     @Query("SELECT * FROM movie WHERE id = :id ")
     fun getMovie(id: Long): Movie?
 
@@ -24,4 +27,7 @@ interface MovieDao {
 
     @Delete
     fun delete(vararg movie: Movie)
+
+    @Query("UPDATE movie SET is_Fav = :isFav WHERE id = :id ")
+    fun updateFavMovie(id: Long, isFav: Boolean): Int
 }

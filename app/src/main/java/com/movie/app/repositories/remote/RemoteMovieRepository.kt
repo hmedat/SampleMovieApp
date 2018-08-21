@@ -9,17 +9,18 @@ import com.movie.app.repositories.MovieDataSource
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInterface)
-    : MovieDataSource {
+class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInterface) :
+    MovieDataSource {
+
     override fun insertMovies(movies: List<Movie>) {
     }
 
     override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
         return apiInterface.getLatestMovies(searchFilter.pageNumber)
-                .map {
-                    MovieMapper.map(it.results!!)
-                    it
-                }
+            .map {
+                MovieMapper.map(it.results!!)
+                it
+            }
     }
 
     override fun getMovie(movieId: Long): Observable<Movie> {
@@ -27,5 +28,13 @@ class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInt
             MovieMapper.map(it)
             it
         }
+    }
+
+    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getFavMovies(): Observable<MoviesResult> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

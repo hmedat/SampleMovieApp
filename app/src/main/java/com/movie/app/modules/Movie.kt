@@ -36,6 +36,9 @@ data class Movie(
     @ColumnInfo(name = "home_page")
     var homepage: String? = null,
 
+    @ColumnInfo(name = "is_Fav")
+    var isFav: Boolean = false,
+
     @Ignore
     var genres: List<Genre>? = null,
     @Ignore
@@ -46,6 +49,7 @@ data class Movie(
     @Ignore
     @SerializedName("reviews")
     var reviewResult: ReviewResult? = null
+
 ) {
     companion object {
         const val ID_NOT_SET: Long = -1L

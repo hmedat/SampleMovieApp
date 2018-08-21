@@ -1,6 +1,5 @@
 package com.movie.app.main
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -10,6 +9,7 @@ import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.details.DetailsMovieActivity
+import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
@@ -39,6 +39,12 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
                 val movie = adapter.data[position]
                 DetailsMovieActivity.startActivity(context, movie.id)
             }
+            setOnItemChildClickListener { _, _, position ->
+                val movie = adapter.data[position]
+                movie.isFav = !movie.isFav
+                presenter.addRemoveFavMovie(movie)
+                adapter.notifyItemChanged(position)
+            }
         }
         rvMovies.apply {
             layoutManager = LinearLayoutManager(context)
@@ -59,7 +65,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
 
     private fun initRefreshLayout() {
         swipeLayoutMovies.visibility = View.GONE
-        swipeLayoutMovies.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
+        swipeLayoutMovies.setDefaultColor()
         swipeLayoutMovies.setOnRefreshListener {
             adapter.setEnableLoadMore(false)
             presenter.loadFirstPage()

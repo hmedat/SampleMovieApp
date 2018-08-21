@@ -1,6 +1,8 @@
 package com.movie.app.util
 
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.widget.ImageView
@@ -34,4 +36,8 @@ fun AppCompatActivity.setToolbarTitle(title: String?) {
 fun AppCompatActivity.enableToolbarBack() {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.setHomeButtonEnabled(true)
+}
+
+fun SwipeRefreshLayout.setDefaultColor() {
+    setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
 }
