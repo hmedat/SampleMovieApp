@@ -10,7 +10,10 @@ import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.modules.Movie
 import com.movie.app.util.GenreUtil
+import com.movie.app.util.enableToolbarBack
 import com.movie.app.util.loadImage
+import com.movie.app.util.setToolbar
+import com.movie.app.util.setToolbarTitle
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener
 import kotlinx.android.synthetic.main.activity_details_movie.*
 import javax.inject.Inject
@@ -32,10 +35,10 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details_movie)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
         val movieId: Long = intent.extras.getLong(EXTRA_MOVIE_ID)
         presenter.setMovieId(movieId)
+        setToolbar(detailsToolbar)
+        enableToolbarBack()
         emptyViewDetails.error().setOnClickListener { presenter.subscribe() }
         presenter.subscribe()
     }
@@ -55,7 +58,7 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         tvGenres.text = GenreUtil.getGenreString(movie.genres)
         tvOverView.text = movie.overview
         imgRate.visibility = View.VISIBLE
-        supportActionBar?.title = movie.title
+        setToolbarTitle(movie.title)
         imgPoster.loadImage(movie.posterPath, Color.BLACK)
         handleVideoData(movie)
     }

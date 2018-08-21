@@ -4,14 +4,14 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.2"
+    compileSdkVersion setup.compileSdk
+    buildToolsVersion setup.buildTools
     defaultConfig {
         applicationId "com.movie.app"
-        minSdkVersion 17
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion setup.minSdk
+        targetSdkVersion setup.targetSdk
+        versionCode release.versionCode
+        versionName release.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -90,7 +90,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:0.3'
     implementation 'com.github.PierfrancescoSoffritti:AndroidYouTubePlayer:6.0.0'
     ktlint "com.github.shyiko:ktlint:0.23.1"
-    implementation "com.mikepenz:materialdrawer:6.1.0-rc01.2"
+    implementation "com.mikepenz:materialdrawer:6.0.8"
 }
 
 task ktlint(type: JavaExec, group: "verification") {

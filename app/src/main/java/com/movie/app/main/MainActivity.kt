@@ -10,6 +10,7 @@ import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.details.DetailsMovieActivity
+import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -18,12 +19,14 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     @Inject
     lateinit var presenter: MainActivityContractor.Presenter
     private lateinit var adapter: MovieAdapter
+    private lateinit var homeDrawer: HomeDrawer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initRefreshLayout()
         initRecyclerView()
+        addDrawer()
         emptyView.error().setOnClickListener { presenter.subscribe() }
         presenter.subscribe()
     }
@@ -49,13 +52,18 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         adapter.setOnLoadMoreListener({ presenter.loadNextPage() }, rvMovies)
     }
 
+    private fun addDrawer() {
+        setToolbar(mainToolbar, R.string.app_name)
+        homeDrawer = HomeDrawer(this, mainToolbar)
+    }
+
     private fun initRefreshLayout() {
         swipeLayoutMovies.visibility = View.GONE
         swipeLayoutMovies.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
-        swipeLayoutMovies.setOnRefreshListener({
+        swipeLayoutMovies.setOnRefreshListener {
             adapter.setEnableLoadMore(false)
             presenter.loadFirstPage()
-        })
+        }
     }
 
     override fun showProgressBar() {
@@ -101,6 +109,13 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
             emptyView.showError()
         } else {
             adapter.loadMoreFail()
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if (homeDrawer.closeIfOpen()) {
+            return
         }
     }
 
