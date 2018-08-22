@@ -17,6 +17,7 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
 
     override fun insertMovies(movies: List<Movie>) {
         val movieGenreJoinList = ArrayList<MovieGenreJoin>()
+        val favMovieIds = database.movieDao().getFavMovieIds()
         val genreList = ArrayList<Genre>()
         val videoList = ArrayList<Video>()
         for (movie in movies) {
@@ -31,6 +32,9 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
                     video.movieId = movie.id
                     videoList.add(video)
                 }
+            }
+            if (favMovieIds.contains(movie.id)) {
+                movie.isFav = true
             }
         }
         database.movieDao().insert(movies)

@@ -31,6 +31,7 @@
         <item name="ev_error_title">@string/error_unknown_title</item>
         <item name="ev_error_titleTextColor">#FFFFFF</item>
         <item name="ev_loading">circular</item>
+        <item name="ev_loading_textColor">@color/colorPrimary</item>
         <item name="ev_loading_drawable">@drawable/ic_sentiment_satisfied_black</item>
         <item name="ev_loading_drawableTint">@color/colorPrimary</item>
         <item name="ev_loading_title">@string/brvah_loading</item>

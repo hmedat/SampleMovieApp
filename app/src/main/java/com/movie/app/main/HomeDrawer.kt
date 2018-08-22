@@ -52,7 +52,7 @@ class HomeDrawer internal constructor(activity: MainActivity, toolbar: Toolbar) 
         mResult.currentSelection
     }
 
-    internal fun closeIfOpen(): Boolean {
+    internal fun closeIfOpened(): Boolean {
         if (mResult.isDrawerOpen) {
             mResult.closeDrawer()
             return true

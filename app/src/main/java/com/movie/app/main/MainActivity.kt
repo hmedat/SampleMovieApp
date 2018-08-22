@@ -3,12 +3,11 @@ package com.movie.app.main
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
-import com.movie.app.api.result.MoviesResult
 import com.movie.app.details.DetailsMovieActivity
+import com.movie.app.modules.Movie
 import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,18 +25,17 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         setContentView(R.layout.activity_main)
         initRefreshLayout()
         initRecyclerView()
-        addDrawer()
+        setToolbar(mainToolbar, R.string.app_name)
+        homeDrawer = HomeDrawer(this, mainToolbar)
         emptyView.error().setOnClickListener { presenter.subscribe() }
         presenter.subscribe()
     }
 
     private fun initRecyclerView() {
-        rvMovies.visibility = View.GONE
         adapter = MovieAdapter().apply {
             openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
             setOnItemClickListener { _, _, position ->
-                val movie = adapter.data[position]
-                DetailsMovieActivity.startActivity(context, movie.id)
+                DetailsMovieActivity.startActivity(context, adapter.data[position].id)
             }
             setOnItemChildClickListener { _, _, position ->
                 val movie = adapter.data[position]
@@ -58,13 +56,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         adapter.setOnLoadMoreListener({ presenter.loadNextPage() }, rvMovies)
     }
 
-    private fun addDrawer() {
-        setToolbar(mainToolbar, R.string.app_name)
-        homeDrawer = HomeDrawer(this, mainToolbar)
-    }
-
     private fun initRefreshLayout() {
-        swipeLayoutMovies.visibility = View.GONE
         swipeLayoutMovies.setDefaultColor()
         swipeLayoutMovies.setOnRefreshListener {
             adapter.setEnableLoadMore(false)
@@ -74,7 +66,6 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
 
     override fun showProgressBar() {
         emptyView.showLoading()
-        swipeLayoutMovies.isRefreshing = true
     }
 
     override fun hideProgressBar() {
@@ -85,21 +76,18 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         emptyView.showEmpty()
     }
 
-    override fun showData(result: MoviesResult) {
-        val list = result.results
-        if (list!!.isNotEmpty()) {
-            emptyView.showContent()
-            rvMovies.visibility = View.VISIBLE
-            swipeLayoutMovies.visibility = View.VISIBLE
-            if (result.isLoadMore()) {
-                adapter.addData(list)
-            } else {
-                adapter.setNewData(list)
-                setLoadMore()
-                rvMovies.smoothScrollToPosition(0)
-            }
-        }
-        if (result.isFinished()) {
+    override fun showFirstData(data: List<Movie>) {
+        emptyView.showContent()
+        adapter.setNewData(data)
+        setLoadMore()
+    }
+
+    override fun showLoadMoreData(data: List<Movie>) {
+        adapter.addData(data)
+    }
+
+    override fun onDataCompleted(finished: Boolean) {
+        if (finished) {
             adapter.loadMoreEnd(true)
         } else {
             adapter.loadMoreComplete()
@@ -109,9 +97,6 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
 
     override fun showError(isFirstPage: Boolean, throwable: Throwable) {
         if (isFirstPage) {
-            if (adapter.itemCount > 0) {
-                return
-            }
             emptyView.showError()
         } else {
             adapter.loadMoreFail()
@@ -119,10 +104,10 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        if (homeDrawer.closeIfOpen()) {
+        if (homeDrawer.closeIfOpened()) {
             return
         }
+        super.onBackPressed()
     }
 
     override fun onDestroy() {

@@ -46,14 +46,19 @@ class MainPresenter @Inject constructor(
                 }
 
                 override fun onNext(result: MoviesResult) {
-                    if (!result.isLoadMore() && (result.results == null ||
-                                result.results?.isEmpty()!!)
-                    ) {
-                        view.showNoData()
+                    if (result.isEmptyData()) {
+                        if (!result.isLoadMore()) {
+                            view.showNoData()
+                        }
+                        return
                     }
-                    view.showData(result)
-                    searchFilter.pageNumber = searchFilter.pageNumber + 1
-                    view.hideProgressBar()
+                    val results = result.results!!
+                    if (result.isLoadMore()) {
+                        view.showLoadMoreData(results)
+                    } else {
+                        view.showFirstData(results)
+                    }
+                    view.onDataCompleted(result.isFinished())
                 }
 
                 override fun onError(throwable: Throwable) {
@@ -62,6 +67,8 @@ class MainPresenter @Inject constructor(
                 }
 
                 override fun onComplete() {
+                    searchFilter.pageNumber = searchFilter.pageNumber + 1
+                    view.hideProgressBar()
                 }
             })
     }
