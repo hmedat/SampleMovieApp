@@ -6,14 +6,15 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/favToolbar"
-        style="@style/ToolbarStyle" />
+        style="@style/ToolbarStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeLayoutMovies"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +27,6 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-
     <com.santalu.emptyview.EmptyView
         android:id="@+id/emptyView"
         style="@style/EmptyViewStyle"
@@ -36,5 +36,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/favToolbar" />
+
 
 </android.support.constraint.ConstraintLayout>

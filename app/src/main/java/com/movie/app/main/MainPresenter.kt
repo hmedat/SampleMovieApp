@@ -81,6 +81,16 @@ class MainPresenter @Inject constructor(
             .subscribe()
     }
 
+    override fun syncFavouritesStatues() {
+        movieRepository.getFavMovieIds()
+            .subscribeOn(schedulerProvider.io())
+            .observeOn(schedulerProvider.ui())
+            .subscribe {
+                view.updateFavouritesStatues(it)
+                view.notifyVisibleItems()
+            }
+    }
+
     override fun unSubscribe() {
         compositeDisposable.clear()
     }

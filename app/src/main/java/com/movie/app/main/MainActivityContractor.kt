@@ -19,6 +19,10 @@ class MainActivityContractor {
         fun showError(isFirstPage: Boolean, throwable: Throwable)
 
         fun onDataCompleted(finished: Boolean)
+
+        fun updateFavouritesStatues(list: HashSet<Long>)
+
+        fun notifyVisibleItems()
     }
 
     interface Presenter : BaseContractor.BasePresenter<View> {
@@ -27,5 +31,7 @@ class MainActivityContractor {
         fun loadNextPage()
 
         fun addRemoveFavMovie(movie: Movie)
+
+        fun syncFavouritesStatues()
     }
 }

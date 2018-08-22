@@ -37,4 +37,8 @@ class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInt
     override fun getFavMovies(): Observable<MoviesResult> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    override fun getFavMovieIds(): Observable<HashSet<Long>> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.widget.ImageView
 
@@ -40,4 +42,16 @@ fun AppCompatActivity.enableToolbarBack() {
 
 fun SwipeRefreshLayout.setDefaultColor() {
     setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
+}
+
+fun RecyclerView.notifyVisibleItems() {
+    val layoutManager = layoutManager as LinearLayoutManager
+    if (adapter == null) {
+        return
+    }
+    val firstPos = layoutManager.findFirstVisibleItemPosition()
+    val lastPos = layoutManager.findLastVisibleItemPosition()
+    for (i in firstPos..lastPos) {
+        adapter.notifyItemChanged(i)
+    }
 }

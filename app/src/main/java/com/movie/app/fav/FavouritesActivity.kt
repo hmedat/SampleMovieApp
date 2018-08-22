@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
@@ -43,7 +42,6 @@ class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
     }
 
     private fun initRefreshLayout() {
-        swipeLayoutMovies.visibility = View.GONE
         swipeLayoutMovies.setDefaultColor()
         swipeLayoutMovies.setOnRefreshListener {
             presenter.subscribe()
@@ -51,7 +49,6 @@ class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
     }
 
     private fun initRecyclerView() {
-        rvMovies.visibility = View.GONE
         adapter = MovieAdapter().apply {
             openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
             setOnItemClickListener { _, _, position ->
@@ -74,7 +71,6 @@ class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
 
     override fun showProgressBar() {
         emptyView.showLoading()
-        swipeLayoutMovies.isRefreshing = true
     }
 
     override fun hideProgressBar() {
@@ -87,8 +83,6 @@ class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
 
     override fun showData(movies: List<Movie>) {
         emptyView.showContent()
-        rvMovies.visibility = View.VISIBLE
-        swipeLayoutMovies.visibility = View.VISIBLE
         adapter.setNewData(movies)
     }
 

@@ -8,6 +8,7 @@ import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.details.DetailsMovieActivity
 import com.movie.app.modules.Movie
+import com.movie.app.util.notifyVisibleItems
 import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,6 +30,13 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         homeDrawer = HomeDrawer(this, mainToolbar)
         emptyView.error().setOnClickListener { presenter.subscribe() }
         presenter.subscribe()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (adapter.itemCount > 0) {
+            presenter.syncFavouritesStatues()
+        }
     }
 
     private fun initRecyclerView() {
@@ -97,9 +105,17 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
 
     override fun showError(isFirstPage: Boolean, throwable: Throwable) {
         if (isFirstPage) {
-            emptyView.showError()
+            if (adapter.itemCount == 0) {
+                emptyView.showError()
+            }
         } else {
             adapter.loadMoreFail()
+        }
+    }
+
+    override fun updateFavouritesStatues(list: HashSet<Long>) {
+        for (movie in adapter.data) {
+            movie.isFav = list.contains(movie.id)
         }
     }
 
@@ -108,6 +124,10 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
             return
         }
         super.onBackPressed()
+    }
+
+    override fun notifyVisibleItems() {
+        rvMovies.notifyVisibleItems()
     }
 
     override fun onDestroy() {

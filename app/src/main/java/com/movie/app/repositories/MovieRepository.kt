@@ -57,4 +57,8 @@ class MovieRepository @Inject constructor(
     override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
         return local.removeAddFavMovie(movieId, isFav)
     }
+
+    override fun getFavMovieIds(): Observable<HashSet<Long>> {
+        return local.getFavMovieIds()
+    }
 }

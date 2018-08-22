@@ -17,7 +17,7 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
 
     override fun insertMovies(movies: List<Movie>) {
         val movieGenreJoinList = ArrayList<MovieGenreJoin>()
-        val favMovieIds = database.movieDao().getFavMovieIds()
+        val favMovieIds = database.movieDao().getFavMovieIds().toHashSet()
         val genreList = ArrayList<Genre>()
         val videoList = ArrayList<Video>()
         for (movie in movies) {
@@ -93,6 +93,12 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
             latestMoviesResult
         }.doOnNext {
             Timber.d("Dispatching ${it.results?.size} users from DB...")
+        }
+    }
+
+    override fun getFavMovieIds(): Observable<HashSet<Long>> {
+        return Observable.fromCallable {
+            database.movieDao().getFavMovieIds().toHashSet()
         }
     }
 }
