@@ -12,6 +12,7 @@ import com.movie.app.util.notifyVisibleItems
 import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class MainActivity : BaseActivity(), MainActivityContractor.View {
@@ -81,20 +82,24 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     override fun showNoData() {
+        Timber.i("showNoData")
         emptyView.showEmpty()
     }
 
     override fun showFirstData(data: List<Movie>) {
+        Timber.i("showFirstData size:%s", data.size)
         emptyView.showContent()
         adapter.setNewData(data)
         setLoadMore()
     }
 
     override fun showLoadMoreData(data: List<Movie>) {
+        Timber.i("showLoadMoreData size:%s", data.size)
         adapter.addData(data)
     }
 
     override fun onDataCompleted(finished: Boolean) {
+        Timber.i("onDataCompleted isFinished:%s", finished)
         if (finished) {
             adapter.loadMoreEnd(true)
         } else {
@@ -104,6 +109,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     override fun showError(isFirstPage: Boolean, throwable: Throwable) {
+        Timber.e(throwable, "isFirstPage: %s, AdapterItemsSize: %s", isFirstPage, adapter.itemCount)
         if (isFirstPage) {
             if (adapter.itemCount == 0) {
                 emptyView.showError()

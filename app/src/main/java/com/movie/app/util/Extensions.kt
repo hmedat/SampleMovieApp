@@ -8,6 +8,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.widget.ImageView
+import io.reactivex.Observable
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 fun ImageView.loadImage(url: String?, colorPlaceholder: Int) {
     GlideApp.with(context)
@@ -55,3 +58,19 @@ fun RecyclerView.notifyVisibleItems() {
         adapter.notifyItemChanged(i)
     }
 }
+
+fun <T> Observable<T>.retryWhenBackoff(
+    initialDelay: Long, numRetries: Int, unit: TimeUnit
+): Observable<T> {
+    return retryWhen(
+        RXJavaUtil.exponentialBackoffForExceptions(
+            initialDelay, numRetries, unit, IOException::class.java
+        )
+    )
+}
+
+fun <T> Observable<T>.retryWhenBackoffDefault(): Observable<T> {
+    return retryWhenBackoff(200, 5, TimeUnit.MILLISECONDS)
+}
+
+

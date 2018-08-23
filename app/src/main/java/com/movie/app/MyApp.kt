@@ -1,6 +1,7 @@
 package com.movie.app
 
 import com.movie.app.di.DaggerAppComponent
+import com.movie.app.util.TimberUtil
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 
@@ -17,6 +18,7 @@ class MyApp : DaggerApplication() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        TimberUtil.init()
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {

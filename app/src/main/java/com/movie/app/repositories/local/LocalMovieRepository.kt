@@ -47,6 +47,7 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
         return Observable.fromCallable {
             val latestMoviesResult = MoviesResult()
             val movies = database.movieDao().getMovies()
+            Timber.i("Movies ${movies.size} users from DB...")
             for (movie in movies) {
                 movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
                 movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
@@ -57,7 +58,7 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
             latestMoviesResult
         }.filter { it.results?.isNotEmpty()!! }
             .doOnNext {
-                Timber.d("Dispatching ${it.results?.size} users from DB...")
+                Timber.i("Dispatching ${it.results?.size} users from DB...")
             }
     }
 
