@@ -61,7 +61,7 @@ class MainPresenterTest {
         verify(view).hideProgressBar()
         verify(view, never()).showNoData()
         verify(view, never()).showError(true, IllegalAccessException())
-        verify(view).showData(result)
+        verify(view).showFirstData(result.results!!)
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.movie.app.util;
 
-import android.util.Pair;
+import android.support.v4.util.Pair;
 
 import java.util.concurrent.TimeUnit;
 

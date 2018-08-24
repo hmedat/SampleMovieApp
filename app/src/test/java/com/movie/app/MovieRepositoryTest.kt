@@ -6,11 +6,12 @@ import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.repositories.MovieRepository
 import com.movie.app.repositories.remote.RemoteMovieRepository
+import com.movie.app.rx.TestHelper
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
+import io.reactivex.Observer
 import io.reactivex.observers.TestObserver
 import org.junit.Assert
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -30,11 +31,13 @@ class MovieRepositoryTest {
     private lateinit var networkException: IOException
     @Mock
     private lateinit var diskException: IOException
+    private lateinit var observer: Observer<MoviesResult>
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         movieRep = MovieRepository(localRep, remoteRep)
+        observer = TestHelper.mockObserver()
     }
 
     @Test
@@ -42,22 +45,18 @@ class MovieRepositoryTest {
         val searchFilter = MovieSearchFilter()
         searchFilter.pageNumber = 1
 
-        val testSubscriber = TestObserver<MoviesResult>()
         whenever(localRep.getMovies(searchFilter))
             .thenReturn(Observable.error(diskException))
 
         whenever(remoteRep.getMovies(searchFilter))
             .thenReturn(Observable.error(networkException))
 
-        movieRep.getMovies(searchFilter).subscribe(testSubscriber)
-
-        // Check if the db only deliver data
-        Assert.assertEquals(testSubscriber.valueCount(), 1)
-        Assert.assertNotNull(testSubscriber.values()[0])
-        Assert.assertNotEquals(testSubscriber.errors()[0], diskException)
+        movieRep.getMovies(searchFilter)
+            .test()
+            .assertValueCount(1)
+            .assertError(Throwable::class.java)
         // Check if the network only deliver an error
-        Assert.assertEquals(testSubscriber.errorCount(), 1)
-        Assert.assertEquals(testSubscriber.errors()[0], networkException)
+        // Check if the db only deliver data
     }
 
     @Test
@@ -65,23 +64,17 @@ class MovieRepositoryTest {
         val searchFilter = MovieSearchFilter()
         searchFilter.pageNumber = 1
 
-        val testSubscriber = TestObserver<MoviesResult>()
         whenever(localRep.getMovies(searchFilter))
             .thenReturn(Observable.error(diskException))
 
         whenever(remoteRep.getMovies(searchFilter))
             .thenReturn(Observable.just(MoviesResult()))
 
-        movieRep.getMovies(searchFilter).subscribe(testSubscriber)
-
-        // Check if the db only deliver data
-        Assert.assertEquals(testSubscriber.valueCount(), 2)
-        Assert.assertNotNull(testSubscriber.values()[0])
-        Assert.assertNotNull(testSubscriber.values()[1])
-
-        // Check there are no errors
-        testSubscriber.assertNoErrors()
-        Assert.assertEquals(testSubscriber.errorCount(), 0)
+        movieRep.getMovies(searchFilter)
+            .test()
+            .assertNoErrors()
+            .assertValueCount(2)
+        // Check if the db and network  deliver data with no errors
     }
 
     @Test
@@ -99,12 +92,11 @@ class MovieRepositoryTest {
         movieRep.getMovies(searchFilter).subscribe(testSubscriber)
 
         // Check if the db only deliver data
-        Assert.assertEquals(testSubscriber.valueCount(), 1)
-        assertNotNull(testSubscriber.values()[0])
-
         // Check if the network only deliver an error
-        Assert.assertEquals(testSubscriber.errorCount(), 1)
-        Assert.assertEquals(testSubscriber.errors()[0], networkException)
+        movieRep.getMovies(searchFilter)
+            .test()
+            .assertError(IOException::class.java)
+            .assertValueCount(1)
     }
 
     @Test

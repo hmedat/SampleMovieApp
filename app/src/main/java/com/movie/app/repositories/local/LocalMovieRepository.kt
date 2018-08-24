@@ -67,7 +67,7 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
             latestMoviesResult
         }.filter { it.results?.isNotEmpty()!! }
             .doOnNext {
-                Timber.i("Dispatching ${it.results?.size} users from DB...")
+                Timber.i("Dispa tching ${it.results?.size} users from DB...")
             }
     }
 

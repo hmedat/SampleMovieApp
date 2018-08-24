@@ -3,8 +3,6 @@ package com.movie.app.repositories
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
-import com.movie.app.repositories.remote.RemoteMovieRepository
-import com.movie.app.util.retryWhenBackoffDefault
 import io.reactivex.Observable
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,8 +24,7 @@ class MovieRepository @Inject constructor(
             .onErrorReturn {
                 val moviesResult = MoviesResult()
                 moviesResult
-            }
-            .filter { !it.isEmptyData() },
+            },
             getAndSaveRemoteMovies(searchFilter)
         )
     }
@@ -35,7 +32,6 @@ class MovieRepository @Inject constructor(
     private fun getAndSaveRemoteMovies(searchFilter: MovieSearchFilter):
             Observable<MoviesResult> {
         return remote.getMovies(searchFilter)
-            .retryWhenBackoffDefault()
             .doOnNext {
                 it.results?.let {
                     insertMovies(it)

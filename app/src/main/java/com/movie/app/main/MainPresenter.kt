@@ -40,7 +40,7 @@ class MainPresenter @Inject constructor(
         }
         movieRepository.getMovies(searchFilter)
             .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+            .observeOn(schedulerProvider.ui(), true)
             .subscribe(object : Observer<MoviesResult> {
                 override fun onSubscribe(d: Disposable) {
                     compositeDisposable.add(d)
