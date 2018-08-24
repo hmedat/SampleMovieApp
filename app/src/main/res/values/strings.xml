@@ -5,4 +5,5 @@
     <string name="desc_no_data"></string>
     <string name="drawer_item_fav">My Favourites</string>
     <string name="fav_movie_title">Favourites Movies</string>
+    <string name="main_page">Main Page</string>
 </resources>

@@ -3,15 +3,20 @@ package com.movie.app.main
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.details.DetailsMovieActivity
 import com.movie.app.modules.Movie
+import com.movie.app.modules.MovieSortType
 import com.movie.app.util.notifyVisibleItems
 import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar_main_activity.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,6 +32,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         setContentView(R.layout.activity_main)
         initRefreshLayout()
         initRecyclerView()
+        initToolbarSpinner()
         setToolbar(mainToolbar, R.string.app_name)
         homeDrawer = HomeDrawer(this, mainToolbar)
         emptyView.error().setOnClickListener { presenter.subscribe() }
@@ -70,6 +76,22 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         swipeLayoutMovies.setOnRefreshListener {
             adapter.setEnableLoadMore(false)
             presenter.loadFirstPage()
+        }
+    }
+
+    private fun initToolbarSpinner() {
+        val adapter = ArrayAdapter(
+            this, R.layout.simple_spinner_item, MovieSortType.values()
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        toolbarSpinner.adapter = adapter
+        toolbarSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
+                presenter.onSearchFilterChanged(MovieSortType.values()[i])
+            }
+
+            override fun onNothingSelected(adapterView: AdapterView<*>) {
+            }
         }
     }
 

@@ -16,11 +16,13 @@ class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInt
     }
 
     override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
-        return apiInterface.getLatestMovies(searchFilter.pageNumber)
-            .map {
-                MovieMapper.map(it.results!!)
-                it
-            }
+        return apiInterface.getLatestMovies(
+            searchFilter.pageNumber
+            , searchFilter.sortBy.apiSearchName
+        ).map {
+            MovieMapper.map(it.results!!)
+            it
+        }
     }
 
     override fun getMovie(movieId: Long): Observable<Movie> {

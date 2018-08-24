@@ -3,6 +3,7 @@ package com.movie.app.main
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
+import com.movie.app.modules.MovieSortType
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
@@ -71,6 +72,12 @@ class MainPresenter @Inject constructor(
                     view.hideProgressBar()
                 }
             })
+    }
+
+    override fun onSearchFilterChanged(movieSortType: MovieSortType) {
+        searchFilter.sortBy = movieSortType
+        searchFilter.pageNumber = MovieSearchFilter.First_PAGE
+        loadData()
     }
 
     override fun addRemoveFavMovie(movie: Movie) {

@@ -2,6 +2,7 @@ package com.movie.app.main
 
 import com.movie.app.BaseContractor
 import com.movie.app.modules.Movie
+import com.movie.app.modules.MovieSortType
 
 class MainActivityContractor {
 
@@ -33,5 +34,7 @@ class MainActivityContractor {
         fun addRemoveFavMovie(movie: Movie)
 
         fun syncFavouritesStatues()
+
+        fun onSearchFilterChanged(movieSortType: MovieSortType)
     }
 }

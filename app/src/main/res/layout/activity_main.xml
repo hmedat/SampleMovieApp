@@ -6,7 +6,11 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/mainToolbar"
-        style="@style/ToolbarStyle" />
+        style="@style/ToolbarStyle">
+
+        <include layout="@layout/toolbar_main_activity" />
+
+    </android.support.v7.widget.Toolbar>
 
     <com.santalu.emptyview.EmptyView
         android:id="@+id/emptyView"

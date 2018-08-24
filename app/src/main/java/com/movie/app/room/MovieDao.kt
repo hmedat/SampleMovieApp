@@ -13,6 +13,9 @@ interface MovieDao {
     @Query("select * from movie ORDER BY popularity desc limit :limitNumber")
     fun getMoviesOrderByPopularity(limitNumber: Int): List<Movie>
 
+    @Query("select * from movie ORDER BY release_date_long desc limit :limitNumber")
+    fun getMoviesOrderByReleaseDate(limitNumber: Int): List<Movie>
+
     @Query("SELECT * FROM movie WHERE is_Fav = 1")
     fun getFavMovies(): List<Movie>
 

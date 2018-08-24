@@ -4,6 +4,7 @@ import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Genre
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
+import com.movie.app.modules.MovieSortType
 import com.movie.app.modules.Video
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.room.AppDatabase
@@ -50,9 +51,11 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
     override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
         return Observable.fromCallable {
             val latestMoviesResult = MoviesResult()
-
-            val limitNumber = 20
-            val movies = database.movieDao().getMoviesOrderByPopularity(limitNumber)
+            val limit = 20
+            val movies = when (searchFilter.sortBy) {
+                MovieSortType.POPULARITY -> database.movieDao().getMoviesOrderByPopularity(limit)
+                MovieSortType.RELEASE_DATE -> database.movieDao().getMoviesOrderByReleaseDate(limit)
+            }
             Timber.i("Movies ${movies.size} users from DB...")
             for (movie in movies) {
                 movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
