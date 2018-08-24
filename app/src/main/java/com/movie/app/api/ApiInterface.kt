@@ -11,8 +11,8 @@ import retrofit2.http.Query
 interface ApiInterface {
     @GET("discover/movie")
     fun getLatestMovies(
-        @Query("page") pageNumber: Int
-        , @Query("sort_by") sortBy: String
+        @Query("page") pageNumber: Int,
+        @Query("sort_by") sortBy: String
     ): Observable<MoviesResult>
 
     @GET("movie/{movieId}/similar")

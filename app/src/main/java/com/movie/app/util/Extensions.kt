@@ -60,7 +60,9 @@ fun RecyclerView.notifyVisibleItems() {
 }
 
 fun <T> Observable<T>.retryWhenBackoff(
-    initialDelay: Long, numRetries: Int, unit: TimeUnit
+    initialDelay: Long,
+    numRetries: Int,
+    unit: TimeUnit
 ): Observable<T> {
     return retryWhen(
         RXJavaUtil.exponentialBackoffForExceptions(
@@ -72,5 +74,3 @@ fun <T> Observable<T>.retryWhenBackoff(
 fun <T> Observable<T>.retryWhenBackoffDefault(): Observable<T> {
     return retryWhenBackoff(200, 5, TimeUnit.MILLISECONDS)
 }
-
-

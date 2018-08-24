@@ -61,7 +61,7 @@ class MainPresenterTest {
         verify(view).hideProgressBar()
         verify(view, never()).showNoData()
         verify(view, never()).showError(true, IllegalAccessException())
-        verify(view).showData(result)
+        verify(view).showFirstData(result.results!!)
     }
 
     @Test
@@ -97,7 +97,7 @@ class MainPresenterTest {
         verify(view).hideProgressBar()
         verify(view).showError(true, ioException)
         verify(view, never()).showNoData()
-        verify(view, never()).showData(result)
+        verify(view, never()).showFirstData(ArrayList())
     }
 
     @Test
@@ -126,18 +126,26 @@ class MainPresenterTest {
         verify(view).hideProgressBar()
         verify(view, never()).showNoData()
         verify(view, never()).showError(true, IllegalAccessException())
-        verify(view).showData(result)
+        verify(view).showLoadMoreData(result.results!!)
     }
 
     @Test
     fun loadNextPageIntoViewWithEmptyData() {
         val pageNumber = 2
         val result = MoviesResult()
+        result.results = listOf(Movie().apply {
+            id = 1
+            title = "Avengers 04"
+        }, Movie().apply {
+            id = 2
+            title = "Avengers 05"
+        }, Movie().apply {
+            id = 3
+            title = "Avengers 06"
+        })
         result.page = pageNumber
         whenever(movieSearchFilter.pageNumber)
                 .thenReturn(pageNumber)
-        whenever(movieSearchFilter.isFirstPage())
-                .thenReturn(false)
         whenever(movieDataSource.getMovies(movieSearchFilter))
                 .thenReturn(Observable.just(result))
         presenter.loadNextPage()
@@ -145,7 +153,7 @@ class MainPresenterTest {
         verify(view).hideProgressBar()
         verify(view, never()).showNoData()
         verify(view, never()).showError(true, IllegalAccessException())
-        verify(view).showData(result)
+        verify(view).showLoadMoreData(result.results!!)
     }
 
     @Test
@@ -165,6 +173,6 @@ class MainPresenterTest {
         verify(view).hideProgressBar()
         verify(view, never()).showNoData()
         verify(view).showError(false, ioException)
-        verify(view, never()).showData(result)
+        verify(view, never()).showLoadMoreData(ArrayList())
     }
 }

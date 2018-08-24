@@ -17,8 +17,7 @@ class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInt
 
     override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
         return apiInterface.getLatestMovies(
-            searchFilter.pageNumber
-            , searchFilter.sortBy.apiSearchName
+            searchFilter.pageNumber, searchFilter.sortBy.apiSearchName
         ).map {
             MovieMapper.map(it.results!!)
             it
@@ -33,14 +32,14 @@ class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInt
     }
 
     override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
     }
 
     override fun getFavMovies(): Observable<MoviesResult> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
     }
 
     override fun getFavMovieIds(): Observable<HashSet<Long>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
     }
 }

@@ -5,7 +5,7 @@ import timber.log.Timber
 
 object TimberUtil {
     fun init() {
-        if (BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
     }
