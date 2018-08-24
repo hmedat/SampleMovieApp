@@ -9,12 +9,13 @@ import com.movie.app.repositories.remote.RemoteMovieRepository
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
-import org.junit.Assert.assertEquals
+import org.junit.Assert
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import java.io.IOException
 
 class MovieRepositoryTest {
 
@@ -25,6 +26,11 @@ class MovieRepositoryTest {
 
     private lateinit var movieRep: MovieRepository
 
+    @Mock
+    private lateinit var networkException: IOException
+    @Mock
+    private lateinit var diskException: IOException
+
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
@@ -32,49 +38,119 @@ class MovieRepositoryTest {
     }
 
     @Test
-    fun testGetMovie() {
+    fun getMoviesWithNoInternetAndNoDataCached() {
+        val searchFilter = MovieSearchFilter()
+        searchFilter.pageNumber = 1
+
+        val testSubscriber = TestObserver<MoviesResult>()
+        whenever(localRep.getMovies(searchFilter))
+            .thenReturn(Observable.error(diskException))
+
+        whenever(remoteRep.getMovies(searchFilter))
+            .thenReturn(Observable.error(networkException))
+
+        movieRep.getMovies(searchFilter).subscribe(testSubscriber)
+
+        // Check if the db only deliver data
+        Assert.assertEquals(testSubscriber.valueCount(), 1)
+        Assert.assertNotNull(testSubscriber.values()[0])
+        Assert.assertNotEquals(testSubscriber.errors()[0], diskException)
+        // Check if the network only deliver an error
+        Assert.assertEquals(testSubscriber.errorCount(), 1)
+        Assert.assertEquals(testSubscriber.errors()[0], networkException)
+    }
+
+    @Test
+    fun getMoviesWithInternetAndNoDataCached() {
+        val searchFilter = MovieSearchFilter()
+        searchFilter.pageNumber = 1
+
+        val testSubscriber = TestObserver<MoviesResult>()
+        whenever(localRep.getMovies(searchFilter))
+            .thenReturn(Observable.error(diskException))
+
+        whenever(remoteRep.getMovies(searchFilter))
+            .thenReturn(Observable.just(MoviesResult()))
+
+        movieRep.getMovies(searchFilter).subscribe(testSubscriber)
+
+        // Check if the db only deliver data
+        Assert.assertEquals(testSubscriber.valueCount(), 2)
+        Assert.assertNotNull(testSubscriber.values()[0])
+        Assert.assertNotNull(testSubscriber.values()[1])
+
+        // Check there are no errors
+        testSubscriber.assertNoErrors()
+        Assert.assertEquals(testSubscriber.errorCount(), 0)
+    }
+
+    @Test
+    fun getMoviesWithNoInternetAndWithDataCached() {
+        val searchFilter = MovieSearchFilter()
+        searchFilter.pageNumber = 1
+
+        val testSubscriber = TestObserver<MoviesResult>()
+        whenever(localRep.getMovies(searchFilter))
+            .thenReturn(Observable.just(MoviesResult()))
+
+        whenever(remoteRep.getMovies(searchFilter))
+            .thenReturn(Observable.error(networkException))
+
+        movieRep.getMovies(searchFilter).subscribe(testSubscriber)
+
+        // Check if the db only deliver data
+        Assert.assertEquals(testSubscriber.valueCount(), 1)
+        assertNotNull(testSubscriber.values()[0])
+
+        // Check if the network only deliver an error
+        Assert.assertEquals(testSubscriber.errorCount(), 1)
+        Assert.assertEquals(testSubscriber.errors()[0], networkException)
+    }
+
+    @Test
+    fun testGetMovieWithOutInternet() {
         val movie: Movie = Movie().apply {
             id = 1
             title = "Avengers"
         }
         val testSubscriber = TestObserver<Movie>()
-        whenever(localRep.getMovie(ArgumentMatchers.any(Long::class.java)))
-                .thenReturn(Observable.just(movie))
-        whenever(remoteRep.getMovie(ArgumentMatchers.any(Long::class.java)))
-                .thenReturn(Observable.just(movie))
+        whenever(localRep.getMovie(movie.id))
+            .thenReturn(Observable.just(movie))
+        whenever(remoteRep.getMovie(movie.id))
+            .thenReturn(Observable.error(networkException))
+
         movieRep.getMovie(movie.id).subscribe(testSubscriber)
-        testSubscriber.assertNoErrors()
-        testSubscriber.assertComplete()
-        assertEquals(testSubscriber.values()[0], movie)
-        assertEquals(testSubscriber.values()[1], movie)
+
+        // Check if the db only deliver data
+        Assert.assertEquals(testSubscriber.valueCount(), 1)
+        Assert.assertNotNull(testSubscriber.values()[0])
+
+        // Check if the network only deliver an error
+        Assert.assertEquals(testSubscriber.errorCount(), 1)
+        Assert.assertEquals(testSubscriber.errors()[0], networkException)
     }
 
     @Test
-    fun testGetMovies() {
-        val searchFilter = MovieSearchFilter()
-        searchFilter.pageNumber = 1
-        val latestMoviesResult = MoviesResult()
-        latestMoviesResult.results = listOf(Movie().apply {
+    fun testGetMovieWithInternet() {
+        val movie: Movie = Movie().apply {
             id = 1
-            title = "Avengers 01"
-        }, Movie().apply {
-            id = 2
-            title = "Avengers 02"
-        }, Movie().apply {
-            id = 3
-            title = "Avenge§rs 03"
-        })
-        val testSubscriber = TestObserver<MoviesResult>()
-        whenever(localRep.getMovies(searchFilter))
-                .thenReturn(Observable.just(latestMoviesResult))
-        whenever(remoteRep.getMovies(searchFilter))
-                .thenReturn(Observable.just(latestMoviesResult))
+            title = "Avengers"
+        }
+        val testSubscriber = TestObserver<Movie>()
+        whenever(localRep.getMovie(movie.id))
+            .thenReturn(Observable.just(movie))
+        whenever(remoteRep.getMovie(movie.id))
+            .thenReturn(Observable.just(movie))
 
-        movieRep.getMovies(searchFilter).subscribe(testSubscriber)
+        movieRep.getMovie(movie.id).subscribe(testSubscriber)
+
+        // Check if the db only deliver data
+        Assert.assertEquals(testSubscriber.valueCount(), 2)
+        Assert.assertNotNull(testSubscriber.values()[0])
+        Assert.assertNotNull(testSubscriber.values()[1])
+
+        // Check there are no errors
         testSubscriber.assertNoErrors()
-        testSubscriber.assertComplete()
-
-        assertEquals(testSubscriber.values()[0], latestMoviesResult)
-        assertEquals(testSubscriber.values()[1], latestMoviesResult)
+        Assert.assertEquals(testSubscriber.errorCount(), 0)
     }
 }

@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class MovieRepository @Inject constructor(
     private val local: MovieDataSource,
-    private var remote: RemoteMovieRepository
+    private var remote: MovieDataSource
 ) : MovieDataSource {
 
     override fun insertMovies(movies: List<Movie>) {

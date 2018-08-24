@@ -19,6 +19,7 @@ object MovieMapper {
             backdropPath?.let {
                 backdropPath = IMAGE_URL + it
             }
+            videosList = videoResult?.videos
         }
     }
 }

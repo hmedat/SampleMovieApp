@@ -112,6 +112,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         Timber.i("showFirstData size:%s", data.size)
         emptyView.showContent()
         adapter.setNewData(data)
+        rvMovies.smoothScrollToPosition(0)
         setLoadMore()
     }
 
