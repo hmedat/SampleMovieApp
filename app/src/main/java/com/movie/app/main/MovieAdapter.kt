@@ -17,12 +17,17 @@ class MovieAdapter : BaseQuickAdapter<Movie, BaseViewHolder>(R.layout.row_movie,
         helper.setText(R.id.tvReleaseYear, item.releaseDate)
         helper.setText(R.id.tvRate, item.voteAverage.toString())
         helper.setText(R.id.tvOverView, item.overview)
+        val resFav = if (item.isFav) R.drawable.ic_favorite else R.drawable.ic_unfavorite
+        helper.setImageResource(R.id.imgFav, resFav)
         val imageView = helper.getView<ImageView>(R.id.imgPoster)
         imageView.loadImage(item.posterPath, Color.BLACK)
+        helper.addOnClickListener(R.id.imgFav)
     }
 
     override fun setNewData(newData: List<Movie>?) {
         if (newData == null) {
+            this.data.clear()
+            notifyDataSetChanged()
             return
         }
         val diffCallback = MovieDiffCallback(mData, newData)

@@ -1,7 +1,9 @@
 package com.movie.app.main
 
 import com.movie.app.api.result.MoviesResult
+import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
+import com.movie.app.modules.MovieSortType
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
@@ -45,11 +47,19 @@ class MainPresenter @Inject constructor(
                 }
 
                 override fun onNext(result: MoviesResult) {
-                    if (!result.isLoadMore() && result.isEmptyResult()) {
-                        view.showNoData()
+                    if (result.isEmptyData()) {
+                        if (!result.isLoadMore()) {
+                            view.showNoData()
+                        }
+                        return
                     }
-                    view.showData(result)
-                    searchFilter.pageNumber = searchFilter.pageNumber + 1
+                    val results = result.results!!
+                    if (result.isLoadMore()) {
+                        view.showLoadMoreData(results)
+                    } else {
+                        view.showFirstData(results)
+                    }
+                    view.onDataCompleted(result.isFinished())
                 }
 
                 override fun onError(throwable: Throwable) {
@@ -58,9 +68,34 @@ class MainPresenter @Inject constructor(
                 }
 
                 override fun onComplete() {
+                    searchFilter.pageNumber = searchFilter.pageNumber + 1
                     view.hideProgressBar()
                 }
             })
+    }
+
+    override fun onSearchFilterChanged(movieSortType: MovieSortType) {
+        searchFilter.sortBy = movieSortType
+        searchFilter.pageNumber = MovieSearchFilter.First_PAGE
+        loadData()
+    }
+
+    override fun addRemoveFavMovie(movie: Movie) {
+        movieRepository.removeAddFavMovie(movie.id, movie.isFav)
+            .subscribeOn(schedulerProvider.io())
+            .observeOn(schedulerProvider.ui())
+            .ignoreElements()
+            .subscribe()
+    }
+
+    override fun syncFavouritesStatues() {
+        movieRepository.getFavMovieIds()
+            .subscribeOn(schedulerProvider.io())
+            .observeOn(schedulerProvider.ui())
+            .subscribe {
+                view.updateFavouritesStatues(it)
+                view.notifyVisibleItems()
+            }
     }
 
     override fun unSubscribe() {

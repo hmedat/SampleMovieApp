@@ -29,10 +29,10 @@ class MovieDataSourceTest {
     private lateinit var movies: List<Movie>
     @Before
     fun setUp() {
-        genresList = listOf(Genre().apply {
+        genresList = listOf(Genre(1).apply {
             id = 10
             name = "action"
-        }, Genre().apply {
+        }, Genre(1).apply {
             id = 11
             name = "drama"
         })

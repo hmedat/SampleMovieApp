@@ -20,12 +20,11 @@ class MovieRepository @Inject constructor(
         if (searchFilter.pageNumber > 1) {
             return getAndSaveRemoteMovies(searchFilter)
         }
-        return Observable.concatArray(
-            local.getMovies(searchFilter)
-                .onErrorReturn {
-                    val moviesResult = MoviesResult()
-                    moviesResult
-                },
+        return Observable.concatArray(local.getMovies(searchFilter)
+            .onErrorReturn {
+                val moviesResult = MoviesResult()
+                moviesResult
+            },
             getAndSaveRemoteMovies(searchFilter)
         )
     }
@@ -48,5 +47,17 @@ class MovieRepository @Inject constructor(
             }.filter { it.id != Movie.ID_NOT_SET },
             remote.getMovie(movieId)
         )
+    }
+
+    override fun getFavMovies(): Observable<MoviesResult> {
+        return local.getFavMovies()
+    }
+
+    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
+        return local.removeAddFavMovie(movieId, isFav)
+    }
+
+    override fun getFavMovieIds(): Observable<HashSet<Long>> {
+        return local.getFavMovieIds()
     }
 }

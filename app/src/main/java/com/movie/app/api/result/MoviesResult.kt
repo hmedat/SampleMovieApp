@@ -15,5 +15,5 @@ class MoviesResult {
 
     fun isFinished(): Boolean = page == totalPages
 
-    fun isEmptyResult(): Boolean = results == null || results!!.isEmpty()
+    fun isEmptyData(): Boolean = results == null || results!!.isEmpty()
 }

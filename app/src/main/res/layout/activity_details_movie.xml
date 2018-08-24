@@ -17,6 +17,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/detailsToolbar"
+                style="@style/ToolbarStyle" />
+
             <ImageView
                 android:id="@+id/imgPoster"
                 android:layout_width="120dp"
@@ -24,7 +28,7 @@
                 android:adjustViewBounds="true"
                 android:cropToPadding="false"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/detailsToolbar"
                 tools:srcCompat="@drawable/movie_template" />
 
             <TextView
@@ -39,7 +43,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imgPoster"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/detailsToolbar"
                 tools:text="The Maze Runner" />
 
             <TextView
