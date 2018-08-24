@@ -8,6 +8,7 @@ import com.movie.app.modules.Video
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.room.AppDatabase
 import com.movie.app.room.entities.MovieGenreJoin
+import com.movie.app.util.DateUtil
 import io.reactivex.Observable
 import timber.log.Timber
 import javax.inject.Inject
@@ -36,6 +37,9 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
             if (favMovieIds.contains(movie.id)) {
                 movie.isFav = true
             }
+            movie.releaseDate?.let {
+                movie.releaseDateLong = DateUtil.parseMovieReleaseDate(it)
+            }
         }
         database.movieDao().insert(movies)
         database.genreDao().insert(genreList)
@@ -46,7 +50,9 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
     override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
         return Observable.fromCallable {
             val latestMoviesResult = MoviesResult()
-            val movies = database.movieDao().getMovies()
+
+            val limitNumber = 20
+            val movies = database.movieDao().getMoviesOrderByPopularity(limitNumber)
             Timber.i("Movies ${movies.size} users from DB...")
             for (movie in movies) {
                 movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)

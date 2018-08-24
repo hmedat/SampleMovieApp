@@ -29,9 +29,15 @@ data class Movie(
     @ColumnInfo(name = "overview")
     var overview: String? = null,
 
+    @ColumnInfo(name = "popularity")
+    var popularity: Double? = null,
+
     @ColumnInfo(name = "release_date")
     @SerializedName("release_date")
     var releaseDate: String? = null,
+
+    @ColumnInfo(name = "release_date_long")
+    var releaseDateLong: Long? = null,
 
     @ColumnInfo(name = "home_page")
     var homepage: String? = null,

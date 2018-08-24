@@ -10,8 +10,8 @@ import com.movie.app.modules.Movie
 @Dao
 interface MovieDao {
 
-    @Query("SELECT * FROM movie limit 20")
-    fun getMovies(): List<Movie>
+    @Query("select * from movie ORDER BY popularity desc limit :limitNumber")
+    fun getMoviesOrderByPopularity(limitNumber: Int): List<Movie>
 
     @Query("SELECT * FROM movie WHERE is_Fav = 1")
     fun getFavMovies(): List<Movie>
