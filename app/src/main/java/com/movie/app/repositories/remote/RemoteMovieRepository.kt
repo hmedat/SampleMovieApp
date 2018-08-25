@@ -12,20 +12,18 @@ import javax.inject.Inject
 class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInterface) :
     MovieDataSource {
 
-    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
-        return apiInterface.getLatestMovies(
-            searchFilter.pageNumber, searchFilter.sortBy.apiSearchName
-        ).map {
-            MovieMapper.map(it.results!!)
-            it
-        }
+    override fun getMovies(filter: MovieSearchFilter): Observable<MoviesResult> {
+        return apiInterface.getLatestMovies(filter.pageNumber, filter.sortBy.apiSearchName)
+            .map {
+                MovieMapper.map(it)
+            }
     }
 
     override fun getMovie(movieId: Long): Observable<Movie> {
-        return apiInterface.findMovie(movieId).map {
-            MovieMapper.map(it)
-            it
-        }
+        return apiInterface.findMovie(movieId)
+            .map {
+                MovieMapper.map(it)
+            }
     }
 
     override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {

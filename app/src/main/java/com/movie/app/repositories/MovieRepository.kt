@@ -14,18 +14,11 @@ class MovieRepository @Inject constructor(
     private var remote: RemoteMovieRepository
 ) : MovieDataSource {
 
-    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
-        if (searchFilter.pageNumber > 1) {
-            return getAndSaveRemoteMovies(searchFilter)
+    override fun getMovies(filter: MovieSearchFilter): Observable<MoviesResult> {
+        if (filter.isLoadMore()) {
+            return getAndSaveRemoteMovies(filter)
         }
-        return Observable.concatArray(
-            local.getMovies(searchFilter)
-                .onErrorReturn {
-                    val moviesResult = MoviesResult()
-                    moviesResult
-                },
-            getAndSaveRemoteMovies(searchFilter)
-        )
+        return Observable.concatArray(local.getMovies(filter), getAndSaveRemoteMovies(filter))
     }
 
     private fun getAndSaveRemoteMovies(searchFilter: MovieSearchFilter):
@@ -41,10 +34,6 @@ class MovieRepository @Inject constructor(
 
     override fun getMovie(movieId: Long): Observable<Movie> {
         return Observable.concatArray(local.getMovie(movieId)
-            .onErrorReturn {
-                Movie(Movie.ID_NOT_SET)
-            }
-            .filter { it.id != Movie.ID_NOT_SET }
             , remote.getMovie(movieId)
                 .doOnNext {
                     local.updateMovieDetails(it)

@@ -3,8 +3,8 @@ package com.movie.app
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
-import com.movie.app.repositories.MovieDataSource
 import com.movie.app.repositories.MovieRepository
+import com.movie.app.repositories.local.LocalMovieRepository
 import com.movie.app.repositories.remote.RemoteMovieRepository
 import com.movie.app.rx.TestHelper
 import com.nhaarman.mockito_kotlin.whenever
@@ -21,7 +21,7 @@ import java.io.IOException
 class MovieRepositoryTest {
 
     @Mock
-    private lateinit var localRep: MovieDataSource
+    private lateinit var localRep: LocalMovieRepository
     @Mock
     private lateinit var remoteRep: RemoteMovieRepository
 

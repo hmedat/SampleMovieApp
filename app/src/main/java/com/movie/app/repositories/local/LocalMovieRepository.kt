@@ -4,7 +4,8 @@ import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Genre
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
-import com.movie.app.modules.MovieSortType
+import com.movie.app.modules.MovieSortType.POPULARITY
+import com.movie.app.modules.MovieSortType.RELEASE_DATE
 import com.movie.app.modules.Video
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.room.AppDatabase
@@ -16,12 +17,15 @@ import javax.inject.Inject
 
 class LocalMovieRepository @Inject constructor(private val database: AppDatabase) :
     MovieDataSource {
+    companion object {
+        private const val LIMIT_COUNT: Int = 20
+    }
 
     fun insertMovies(movies: List<Movie>) {
         val favMovieIds = database.movieDao().getFavMovieIds().toHashSet()
-        for (movie in movies) {
-            movie.isFav = favMovieIds.contains(movie.id)
-            movie.releaseDateLong = DateUtil.parseMovieReleaseDate(movie.releaseDate)
+        movies.forEach {
+            it.isFav = favMovieIds.contains(it.id)
+            it.releaseDateLong = DateUtil.parseMovieReleaseDate(it.releaseDate)
         }
         database.movieDao().insert(movies)
     }
@@ -43,21 +47,21 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
         database.movieGenreDao().insert(genreJoinList)
     }
 
-    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
+    override fun getMovies(filter: MovieSearchFilter): Observable<MoviesResult> {
         return Observable.fromCallable {
-            val result = MoviesResult()
-            val limit = 20
-            val movies = when (searchFilter.sortBy) {
-                MovieSortType.POPULARITY -> database.movieDao().getMoviesOrderByPopularity(limit)
-                MovieSortType.RELEASE_DATE -> database.movieDao().getMoviesOrderByReleaseDate(limit)
+            MoviesResult().apply {
+                results = when (filter.sortBy) {
+                    POPULARITY -> database.movieDao().getMoviesOrderByPopularity(LIMIT_COUNT)
+                    RELEASE_DATE -> database.movieDao().getMoviesOrderByReleaseDate(LIMIT_COUNT)
+                }
+                page = MovieSearchFilter.First_PAGE
+                totalPages = MovieSearchFilter.First_PAGE
             }
-            Timber.i("Movies ${movies.size} users from DB...")
-            result.results = movies
-            result.page = MovieSearchFilter.First_PAGE
-            result.totalPages = MovieSearchFilter.First_PAGE
-            result
+        }.onErrorReturn {
+            val moviesResult = MoviesResult()
+            moviesResult
         }.doOnNext {
-            Timber.i("Dispa tching ${it.results?.size} users from DB...")
+            Timber.i("Dispatching ${it.results?.size} users from DB...")
         }
     }
 
@@ -66,11 +70,16 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
             var movie = database.movieDao().getMovie(movieId)
             if (movie == null) {
                 movie = Movie(Movie.ID_NOT_SET)
-            } else {
-                movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
-                movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
             }
             movie
+        }.onErrorReturn {
+            Movie(Movie.ID_NOT_SET)
+        }.filter {
+            it.id != Movie.ID_NOT_SET
+        }.map {
+            it.genres = database.movieGenreDao().getGenresForMovie(it.id)
+            it.videosList = database.videoDao().getVideosForMovies(it.id)
+            it
         }
     }
 
@@ -83,14 +92,9 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
 
     override fun getFavMovies(): Observable<MoviesResult> {
         return Observable.fromCallable {
-            val latestMoviesResult = MoviesResult()
-            val movies = database.movieDao().getFavMovies()
-            for (movie in movies) {
-                movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
-                movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
+            MoviesResult().apply {
+                results = database.movieDao().getFavMovies()
             }
-            latestMoviesResult.results = movies
-            latestMoviesResult
         }.doOnNext {
             Timber.d("Dispatching ${it.results?.size} users from DB...")
         }

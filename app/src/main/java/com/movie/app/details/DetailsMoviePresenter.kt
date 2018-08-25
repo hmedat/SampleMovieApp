@@ -58,11 +58,10 @@ class DetailsMoviePresenter(
         apiInterface.getSimilarMovies(movieId)
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
-            .map { it.results }
             .map {
                 MovieMapper.map(it)
-                it
             }
+            .map { it.results }
             .filter { it.isNotEmpty() }
             .subscribe(object : Observer<List<Movie>?> {
                 override fun onSubscribe(d: Disposable) {

@@ -9,4 +9,6 @@ data class MovieSearchFilter(
     }
 
     fun isFirstPage(): Boolean = pageNumber == First_PAGE
+
+    fun isLoadMore(): Boolean = pageNumber > First_PAGE
 }
