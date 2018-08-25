@@ -6,9 +6,6 @@ import com.movie.app.modules.MovieSearchFilter
 import io.reactivex.Observable
 
 interface MovieDataSource {
-
-    fun insertMovies(movies: List<Movie>)
-
     fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult>
 
     fun getMovie(movieId: Long): Observable<Movie>

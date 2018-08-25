@@ -17,58 +17,48 @@ import javax.inject.Inject
 class LocalMovieRepository @Inject constructor(private val database: AppDatabase) :
     MovieDataSource {
 
-    override fun insertMovies(movies: List<Movie>) {
-        val movieGenreJoinList = ArrayList<MovieGenreJoin>()
+    fun insertMovies(movies: List<Movie>) {
         val favMovieIds = database.movieDao().getFavMovieIds().toHashSet()
-        val genreList = ArrayList<Genre>()
-        val videoList = ArrayList<Video>()
         for (movie in movies) {
-            movie.genres?.let {
-                genreList.addAll(it)
-                for (genre in it) {
-                    movieGenreJoinList.add(MovieGenreJoin(movie.id, genre.id))
-                }
-            }
-            movie.videoResult?.videos?.let {
-                for (video in it) {
-                    video.movieId = movie.id
-                    videoList.add(video)
-                }
-            }
-            if (favMovieIds.contains(movie.id)) {
-                movie.isFav = true
-            }
-            movie.releaseDate?.let {
-                movie.releaseDateLong = DateUtil.parseMovieReleaseDate(it)
-            }
+            movie.isFav = favMovieIds.contains(movie.id)
+            movie.releaseDateLong = DateUtil.parseMovieReleaseDate(movie.releaseDate)
         }
         database.movieDao().insert(movies)
+    }
+
+    fun updateMovieDetails(movie: Movie) {
+        val genreJoinList = ArrayList<MovieGenreJoin>()
+        val genreList = ArrayList<Genre>()
+        val videoList = ArrayList<Video>()
+        movie.genres?.forEach {
+            genreList.add(it)
+            genreJoinList.add(MovieGenreJoin(movie.id, it.id))
+        }
+        movie.videoResult?.videos?.forEach {
+            it.movieId = movie.id
+            videoList.add(it)
+        }
         database.genreDao().insert(genreList)
         database.videoDao().insert(videoList)
-        database.movieGenreDao().insert(movieGenreJoinList)
+        database.movieGenreDao().insert(genreJoinList)
     }
 
     override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
         return Observable.fromCallable {
-            val latestMoviesResult = MoviesResult()
+            val result = MoviesResult()
             val limit = 20
             val movies = when (searchFilter.sortBy) {
                 MovieSortType.POPULARITY -> database.movieDao().getMoviesOrderByPopularity(limit)
                 MovieSortType.RELEASE_DATE -> database.movieDao().getMoviesOrderByReleaseDate(limit)
             }
             Timber.i("Movies ${movies.size} users from DB...")
-            for (movie in movies) {
-                movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
-                movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
-            }
-            latestMoviesResult.results = movies
-            latestMoviesResult.page = MovieSearchFilter.First_PAGE
-            latestMoviesResult.totalPages = MovieSearchFilter.First_PAGE
-            latestMoviesResult
-        }.filter { it.results?.isNotEmpty()!! }
-            .doOnNext {
-                Timber.i("Dispa tching ${it.results?.size} users from DB...")
-            }
+            result.results = movies
+            result.page = MovieSearchFilter.First_PAGE
+            result.totalPages = MovieSearchFilter.First_PAGE
+            result
+        }.doOnNext {
+            Timber.i("Dispa tching ${it.results?.size} users from DB...")
+        }
     }
 
     override fun getMovie(movieId: Long): Observable<Movie> {

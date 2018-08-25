@@ -12,9 +12,6 @@ import javax.inject.Inject
 class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInterface) :
     MovieDataSource {
 
-    override fun insertMovies(movies: List<Movie>) {
-    }
-
     override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
         return apiInterface.getLatestMovies(
             searchFilter.pageNumber, searchFilter.sortBy.apiSearchName

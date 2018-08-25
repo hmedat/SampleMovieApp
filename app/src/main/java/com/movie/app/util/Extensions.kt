@@ -2,6 +2,7 @@ package com.movie.app.util
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.support.v4.util.LongSparseArray
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -45,6 +46,14 @@ fun AppCompatActivity.enableToolbarBack() {
 
 fun SwipeRefreshLayout.setDefaultColor() {
     setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
+}
+
+fun <E> LongSparseArray<E>.getAllValues(): ArrayList<E> {
+    val values = ArrayList<E>()
+    for (i: Int in 0..size()) {
+        values.add(get(keyAt(i)))
+    }
+    return values
 }
 
 fun RecyclerView.notifyVisibleItems() {

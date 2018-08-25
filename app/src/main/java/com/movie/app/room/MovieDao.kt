@@ -22,6 +22,7 @@ interface MovieDao {
     @Query("SELECT id FROM movie WHERE is_Fav = 1")
     fun getFavMovieIds(): List<Long>
 
+
     @Query("SELECT * FROM movie WHERE id = :id")
     fun getMovie(id: Long): Movie?
 

@@ -61,7 +61,6 @@ class DetailsMoviePresenter(
             .map { it.results }
             .map {
                 MovieMapper.map(it)
-                movieDataSource.insertMovies(it)
                 it
             }
             .filter { it.isNotEmpty() }
