@@ -1,8 +1,8 @@
 package com.movie.app.api.result
 
-class Review(
-    private val author: String? = null,
-    private val content: String? = null,
-    private val id: String? = null,
-    private val url: String? = null
+data class Review(
+    val author: String? = null,
+    val content: String? = null,
+    val id: String? = null,
+    val url: String? = null
 )
