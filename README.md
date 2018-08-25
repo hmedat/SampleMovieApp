@@ -1,4 +1,4 @@
-# Sample Movie App [![Build Status](https://travis-ci.org/hmedat2008/SampleMovieApp.svg?branch=master)](https://travis-ci.org/hmedat2008/SampleMovieApp.svg?branch=master)
+# Sample Movie App [![Build Status](https://travis-ci.org/hmedat/SampleMovieApp.svg?branch=master)](https://travis-ci.org/hmedat2008/SampleMovieApp.svg?branch=master)
 This app shows Latest Movies and their details  
 Detail page is displayed with poster, title, trailer
 
