@@ -26,7 +26,7 @@ class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInt
             }
     }
 
-    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
+    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Int> {
         TODO("not implemented")
     }
 

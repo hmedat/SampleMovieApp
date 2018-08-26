@@ -88,6 +88,8 @@ dependencies {
 
     implementation "android.arch.persistence.room:runtime:$archRoomVersion"
     kapt "android.arch.persistence.room:compiler:$archRoomVersion"
+    implementation "android.arch.lifecycle:extensions:$archRoomVersion"
+    implementation "android.arch.persistence.room:rxjava2:$archRoomVersion"
     androidTestImplementation "android.arch.core:core-testing:1.1.1"
     implementation 'com.jakewharton.timber:timber:4.7.0'
 

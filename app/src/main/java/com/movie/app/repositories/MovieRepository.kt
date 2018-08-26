@@ -18,7 +18,13 @@ class MovieRepository @Inject constructor(
         if (filter.isLoadMore()) {
             return getAndSaveRemoteMovies(filter)
         }
-        return Observable.concatArray(local.getMovies(filter), getAndSaveRemoteMovies(filter))
+        return Observable.concatArray(
+            local.getMovies(filter)
+                .onErrorReturn {
+                    val moviesResult = MoviesResult()
+                    moviesResult
+                }, getAndSaveRemoteMovies(filter)
+        )
     }
 
     private fun getAndSaveRemoteMovies(searchFilter: MovieSearchFilter):
@@ -45,7 +51,7 @@ class MovieRepository @Inject constructor(
         return local.getFavMovies()
     }
 
-    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
+    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Int> {
         return local.removeAddFavMovie(movieId, isFav)
     }
 

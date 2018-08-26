@@ -6,8 +6,8 @@ import com.movie.app.details.DetailsActivityContractor
 import com.movie.app.details.DetailsMoviePresenter
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
-import com.movie.app.repositories.MovieDataSource
 import com.movie.app.repositories.MovieRepository
+import com.movie.app.repositories.local.LocalMovieRepository
 import com.movie.app.repositories.remote.RemoteMovieRepository
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import com.movie.app.util.schedulers.ImmediateSchedulerProvider
@@ -32,7 +32,7 @@ class DetailsMoviePresenterTest {
     private lateinit var apiInterface: ApiInterface
     private lateinit var movie: Movie
     @Mock
-    private lateinit var localRep: MovieDataSource
+    private lateinit var localRep: LocalMovieRepository
     @Mock
     private lateinit var remoteRep: RemoteMovieRepository
 
