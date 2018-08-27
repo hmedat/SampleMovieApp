@@ -1,13 +1,11 @@
 package com.movie.app.repositories.local
 
 import com.movie.app.api.result.MoviesResult
-import com.movie.app.modules.Genre
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.modules.MovieSearchFilter.Companion.First_PAGE
 import com.movie.app.modules.MovieSortType.POPULARITY
 import com.movie.app.modules.MovieSortType.RELEASE_DATE
-import com.movie.app.modules.Video
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.room.AppDatabase
 import com.movie.app.room.entities.MovieGenreJoin
@@ -24,7 +22,7 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
 
     fun insertMovies(movies: List<Movie>): List<Long> {
         val favMovieIds = database.movieDao().getFavMovieIds().toHashSet()
-        movies.forEach {
+        movies.map {
             it.isFav = favMovieIds.contains(it.id)
             it.releaseDateLong = DateUtil.parseMovieReleaseDate(it.releaseDate)
         }
@@ -32,32 +30,28 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
     }
 
     fun updateMovieDetails(movie: Movie) {
-        val genreJoinList = ArrayList<MovieGenreJoin>()
-        val genreList = ArrayList<Genre>()
-        val videoList = ArrayList<Video>()
-        movie.genres?.forEach {
-            genreList.add(it)
-            genreJoinList.add(MovieGenreJoin(movie.id, it.id))
+        val genres = movie.genres ?: ArrayList()
+        val genresJoin = genres.map {
+            MovieGenreJoin(movie.id, it.id)
         }
-        movie.videoResult?.videos?.forEach {
+        val videos = movie.videoResult?.videos ?: ArrayList()
+        videos.map {
             it.movieId = movie.id
-            videoList.add(it)
         }
-        database.genreDao().insert(genreList)
-        database.videoDao().insert(videoList)
-        database.movieGenreDao().insert(genreJoinList)
+        database.genreDao().insert(genres)
+        database.videoDao().insert(videos)
+        database.movieGenreDao().insert(genresJoin)
     }
 
     override fun getMovies(filter: MovieSearchFilter): Observable<MoviesResult> {
         return when (filter.sortBy) {
             POPULARITY -> database.movieDao().getMoviesOrderByPopularity(LIMIT_COUNT)
             RELEASE_DATE -> database.movieDao().getMoviesOrderByReleaseDate(LIMIT_COUNT)
-        }
-            .map {
-                MoviesResult(results = it, page = First_PAGE, totalPages = First_PAGE)
-            }.doOnNext {
-                Timber.i("Dispatching ${it.results?.size} users from DB...")
-            }.toObservable()
+        }.map {
+            MoviesResult(results = it, page = First_PAGE, totalPages = First_PAGE)
+        }.doOnNext {
+            Timber.i("Dispatching ${it.results?.size} users from DB...")
+        }.toObservable()
     }
 
     override fun getMovie(movieId: Long): Observable<Movie> {
@@ -86,8 +80,6 @@ class LocalMovieRepository @Inject constructor(private val database: AppDatabase
     }
 
     override fun getFavMovieIds(): Observable<HashSet<Long>> {
-        return Observable.fromCallable {
-            database.movieDao().getFavMovieIds().toHashSet()
-        }
+        return Observable.fromCallable { database.movieDao().getFavMovieIds().toHashSet() }
     }
 }
