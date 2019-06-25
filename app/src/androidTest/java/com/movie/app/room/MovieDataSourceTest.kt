@@ -1,8 +1,8 @@
 package com.movie.app.room
 
-import android.arch.persistence.room.Room
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
+import androidx.room.Room
+import androidx.test.InstrumentationRegistry
+import androidx.test.runner.AndroidJUnit4
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.api.result.VideoResult
 import com.movie.app.modules.Genre

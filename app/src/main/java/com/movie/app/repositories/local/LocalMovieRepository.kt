@@ -12,7 +12,6 @@ import com.movie.app.room.entities.MovieGenreJoin
 import com.movie.app.util.DateUtil
 import io.reactivex.Observable
 import timber.log.Timber
-import javax.inject.Inject
 
 class LocalMovieRepository(private val database: AppDatabase) : MovieDataSource {
 

@@ -5,7 +5,6 @@ import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import io.reactivex.Observable
 import timber.log.Timber
-import javax.inject.Inject
 
 class MovieRepository (
     private val local: MovieDataSource,

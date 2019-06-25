@@ -2,12 +2,11 @@ package com.movie.app.util
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.widget.ImageView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Observable
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -43,7 +42,7 @@ fun AppCompatActivity.enableToolbarBack() {
     supportActionBar?.setHomeButtonEnabled(true)
 }
 
-fun SwipeRefreshLayout.setDefaultColor() {
+fun androidx.swiperefreshlayout.widget.SwipeRefreshLayout.setDefaultColor() {
     setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
 }
 
@@ -55,7 +54,7 @@ fun RecyclerView.notifyVisibleItems() {
     val firstPos = layoutManager.findFirstVisibleItemPosition()
     val lastPos = layoutManager.findLastVisibleItemPosition()
     for (i in firstPos..lastPos) {
-        adapter.notifyItemChanged(i)
+        adapter?.notifyItemChanged(i)
     }
 }
 

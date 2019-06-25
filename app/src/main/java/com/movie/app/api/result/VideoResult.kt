@@ -1,6 +1,6 @@
 package com.movie.app.api.result
 
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import com.google.gson.annotations.SerializedName
 import com.movie.app.modules.Video
 

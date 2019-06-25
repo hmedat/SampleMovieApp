@@ -5,7 +5,6 @@ import android.os.Bundle
 import com.movie.app.BaseActivity
 import com.movie.app.main.MainActivity
 import org.koin.android.ext.android.inject
-import javax.inject.Inject
 
 class SplashActivity : BaseActivity(), SplashActivityContractor.View {
 

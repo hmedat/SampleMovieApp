@@ -1,7 +1,5 @@
 package com.movie.app
 
-import com.movie.app.splash.SplashActivityContractor
-
 /**
  * Created by mohammedhmedat on 12/16/17.
  */
@@ -13,5 +11,4 @@ class BaseContractor {
         fun unSubscribe()
     }
 
-    interface BaseView<T>
 }

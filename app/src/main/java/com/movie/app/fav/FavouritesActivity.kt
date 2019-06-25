@@ -3,8 +3,8 @@ package com.movie.app.fav
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
@@ -16,7 +16,6 @@ import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_favourites.*
 import org.koin.android.ext.android.inject
-import javax.inject.Inject
 
 class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
 

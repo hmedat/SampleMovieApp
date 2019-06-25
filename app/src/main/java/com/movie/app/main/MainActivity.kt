@@ -1,11 +1,11 @@
 package com.movie.app.main
 
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar_main_activity.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
-import javax.inject.Inject
 
 class MainActivity : BaseActivity(), MainActivityContractor.View {
 

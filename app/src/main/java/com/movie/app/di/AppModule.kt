@@ -1,9 +1,9 @@
 package com.movie.app.di
 
+import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import com.movie.app.MyApp
 import com.movie.app.api.ApiInterface
 import com.movie.app.api.RequestInterceptor
 import com.movie.app.util.schedulers.BaseSchedulerProvider
@@ -11,6 +11,7 @@ import com.movie.app.util.schedulers.SchedulerProvider
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit
 val appModule = module {
     single { provideApiService(get(), get()) }
     single { provideGson() }
-    single { provideOkHttpClient(get()) }
+    single { provideOkHttpClient(androidContext()) }
     single { provideRxSchedulers() }
 }
 
@@ -42,10 +43,10 @@ const val CACHE_SIZE: Long = 10 * 1024 * 1024
 const val CONNECT_TIMEOUT: Long = 30
 const val READ_TIMEOUT: Long = 60
 
-fun provideOkHttpClient(application: MyApp): OkHttpClient {
+fun provideOkHttpClient(context: Context): OkHttpClient {
     val interceptor = HttpLoggingInterceptor()
     interceptor.level = HttpLoggingInterceptor.Level.BODY
-    val cacheDir = File(application.cacheDir, UUID.randomUUID().toString())
+    val cacheDir = File(context.cacheDir, UUID.randomUUID().toString())
     val cache = Cache(cacheDir, CACHE_SIZE)
 
     return OkHttpClient.Builder()

@@ -7,7 +7,6 @@ import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.MovieDataSource
 import io.reactivex.Observable
-import javax.inject.Inject
 
 class RemoteMovieRepository(private val apiInterface: ApiInterface) : MovieDataSource {
 

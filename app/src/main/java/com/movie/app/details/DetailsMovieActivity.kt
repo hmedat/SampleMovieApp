@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.modules.Movie
@@ -17,7 +17,6 @@ import com.movie.app.util.setToolbarTitle
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener
 import kotlinx.android.synthetic.main.activity_details_movie.*
 import org.koin.android.ext.android.inject
-import javax.inject.Inject
 
 class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
 
@@ -35,7 +34,7 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details_movie)
-        val movieId: Long = intent.extras.getLong(EXTRA_MOVIE_ID)
+        val movieId: Long = intent?.extras?.getLong(EXTRA_MOVIE_ID) ?: 0
         presenter.setMovieId(movieId)
         setToolbar(detailsToolbar)
         enableToolbarBack()

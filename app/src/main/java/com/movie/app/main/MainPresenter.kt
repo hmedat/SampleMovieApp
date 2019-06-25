@@ -9,9 +9,8 @@ import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import javax.inject.Inject
 
-class MainPresenter @Inject constructor(
+class MainPresenter(
     private val schedulerProvider: BaseSchedulerProvider,
     private val movieRepository: MovieDataSource,
     private val searchFilter: MovieSearchFilter

@@ -25,8 +25,8 @@ class MyApp : Application() {
         instance = this
         TimberUtil.init()
         startKoin {
+            androidContext((this@MyApp))
             androidLogger()
-            androidContext(instance)
             modules(listOf(appModule, roomModule, activityModule))
         }
     }
