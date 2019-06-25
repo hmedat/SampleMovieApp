@@ -12,16 +12,20 @@ import io.reactivex.disposables.Disposable
 class DetailsMoviePresenter(
     private val schedulerProvider: BaseSchedulerProvider,
     private var movieDataSource: MovieDataSource,
-    private var apiInterface: ApiInterface,
-    private val view: DetailsActivityContractor.View
-) : DetailsActivityContractor.Presenter {
+    private var apiInterface: ApiInterface
+    ) : DetailsActivityContractor.Presenter {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private var movieId: Long = 0
     private var movie: Movie? = null
+    private lateinit var view: DetailsActivityContractor.View
 
     override fun setMovieId(movieId: Long) {
         this.movieId = movieId
+    }
+
+    override fun bindView(view: DetailsActivityContractor.View) {
+        this.view = view
     }
 
     override fun subscribe() {

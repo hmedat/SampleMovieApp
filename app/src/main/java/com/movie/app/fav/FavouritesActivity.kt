@@ -15,12 +15,12 @@ import com.movie.app.util.enableToolbarBack
 import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_favourites.*
+import org.koin.android.ext.android.inject
 import javax.inject.Inject
 
 class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
 
-    @Inject
-    lateinit var presenter: FavouritesActivityContractor.Presenter
+    val presenter: FavouritesActivityContractor.Presenter  by inject()
     private lateinit var adapter: MovieAdapter
 
     companion object {
@@ -38,6 +38,7 @@ class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
         initRecyclerView()
         initRefreshLayout()
         emptyView.error().setOnClickListener { presenter.subscribe() }
+        presenter.bindView(this)
         presenter.subscribe()
     }
 

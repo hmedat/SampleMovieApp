@@ -14,8 +14,7 @@ import io.reactivex.Observable
 import timber.log.Timber
 import javax.inject.Inject
 
-class LocalMovieRepository @Inject constructor(private val database: AppDatabase) :
-    MovieDataSource {
+class LocalMovieRepository(private val database: AppDatabase) : MovieDataSource {
 
     override fun insertMovies(movies: List<Movie>) {
         val movieGenreJoinList = ArrayList<MovieGenreJoin>()

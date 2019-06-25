@@ -14,11 +14,15 @@ import javax.inject.Inject
 class MainPresenter @Inject constructor(
     private val schedulerProvider: BaseSchedulerProvider,
     private val movieRepository: MovieDataSource,
-    private val view: MainActivityContractor.View,
     private val searchFilter: MovieSearchFilter
 ) : MainActivityContractor.Presenter {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private lateinit var view: MainActivityContractor.View
+
+    override fun bindView(view: MainActivityContractor.View) {
+        this.view = view
+    }
 
     override fun subscribe() {
         loadFirstPage()

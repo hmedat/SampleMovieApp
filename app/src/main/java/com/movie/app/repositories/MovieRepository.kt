@@ -7,7 +7,7 @@ import io.reactivex.Observable
 import timber.log.Timber
 import javax.inject.Inject
 
-class MovieRepository @Inject constructor(
+class MovieRepository (
     private val local: MovieDataSource,
     private var remote: MovieDataSource
 ) : MovieDataSource {

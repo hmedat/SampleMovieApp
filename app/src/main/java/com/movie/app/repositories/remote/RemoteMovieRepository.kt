@@ -9,8 +9,7 @@ import com.movie.app.repositories.MovieDataSource
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class RemoteMovieRepository @Inject constructor(private val apiInterface: ApiInterface) :
-    MovieDataSource {
+class RemoteMovieRepository(private val apiInterface: ApiInterface) : MovieDataSource {
 
     override fun insertMovies(movies: List<Movie>) {
     }

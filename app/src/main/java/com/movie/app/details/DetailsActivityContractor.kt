@@ -1,6 +1,7 @@
 package com.movie.app.details
 
 import com.movie.app.BaseContractor
+import com.movie.app.main.MainActivityContractor
 import com.movie.app.modules.Movie
 
 class DetailsActivityContractor {
@@ -18,6 +19,9 @@ class DetailsActivityContractor {
     }
 
     interface Presenter : BaseContractor.BasePresenter<View> {
+
+        fun bindView(view: View)
+
         fun setMovieId(movieId: Long)
 
         fun getSimilarMovies()

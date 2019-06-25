@@ -16,12 +16,12 @@ import com.movie.app.util.setToolbar
 import com.movie.app.util.setToolbarTitle
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener
 import kotlinx.android.synthetic.main.activity_details_movie.*
+import org.koin.android.ext.android.inject
 import javax.inject.Inject
 
 class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
 
-    @Inject
-    lateinit var presenter: DetailsActivityContractor.Presenter
+    val presenter: DetailsActivityContractor.Presenter  by inject()
 
     companion object {
         const val EXTRA_MOVIE_ID: String = "Extra.Movie.Id"
@@ -40,6 +40,7 @@ class DetailsMovieActivity : BaseActivity(), DetailsActivityContractor.View {
         setToolbar(detailsToolbar)
         enableToolbarBack()
         emptyViewDetails.error().setOnClickListener { presenter.subscribe() }
+        presenter.bindView(this)
         presenter.subscribe()
     }
 

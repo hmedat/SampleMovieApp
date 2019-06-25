@@ -3,10 +3,12 @@ package com.movie.app.main
 import com.movie.app.BaseContractor
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSortType
+import com.movie.app.splash.SplashActivityContractor
 
 class MainActivityContractor {
 
     interface View {
+
         fun showProgressBar()
 
         fun hideProgressBar()
@@ -27,6 +29,8 @@ class MainActivityContractor {
     }
 
     interface Presenter : BaseContractor.BasePresenter<View> {
+        fun bindView(view: View)
+
         fun loadFirstPage()
 
         fun loadNextPage()

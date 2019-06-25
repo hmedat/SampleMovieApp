@@ -2,6 +2,7 @@ package com.movie.app.fav
 
 import com.movie.app.BaseContractor
 import com.movie.app.modules.Movie
+import com.movie.app.splash.SplashActivityContractor
 
 class FavouritesActivityContractor {
 
@@ -18,6 +19,8 @@ class FavouritesActivityContractor {
     }
 
     interface Presenter : BaseContractor.BasePresenter<View> {
+        fun bindView(view: View)
+
         fun removeFromList(movieId: Long)
     }
 }

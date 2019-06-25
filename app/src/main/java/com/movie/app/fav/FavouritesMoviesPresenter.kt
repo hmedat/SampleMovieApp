@@ -9,11 +9,15 @@ import io.reactivex.disposables.Disposable
 
 class FavouritesMoviesPresenter(
     private val schedulerProvider: BaseSchedulerProvider,
-    private var movieDataSource: MovieDataSource,
-    private val view: FavouritesActivityContractor.View
+    private var movieDataSource: MovieDataSource
 ) : FavouritesActivityContractor.Presenter {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private lateinit var view: FavouritesActivityContractor.View
+
+    override fun bindView(view: FavouritesActivityContractor.View) {
+        this.view = view
+    }
 
     override fun subscribe() {
         loadData()

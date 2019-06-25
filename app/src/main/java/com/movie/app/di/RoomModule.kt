@@ -10,37 +10,34 @@ import com.movie.app.repositories.remote.RemoteMovieRepository
 import com.movie.app.room.AppDatabase
 import dagger.Module
 import dagger.Provides
+import org.koin.dsl.module
 import javax.inject.Singleton
 
-@Module
-class RoomModule {
 
-    @Provides
-    @Singleton
-    fun provideDatabase(application: MyApp): AppDatabase {
-        return Room.databaseBuilder(application, AppDatabase::class.java, "movie-database")
-                // allow queries on the main thread.
-                // Don't do this on a real app! See PersistenceBasicSample for an example.
-                .allowMainThreadQueries()
-                .build()
-    }
+val roomModule = module {
+    single { provideDatabase(get()) }
+    single { provideLocalMovieRepository(get()) }
+    single { provideRemoteMovieRepository(get()) }
+    single { provideMovieRepository(get(), get()) }
+}
 
-    @Provides
-    @Singleton
-    fun provideLocalMovieRepository(database: AppDatabase): LocalMovieRepository {
-        return LocalMovieRepository(database)
-    }
+fun provideDatabase(application: MyApp): AppDatabase {
+    return Room.databaseBuilder(application, AppDatabase::class.java, "movie-database")
+        // allow queries on the main thread.
+        // Don't do this on a real app! See PersistenceBasicSample for an example.
+        .allowMainThreadQueries()
+        .build()
+}
 
-    @Provides
-    @Singleton
-    fun provideRemoteMovieRepository(apiInterface: ApiInterface): RemoteMovieRepository {
-        return RemoteMovieRepository(apiInterface)
-    }
+fun provideLocalMovieRepository(database: AppDatabase): LocalMovieRepository {
+    return LocalMovieRepository(database)
+}
 
-    @Provides
-    @Singleton
-    fun provideMovieRepository(local: LocalMovieRepository, remote: RemoteMovieRepository):
-            MovieDataSource {
-        return MovieRepository(local, remote)
-    }
+fun provideRemoteMovieRepository(apiInterface: ApiInterface): RemoteMovieRepository {
+    return RemoteMovieRepository(apiInterface)
+}
+
+fun provideMovieRepository(local: LocalMovieRepository, remote: RemoteMovieRepository):
+    MovieDataSource {
+    return MovieRepository(local, remote)
 }

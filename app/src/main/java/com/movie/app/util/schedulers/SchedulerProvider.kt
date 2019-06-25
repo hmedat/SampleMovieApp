@@ -8,7 +8,7 @@ import javax.inject.Inject
 /**
  * Provides various threading schedulers.
  */
-class SchedulerProvider @Inject constructor() : BaseSchedulerProvider {
+class SchedulerProvider : BaseSchedulerProvider {
     /**
      * IO thread pool scheduler
      */

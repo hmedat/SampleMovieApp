@@ -17,13 +17,13 @@ import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar_main_activity.*
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 import javax.inject.Inject
 
 class MainActivity : BaseActivity(), MainActivityContractor.View {
 
-    @Inject
-    lateinit var presenter: MainActivityContractor.Presenter
+    val presenter: MainActivityContractor.Presenter  by inject()
     private lateinit var adapter: MovieAdapter
     private lateinit var homeDrawer: HomeDrawer
 
@@ -36,6 +36,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         setToolbar(mainToolbar, R.string.app_name)
         homeDrawer = HomeDrawer(this, mainToolbar)
         emptyView.error().setOnClickListener { presenter.subscribe() }
+        presenter.bindView(this)
         presenter.subscribe()
     }
 
