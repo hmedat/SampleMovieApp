@@ -3,7 +3,7 @@ package com.movie.app
 import com.movie.app.api.ApiInterface
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.details.DetailsActivityContractor
-import com.movie.app.details.DetailsMoviePresenter
+import com.movie.app.details.DetailsMovieViewModel
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.MovieDataSource
@@ -48,7 +48,7 @@ class DetailsMoviePresenterTest {
         MockitoAnnotations.initMocks(this)
         schedulerProvider = ImmediateSchedulerProvider()
         movieRep = MovieRepository(localRep, remoteRep)
-        presenter = DetailsMoviePresenter(schedulerProvider, movieRep, apiInterface, view)
+        presenter = DetailsMovieViewModel(schedulerProvider, movieRep, apiInterface, view)
         movie = Movie().apply {
             id = 10
             title = "Avengers 01"

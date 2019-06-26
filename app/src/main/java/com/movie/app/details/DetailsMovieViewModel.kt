@@ -1,39 +1,44 @@
 package com.movie.app.details
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.movie.app.api.ApiInterface
 import com.movie.app.mapper.MovieMapper
 import com.movie.app.modules.Movie
 import com.movie.app.repositories.MovieDataSource
+import com.movie.app.util.LiveDataResult
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-class DetailsMoviePresenter(
+class DetailsMovieViewModel(
     private val schedulerProvider: BaseSchedulerProvider,
     private var movieDataSource: MovieDataSource,
     private var apiInterface: ApiInterface
-    ) : DetailsActivityContractor.Presenter {
+) : ViewModel() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private var movieId: Long = 0
     private var movie: Movie? = null
-    private lateinit var view: DetailsActivityContractor.View
 
-    override fun setMovieId(movieId: Long) {
+    private var movieDetailsLiveData: MutableLiveData<LiveDataResult<Movie>> = MutableLiveData()
+    fun getMovieDetailsLiveData(): LiveData<LiveDataResult<Movie>> = movieDetailsLiveData
+
+    private var similarMoviesLiveData: MutableLiveData<List<Movie>> = MutableLiveData()
+    fun getSimilarMoviesLiveData(): LiveData<List<Movie>> = similarMoviesLiveData
+
+    fun setMovieId(movieId: Long) {
         this.movieId = movieId
     }
 
-    override fun bindView(view: DetailsActivityContractor.View) {
-        this.view = view
-    }
-
-    override fun subscribe() {
+    fun subscribe() {
         loadData()
     }
 
     private fun loadData() {
-        view.showProgressBar()
+        movieDetailsLiveData.postValue(LiveDataResult.loading())
         movieDataSource.getMovie(movieId)
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui(), true)
@@ -44,21 +49,20 @@ class DetailsMoviePresenter(
 
                 override fun onNext(item: Movie) {
                     movie = item
-                    view.showData(movie!!)
+                    movieDetailsLiveData.postValue(LiveDataResult.success(movie))
                 }
 
                 override fun onError(throwable: Throwable) {
-                    view.hideProgressBar()
+                    movieDetailsLiveData.postValue(LiveDataResult.error(throwable))
                 }
 
                 override fun onComplete() {
-                    view.hideProgressBar()
                     getSimilarMovies()
                 }
             })
     }
 
-    override fun getSimilarMovies() {
+    fun getSimilarMovies() {
         apiInterface.getSimilarMovies(movieId)
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
@@ -75,7 +79,7 @@ class DetailsMoviePresenter(
                 }
 
                 override fun onNext(list: List<Movie>) {
-                    view.showSimilarMovies(list)
+                    similarMoviesLiveData.postValue(list)
                 }
 
                 override fun onError(throwable: Throwable) {
@@ -86,7 +90,8 @@ class DetailsMoviePresenter(
             })
     }
 
-    override fun unSubscribe() {
+    override fun onCleared() {
+        super.onCleared()
         compositeDisposable.clear()
     }
 }
