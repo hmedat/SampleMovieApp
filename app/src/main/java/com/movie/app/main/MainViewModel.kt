@@ -1,45 +1,50 @@
 package com.movie.app.main
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.modules.MovieSortType
 import com.movie.app.repositories.MovieDataSource
+import com.movie.app.util.LiveDataResult
+import com.movie.app.util.PaginationLiveDataResult
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-class MainPresenter(
+class MainViewModel(
     private val schedulerProvider: BaseSchedulerProvider,
     private val movieRepository: MovieDataSource,
     private val searchFilter: MovieSearchFilter
-) : MainActivityContractor.Presenter {
+) : ViewModel() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private lateinit var view: MainActivityContractor.View
+    private var favStatusLiveData: MutableLiveData<HashSet<Long>> = MutableLiveData()
+    private var searchResultLiveData: MutableLiveData<PaginationLiveDataResult<MoviesResult>> = MutableLiveData()
 
-    override fun bindView(view: MainActivityContractor.View) {
-        this.view = view
-    }
+    fun getSearchResultLiveData(): LiveData<PaginationLiveDataResult<MoviesResult>> = searchResultLiveData
+    fun getFavStatusLiveData(): LiveData<HashSet<Long>> = favStatusLiveData
 
-    override fun subscribe() {
+    fun subscribe() {
         loadFirstPage()
     }
 
-    override fun loadFirstPage() {
+    fun loadFirstPage() {
         searchFilter.pageNumber = MovieSearchFilter.First_PAGE
         loadData()
     }
 
-    override fun loadNextPage() {
+    fun loadNextPage() {
         loadData()
     }
 
     private fun loadData() {
         val isFirstPage = searchFilter.isFirstPage()
         if (isFirstPage) {
-            view.showProgressBar()
+            searchResultLiveData.postValue(PaginationLiveDataResult.loading())
         }
         movieRepository.getMovies(searchFilter)
             .subscribeOn(schedulerProvider.io())
@@ -52,38 +57,34 @@ class MainPresenter(
                 override fun onNext(result: MoviesResult) {
                     if (result.isEmptyData()) {
                         if (!result.isLoadMore()) {
-                            view.showNoData()
+                            searchResultLiveData.postValue(PaginationLiveDataResult.noData())
                         }
                         return
                     }
-                    val results = result.results!!
                     if (result.isLoadMore()) {
-                        view.showLoadMoreData(results)
+                        searchResultLiveData.postValue(PaginationLiveDataResult.moreData(result))
                     } else {
-                        view.showFirstData(results)
+                        searchResultLiveData.postValue(PaginationLiveDataResult.firstData(result))
                     }
-                    view.onDataCompleted(result.isFinished())
                 }
 
                 override fun onError(throwable: Throwable) {
-                    view.hideProgressBar()
-                    view.showError(isFirstPage, throwable)
+                    searchResultLiveData.postValue(PaginationLiveDataResult.error(throwable))
                 }
 
                 override fun onComplete() {
                     searchFilter.pageNumber = searchFilter.pageNumber + 1
-                    view.hideProgressBar()
                 }
             })
     }
 
-    override fun onSearchFilterChanged(movieSortType: MovieSortType) {
+    fun onSearchFilterChanged(movieSortType: MovieSortType) {
         searchFilter.sortBy = movieSortType
         searchFilter.pageNumber = MovieSearchFilter.First_PAGE
         loadData()
     }
 
-    override fun addRemoveFavMovie(movie: Movie) {
+    fun addRemoveFavMovie(movie: Movie) {
         movieRepository.removeAddFavMovie(movie.id, movie.isFav)
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
@@ -91,17 +92,18 @@ class MainPresenter(
             .subscribe()
     }
 
-    override fun syncFavouritesStatues() {
-        movieRepository.getFavMovieIds()
+    fun syncFavouritesStatues() {
+        compositeDisposable.add(movieRepository.getFavMovieIds()
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
             .subscribe {
-                view.updateFavouritesStatues(it)
-                view.notifyVisibleItems()
-            }
+                favStatusLiveData.postValue(it)
+            })
     }
 
-    override fun unSubscribe() {
+    override fun onCleared() {
+        super.onCleared()
         compositeDisposable.clear()
     }
+
 }

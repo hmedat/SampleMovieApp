@@ -2,22 +2,22 @@ package com.movie.app.splash
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import com.movie.app.BaseActivity
 import com.movie.app.main.MainActivity
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SplashActivity : BaseActivity(), SplashActivityContractor.View {
+class SplashActivity : BaseActivity() {
 
-    val presenter: SplashActivityContractor.Presenter by inject()
+    private val viewModel: SplashViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.bindView(this)
-        presenter.subscribe()
+        viewModel.getSubscribeLiveData().observe(this, Observer {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        })
+        viewModel.subscribe()
     }
 
-    override fun startNextActivity(bundle: Bundle?) {
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
-    }
 }
