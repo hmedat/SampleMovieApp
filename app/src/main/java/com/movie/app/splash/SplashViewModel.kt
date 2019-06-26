@@ -3,26 +3,21 @@ package com.movie.app.splash
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.Completable
-import io.reactivex.disposables.CompositeDisposable
-import java.util.concurrent.TimeUnit
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SplashViewModel : ViewModel() {
 
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private var subscribeLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private var subscribeLiveData: MutableLiveData<Any> = MutableLiveData()
 
-    fun getSubscribeLiveData(): LiveData<Boolean> = subscribeLiveData
+    fun getSubscribeLiveData(): LiveData<Any> = subscribeLiveData
 
     fun subscribe() {
-        Completable.complete()
-            .delay(1, TimeUnit.SECONDS)
-            .doOnComplete { subscribeLiveData.postValue(true) }
-            .subscribe()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.clear()
+        viewModelScope.launch(Dispatchers.Main) {
+            delay(1000)
+            subscribeLiveData.postValue(true)
+        }
     }
 }

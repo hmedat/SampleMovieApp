@@ -82,26 +82,20 @@ class LocalMovieRepository(private val database: AppDatabase) : MovieDataSource 
         }
     }
 
-    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
-        return Observable.fromCallable {
-            database.movieDao().updateFavMovie(movieId, isFav)
-            true
-        }
+    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean {
+        database.movieDao().updateFavMovie(movieId, isFav)
+        return true
     }
 
-    override fun getFavMovies(): Observable<MoviesResult> {
-        return Observable.fromCallable {
-            val latestMoviesResult = MoviesResult()
-            val movies = database.movieDao().getFavMovies()
-            for (movie in movies) {
-                movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
-                movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
-            }
-            latestMoviesResult.results = movies
-            latestMoviesResult
-        }.doOnNext {
-            Timber.d("Dispatching ${it.results?.size} users from DB...")
+    override suspend fun getFavMovies(): MoviesResult {
+        val result = MoviesResult()
+        val movies = database.movieDao().getFavMovies()
+        for (movie in movies) {
+            movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
+            movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
         }
+        result.results = movies
+        return result
     }
 
     override fun getFavMovieIds(): Observable<HashSet<Long>> {

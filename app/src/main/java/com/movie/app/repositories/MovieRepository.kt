@@ -48,11 +48,11 @@ class MovieRepository (
         )
     }
 
-    override fun getFavMovies(): Observable<MoviesResult> {
+    override suspend fun getFavMovies(): MoviesResult {
         return local.getFavMovies()
     }
 
-    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
+    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean {
         return local.removeAddFavMovie(movieId, isFav)
     }
 

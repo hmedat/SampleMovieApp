@@ -29,11 +29,11 @@ class RemoteMovieRepository(private val apiInterface: ApiInterface) : MovieDataS
         }
     }
 
-    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
+    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean {
         TODO("not implemented")
     }
 
-    override fun getFavMovies(): Observable<MoviesResult> {
+    override suspend fun getFavMovies(): MoviesResult {
         TODO("not implemented")
     }
 

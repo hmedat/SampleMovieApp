@@ -13,9 +13,9 @@ interface MovieDataSource {
 
     fun getMovie(movieId: Long): Observable<Movie>
 
-    fun getFavMovies(): Observable<MoviesResult>
+    suspend fun getFavMovies(): MoviesResult
 
-    fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean>
+    fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean
 
     fun getFavMovieIds(): Observable<HashSet<Long>>
 }

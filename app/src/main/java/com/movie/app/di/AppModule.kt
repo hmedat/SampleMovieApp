@@ -3,6 +3,7 @@ package com.movie.app.di
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.movie.app.api.ApiInterface
 import com.movie.app.api.RequestInterceptor
@@ -30,6 +31,7 @@ fun provideApiService(gson: Gson, okHttpClient: OkHttpClient): ApiInterface {
     return Retrofit.Builder()
         .baseUrl("https://api.themoviedb.org/3/")
         .addConverterFactory(GsonConverterFactory.create(gson))
+        .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .client(okHttpClient)
         .build().create(ApiInterface::class.java)

@@ -3,20 +3,19 @@ package com.movie.app.fav
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.repositories.MovieDataSource
 import com.movie.app.util.LiveDataResult
 import com.movie.app.util.schedulers.BaseSchedulerProvider
-import io.reactivex.Observer
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FavouritesMoviesViewModel(
     private val schedulerProvider: BaseSchedulerProvider,
     private var movieDataSource: MovieDataSource
 ) : ViewModel() {
 
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private var resultLiveData: MutableLiveData<LiveDataResult<MoviesResult>> = MutableLiveData()
 
     fun getResultLiveData(): LiveData<LiveDataResult<MoviesResult>> = resultLiveData
@@ -27,37 +26,19 @@ class FavouritesMoviesViewModel(
 
     private fun loadData() {
         resultLiveData.postValue(LiveDataResult.loading())
-        movieDataSource.getFavMovies()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
-            .subscribe(object : Observer<MoviesResult> {
-                override fun onSubscribe(d: Disposable) {
-                    compositeDisposable.add(d)
-                }
-
-                override fun onNext(result: MoviesResult) {
-                    resultLiveData.postValue(LiveDataResult.success(result))
-                }
-
-                override fun onError(throwable: Throwable) {
-                    resultLiveData.postValue(LiveDataResult.error(throwable))
-                }
-
-                override fun onComplete() {
-                }
-            })
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val movies = movieDataSource.getFavMovies()
+                resultLiveData.postValue(LiveDataResult.success(movies))
+            } catch (e: Exception) {
+                resultLiveData.postValue(LiveDataResult.error(e))
+            }
+        }
     }
 
     fun removeFromList(movieId: Long) {
-        movieDataSource.removeAddFavMovie(movieId, false)
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
-            .ignoreElements()
-            .subscribe()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.clear()
+        viewModelScope.launch(Dispatchers.IO) {
+            movieDataSource.removeAddFavMovie(movieId, false)
+        }
     }
 }

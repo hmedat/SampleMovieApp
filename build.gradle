@@ -6,6 +6,8 @@ buildscript {
         android_support_version = '28.0.0'
         daggerVersion = '2.13'
         archRoomVersion = '1.1.1'
+        lifecycleVersion = '2.2.0-alpha01'
+        coroutineVersion = '1.1.1'
         setup = [
                 compileSdk: 28,
                 buildTools: "28.0.0",

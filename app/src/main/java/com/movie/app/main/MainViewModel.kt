@@ -8,9 +8,9 @@ import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.modules.MovieSortType
 import com.movie.app.repositories.MovieDataSource
-import com.movie.app.util.LiveDataResult
 import com.movie.app.util.PaginationLiveDataResult
 import com.movie.app.util.schedulers.BaseSchedulerProvider
+import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -85,7 +85,9 @@ class MainViewModel(
     }
 
     fun addRemoveFavMovie(movie: Movie) {
-        movieRepository.removeAddFavMovie(movie.id, movie.isFav)
+        Observable.fromCallable {
+            movieRepository.removeAddFavMovie(movie.id, movie.isFav)
+        }
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
             .ignoreElements()
