@@ -1,30 +1,32 @@
 package com.movie.app.fav
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.repositories.MovieDataSource
+import com.movie.app.util.LiveDataResult
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
-class FavouritesMoviesPresenter(
+class FavouritesMoviesViewModel(
     private val schedulerProvider: BaseSchedulerProvider,
     private var movieDataSource: MovieDataSource
-) : FavouritesActivityContractor.Presenter {
+) : ViewModel() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private lateinit var view: FavouritesActivityContractor.View
+    private var resultLiveData: MutableLiveData<LiveDataResult<MoviesResult>> = MutableLiveData()
 
-    override fun bindView(view: FavouritesActivityContractor.View) {
-        this.view = view
-    }
+    fun getResultLiveData(): LiveData<LiveDataResult<MoviesResult>> = resultLiveData
 
-    override fun subscribe() {
+    fun subscribe() {
         loadData()
     }
 
     private fun loadData() {
-        view.showProgressBar()
+        resultLiveData.postValue(LiveDataResult.loading())
         movieDataSource.getFavMovies()
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
@@ -34,25 +36,19 @@ class FavouritesMoviesPresenter(
                 }
 
                 override fun onNext(result: MoviesResult) {
-                    if (result.isEmptyData()) {
-                        view.showNoData()
-                    } else {
-                        view.showData(result.results!!)
-                    }
+                    resultLiveData.postValue(LiveDataResult.success(result))
                 }
 
                 override fun onError(throwable: Throwable) {
-                    view.hideProgressBar()
-                    view.showError(throwable)
+                    resultLiveData.postValue(LiveDataResult.error(throwable))
                 }
 
                 override fun onComplete() {
-                    view.hideProgressBar()
                 }
             })
     }
 
-    override fun removeFromList(movieId: Long) {
+    fun removeFromList(movieId: Long) {
         movieDataSource.removeAddFavMovie(movieId, false)
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
@@ -60,7 +56,8 @@ class FavouritesMoviesPresenter(
             .subscribe()
     }
 
-    override fun unSubscribe() {
+    override fun onCleared() {
+        super.onCleared()
         compositeDisposable.clear()
     }
 }

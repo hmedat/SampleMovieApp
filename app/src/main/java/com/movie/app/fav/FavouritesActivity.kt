@@ -3,6 +3,7 @@ package com.movie.app.fav
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -10,16 +11,16 @@ import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.details.DetailsMovieActivity
 import com.movie.app.main.MovieAdapter
-import com.movie.app.modules.Movie
+import com.movie.app.util.ResultState
 import com.movie.app.util.enableToolbarBack
 import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_favourites.*
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
+class FavouritesActivity : BaseActivity() {
 
-    val presenter: FavouritesActivityContractor.Presenter  by inject()
+    private val viewModel: FavouritesMoviesViewModel  by viewModel()
     private lateinit var adapter: MovieAdapter
 
     companion object {
@@ -36,15 +37,35 @@ class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
         enableToolbarBack()
         initRecyclerView()
         initRefreshLayout()
-        emptyView.error().setOnClickListener { presenter.subscribe() }
-        presenter.bindView(this)
-        presenter.subscribe()
+        emptyView.error().setOnClickListener { viewModel.subscribe() }
+        viewModel.getResultLiveData().observe(this, Observer {
+            when (it.status) {
+                ResultState.LOADING -> {
+                    emptyView.showLoading()
+                }
+                ResultState.SUCCESS -> {
+                    val list = it.data?.results ?: listOf()
+                    swipeLayoutMovies.isRefreshing = false
+                    if (list.isEmpty()) {
+                        emptyView.showEmpty()
+                    } else {
+                        emptyView.showContent()
+                        adapter.setNewData(list)
+                    }
+                }
+                ResultState.ERROR -> {
+                    emptyView.showError()
+                    swipeLayoutMovies.isRefreshing = false
+                }
+            }
+        })
+        viewModel.subscribe()
     }
 
     private fun initRefreshLayout() {
         swipeLayoutMovies.setDefaultColor()
         swipeLayoutMovies.setOnRefreshListener {
-            presenter.subscribe()
+            viewModel.subscribe()
         }
     }
 
@@ -55,10 +76,10 @@ class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
                 DetailsMovieActivity.startActivity(context, adapter.data[position].id)
             }
             setOnItemChildClickListener { _, _, position ->
-                presenter.removeFromList(adapter.data[position].id)
+                viewModel.removeFromList(adapter.data[position].id)
                 adapter.remove(position)
                 if (adapter.itemCount == 0) {
-                    showNoData()
+                    this@FavouritesActivity.emptyView.showEmpty()
                 }
             }
         }
@@ -69,24 +90,4 @@ class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
         rvMovies.adapter = adapter
     }
 
-    override fun showProgressBar() {
-        emptyView.showLoading()
-    }
-
-    override fun hideProgressBar() {
-        swipeLayoutMovies.isRefreshing = false
-    }
-
-    override fun showNoData() {
-        emptyView.showEmpty()
-    }
-
-    override fun showData(movies: List<Movie>) {
-        emptyView.showContent()
-        adapter.setNewData(movies)
-    }
-
-    override fun showError(throwable: Throwable) {
-        emptyView.showError()
-    }
 }
