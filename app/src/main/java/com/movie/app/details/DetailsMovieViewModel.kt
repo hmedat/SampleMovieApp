@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.movie.app.modules.Movie
 import com.movie.app.repositories.MovieRepository
-import com.movie.app.util.LiveDataResult
+import com.movie.app.util.Result
 import com.movie.app.util.schedulers.BaseExecutor
 import kotlinx.coroutines.launch
 
@@ -16,10 +16,9 @@ class DetailsMovieViewModel(
 ) : ViewModel() {
 
     private var movieId: Long = 0
-    private var movie: Movie? = null
 
-    private var _movieDetails: MutableLiveData<LiveDataResult<Movie>> = MutableLiveData()
-    val movieDetails: LiveData<LiveDataResult<Movie>> = _movieDetails
+    private var _movieDetails: MutableLiveData<Result<Movie>> = MutableLiveData()
+    val movieDetails: LiveData<Result<Movie>> = _movieDetails
 
     private var _similarMovies: MutableLiveData<List<Movie>> = MutableLiveData()
     val similarMovies: LiveData<List<Movie>> = _similarMovies
@@ -33,20 +32,18 @@ class DetailsMovieViewModel(
     }
 
     private fun loadData() {
-        _movieDetails.postValue(LiveDataResult.loading())
+        _movieDetails.postValue(Result.loading())
         viewModelScope.launch(executor.io()) {
             try {
                 movieRepo.getLocalMovie(movieId)?.let {
-                    movie = it
-                    _movieDetails.postValue(LiveDataResult.success(movie))
+                    _movieDetails.postValue(Result.success(it))
                 }
                 movieRepo.getRemoteMovie(movieId)?.let {
-                    movie = it
-                    _movieDetails.postValue(LiveDataResult.success(movie))
+                    _movieDetails.postValue(Result.success(it))
                 }
                 getSimilarMovies()
             } catch (e: Exception) {
-                _movieDetails.postValue(LiveDataResult.error(e))
+                _movieDetails.postValue(Result.failure(e))
             }
         }
     }

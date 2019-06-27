@@ -11,7 +11,7 @@ import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.details.DetailsMovieActivity
 import com.movie.app.main.MovieAdapter
-import com.movie.app.util.ResultState
+import com.movie.app.util.Result
 import com.movie.app.util.enableToolbarBack
 import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
@@ -37,14 +37,14 @@ class FavouritesActivity : BaseActivity() {
         enableToolbarBack()
         initRecyclerView()
         initRefreshLayout()
-        emptyView.error().setOnClickListener { viewModel.subscribe() }
-        viewModel.getResultLiveData().observe(this, Observer {
-            when (it.status) {
-                ResultState.LOADING -> {
-                    emptyView.showLoading()
-                }
-                ResultState.SUCCESS -> {
-                    val list = it.data?.results ?: listOf()
+        emptyView.error().setOnClickListener {
+            viewModel.loadData()
+        }
+        viewModel.result.observe(this, Observer {
+            when (it) {
+                is Result.Loading -> emptyView.showLoading()
+                is Result.Success -> {
+                    val list = it.data.results ?: listOf()
                     swipeLayoutMovies.isRefreshing = false
                     if (list.isEmpty()) {
                         emptyView.showEmpty()
@@ -53,19 +53,18 @@ class FavouritesActivity : BaseActivity() {
                         adapter.setNewData(list)
                     }
                 }
-                ResultState.ERROR -> {
+                is Result.Failure -> {
                     emptyView.showError()
                     swipeLayoutMovies.isRefreshing = false
                 }
             }
         })
-        viewModel.subscribe()
     }
 
     private fun initRefreshLayout() {
         swipeLayoutMovies.setDefaultColor()
         swipeLayoutMovies.setOnRefreshListener {
-            viewModel.subscribe()
+            viewModel.loadData()
         }
     }
 
@@ -77,10 +76,10 @@ class FavouritesActivity : BaseActivity() {
             DetailsMovieActivity.startActivity(context, adapter.data[position].id)
         }
         adapter.setOnItemChildClickListener { _, _, position ->
-            viewModel.removeFromList(adapter.data[position].id)
+            viewModel.removeMovie(adapter.data[position].id)
             adapter.remove(position)
             if (adapter.itemCount == 0) {
-                this@FavouritesActivity.emptyView.showEmpty()
+                emptyView.showEmpty()
             }
         }
         rvMovies.apply {

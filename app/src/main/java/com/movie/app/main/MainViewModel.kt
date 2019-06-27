@@ -9,7 +9,7 @@ import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.modules.MovieSortType
 import com.movie.app.repositories.MovieRepository
-import com.movie.app.util.PaginationLiveDataResult
+import com.movie.app.util.Result
 import com.movie.app.util.schedulers.BaseExecutor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,12 +21,12 @@ class MainViewModel(
 ) : ViewModel() {
 
     private var _favStatus: MutableLiveData<HashSet<Long>> = MutableLiveData()
-    private var _result: MutableLiveData<PaginationLiveDataResult<MoviesResult>> = MutableLiveData()
+    private var _result: MutableLiveData<Result<MoviesResult>> = MutableLiveData()
 
-    fun getResultLiveData(): LiveData<PaginationLiveDataResult<MoviesResult>> = _result
+    val result: LiveData<Result<MoviesResult>> = _result
     fun getFavStatusLiveData(): LiveData<HashSet<Long>> = _favStatus
 
-    fun subscribe() {
+    init {
         loadFirstPage()
     }
 
@@ -42,26 +42,36 @@ class MainViewModel(
     private fun loadData() {
         val isFirstPage = searchFilter.isFirstPage()
         if (isFirstPage) {
-            _result.postValue(PaginationLiveDataResult.loading())
+            _result.postValue(Result.loading())
         }
         viewModelScope.launch(executor.io()) {
             try {
                 if (searchFilter.isFirstPage()) {
-                    val localMovies = movieRepo.getLocalMovies(searchFilter)
-                    _result.postValue(PaginationLiveDataResult.firstData(localMovies))
+                    movieRepo.getLocalMovies(searchFilter)?.let {
+                        _result.postValue(Result.success(it))
+                    }
                 }
-                val result = movieRepo.getRemoteMovies(searchFilter)
-                if (result?.isLoadMore() == true) {
-                    _result.postValue(PaginationLiveDataResult.moreData(result))
-                } else {
-                    _result.postValue(PaginationLiveDataResult.firstData(result))
-                }
-                if (result?.isEmptyData() == true && !result.isLoadMore()) {
-                    _result.postValue(PaginationLiveDataResult.noData())
+                movieRepo.getRemoteMovies(searchFilter)?.let {
+                    _result.postValue(Result.success(it))
                 }
                 searchFilter.incrementPage()
+
+                /*   if (searchFilter.isFirstPage()) {
+                       val localMovies = movieRepo.getLocalMovies(searchFilter)
+                       _result.postValue(Result.success(localMovies))
+                   }
+                   val result = movieRepo.getRemoteMovies(searchFilter)
+                   if (result?.isLoadMore() == true) {
+                       _result.postValue(Result.success(result))
+                   } else {
+                       _result.postValue(Result.success(result))
+                   }
+                   if (result?.isEmptyData() == true && !result.isLoadMore()) {
+                       _result.postValue(PaginationLiveDataResult.noData())
+                   }
+                   searchFilter.incrementPage()*/
             } catch (e: Exception) {
-                _result.postValue(PaginationLiveDataResult.error(e))
+                _result.postValue(Result.failure(e))
             }
         }
     }

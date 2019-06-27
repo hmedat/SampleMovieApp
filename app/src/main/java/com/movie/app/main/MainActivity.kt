@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
+import com.movie.app.api.result.MoviesResult
 import com.movie.app.details.DetailsMovieActivity
 import com.movie.app.modules.MovieSortType
-import com.movie.app.util.PaginationResultState
+import com.movie.app.util.Result
 import com.movie.app.util.notifyVisibleItems
 import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
@@ -35,47 +36,31 @@ class MainActivity : BaseActivity() {
         initToolbarSpinner()
         setToolbar(mainToolbar, R.string.app_name)
         homeDrawer = HomeDrawer(this, mainToolbar)
-        emptyView.error().setOnClickListener { viewModel.subscribe() }
-        viewModel.subscribe()
-
+        emptyView.error().setOnClickListener {
+            viewModel.loadFirstPage()
+        }
         viewModel.getFavStatusLiveData().observe(this, Observer {
             for (movie in adapter.data) {
                 movie.isFav = it.contains(movie.id)
             }
             rvMovies.notifyVisibleItems()
         })
-        viewModel.getResultLiveData().observe(this, Observer {
-            val result = it?.data
-            when (it.status) {
-                PaginationResultState.LOADING -> {
-                    emptyView.showLoading()
-                }
-                PaginationResultState.FIRST_DATA -> {
-                    val list = result?.results ?: return@Observer
-                    Timber.i("showFirstData size:%s", list.size)
-                    emptyView.showContent()
-                    adapter.setNewData(list)
-                    rvMovies.smoothScrollToPosition(0)
-                    setLoadMore()
-                    swipeLayoutMovies.isRefreshing = false
+
+        viewModel.result.observe(this, Observer {
+            when (it) {
+                is Result.Loading -> emptyView.showLoading()
+                is Result.Success -> {
+                    val result = it.data
+                    if (result.isFirstPage()) {
+                        initData(result)
+                    } else {
+                        updateData(result)
+                    }
                     onDataCompleted(result.isFinished())
                 }
-                PaginationResultState.MORE_DATA -> {
-                    val list = result?.results ?: return@Observer
-                    Timber.i("showLoadMoreData size:%s", list.size)
-                    adapter.addData(list)
-                    swipeLayoutMovies.isRefreshing = false
-                    onDataCompleted(result.isFinished())
-                }
-                PaginationResultState.NO_DATA -> {
-                    emptyView.showEmpty()
-                    swipeLayoutMovies.isRefreshing = false
-                }
-                PaginationResultState.ERROR -> {
-                    if (result?.isLoadMore() == false) {
-                        if (adapter.itemCount == 0) {
-                            emptyView.showError()
-                        }
+                is Result.Failure -> {
+                    if (adapter.itemCount == 0) {
+                        emptyView.showError()
                     } else {
                         adapter.loadMoreFail()
                     }
@@ -94,7 +79,7 @@ class MainActivity : BaseActivity() {
 
     private fun initRecyclerView() {
         adapter = MovieAdapter().apply {
-            openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
+            openLoadAnimation(BaseQuickAdapter.ALPHAIN)
             setOnItemClickListener { _, _, position ->
                 DetailsMovieActivity.startActivity(context, adapter.data[position].id)
             }
@@ -129,7 +114,7 @@ class MainActivity : BaseActivity() {
         val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, MovieSortType.values())
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         toolbarSpinner.adapter = adapter
-        toolbarSpinner.setSelection(0,false)
+        toolbarSpinner.setSelection(0, false)
         toolbarSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
                 viewModel.onSearchFilterChanged(MovieSortType.values()[i])
@@ -148,6 +133,25 @@ class MainActivity : BaseActivity() {
             adapter.loadMoreComplete()
             adapter.setEnableLoadMore(true)
         }
+        swipeLayoutMovies.isRefreshing = false
+    }
+
+    private fun initData(result: MoviesResult) {
+        if (result.isEmptyData()) {
+            emptyView.showEmpty()
+            return
+        }
+        emptyView.showContent()
+        adapter.setNewData(result.results)
+        rvMovies.smoothScrollToPosition(0)
+        setLoadMore()
+        onDataCompleted(result.isFinished())
+    }
+
+    private fun updateData(result: MoviesResult) {
+        adapter.addData(result.results ?: listOf())
+        swipeLayoutMovies.isRefreshing = false
+        onDataCompleted(result.isFinished())
     }
 
     override fun onBackPressed() {

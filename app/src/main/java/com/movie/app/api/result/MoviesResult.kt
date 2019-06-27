@@ -11,6 +11,8 @@ class MoviesResult {
     var totalPages: Int = 0
     var results: List<Movie>? = null
 
+    fun isFirstPage(): Boolean = page == MovieSearchFilter.First_PAGE
+
     fun isLoadMore(): Boolean = page > MovieSearchFilter.First_PAGE
 
     fun isFinished(): Boolean = page == totalPages

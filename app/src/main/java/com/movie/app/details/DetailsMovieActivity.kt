@@ -11,7 +11,7 @@ import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.modules.Movie
 import com.movie.app.util.GenreUtil
-import com.movie.app.util.ResultState
+import com.movie.app.util.Result
 import com.movie.app.util.enableToolbarBack
 import com.movie.app.util.loadImage
 import com.movie.app.util.setToolbar
@@ -42,16 +42,15 @@ class DetailsMovieActivity : BaseActivity() {
             viewModel.subscribe()
         }
         viewModel.movieDetails.observe(this, Observer {
-            when (it.status) {
-                ResultState.LOADING -> {
+            when (it) {
+                is Result.Loading -> {
                     emptyViewDetails.showLoading()
                 }
-                ResultState.SUCCESS -> {
-                    val data = it.data ?: return@Observer
-                    showData(data)
+                is Result.Success -> {
+                    showData(it.data)
                     emptyViewDetails.showContent()
                 }
-                ResultState.ERROR -> {
+                is Result.Failure -> {
                     emptyViewDetails.showError()
                 }
             }

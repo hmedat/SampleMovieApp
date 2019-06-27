@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.repositories.MovieRepository
-import com.movie.app.util.LiveDataResult
+import com.movie.app.util.Result
 import com.movie.app.util.schedulers.BaseExecutor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,27 +16,25 @@ class FavouritesMoviesViewModel(
     private var repo: MovieRepository
 ) : ViewModel() {
 
-    private var _result: MutableLiveData<LiveDataResult<MoviesResult>> = MutableLiveData()
+    private var _result: MutableLiveData<Result<MoviesResult>> = MutableLiveData()
+    val result: LiveData<Result<MoviesResult>> = _result
 
-    fun getResultLiveData(): LiveData<LiveDataResult<MoviesResult>> = _result
-
-    fun subscribe() {
+    init {
         loadData()
     }
 
-    private fun loadData() {
-        _result.postValue(LiveDataResult.loading())
+    fun loadData() {
+        _result.postValue(Result.loading())
         viewModelScope.launch(executor.io()) {
             try {
-                val movies = repo.getFavMovies()
-                _result.postValue(LiveDataResult.success(movies))
+                _result.postValue(Result.success(repo.getFavMovies()))
             } catch (e: Exception) {
-                _result.postValue(LiveDataResult.error(e))
+                _result.postValue(Result.failure(e))
             }
         }
     }
 
-    fun removeFromList(movieId: Long) {
+    fun removeMovie(movieId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             repo.removeAddFavMovie(movieId, false)
         }
