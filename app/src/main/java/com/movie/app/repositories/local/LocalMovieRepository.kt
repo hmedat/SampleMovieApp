@@ -93,9 +93,7 @@ class LocalMovieRepository(private val database: AppDatabase) : MovieDataSource 
         return result
     }
 
-    override fun getFavMovieIds(): Observable<HashSet<Long>> {
-        return Observable.fromCallable {
-            database.movieDao().getFavMovieIds().toHashSet()
-        }
+    override fun getFavMovieIds(): HashSet<Long> {
+        return database.movieDao().getFavMovieIds().toHashSet()
     }
 }

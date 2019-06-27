@@ -38,7 +38,7 @@ class MovieRepository(private val local: MovieDataSource, private var remote: Mo
         return local.removeAddFavMovie(movieId, isFav)
     }
 
-    fun getFavMovieIds(): Observable<HashSet<Long>> {
+    fun getFavMovieIds(): HashSet<Long> {
         return local.getFavMovieIds()
     }
 }

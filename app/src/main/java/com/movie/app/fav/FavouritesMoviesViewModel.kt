@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.movie.app.api.result.MoviesResult
-import com.movie.app.repositories.MovieDataSource
+import com.movie.app.repositories.MovieRepository
 import com.movie.app.util.LiveDataResult
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class FavouritesMoviesViewModel(
     private val schedulerProvider: BaseSchedulerProvider,
-    private var movieDataSource: MovieDataSource
+    private var repo: MovieRepository
 ) : ViewModel() {
 
     private var resultLiveData: MutableLiveData<LiveDataResult<MoviesResult>> = MutableLiveData()
@@ -28,7 +28,7 @@ class FavouritesMoviesViewModel(
         resultLiveData.postValue(LiveDataResult.loading())
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val movies = movieDataSource.getFavMovies()
+                val movies = repo.getFavMovies()
                 resultLiveData.postValue(LiveDataResult.success(movies))
             } catch (e: Exception) {
                 resultLiveData.postValue(LiveDataResult.error(e))
@@ -38,7 +38,7 @@ class FavouritesMoviesViewModel(
 
     fun removeFromList(movieId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            movieDataSource.removeAddFavMovie(movieId, false)
+            repo.removeAddFavMovie(movieId, false)
         }
     }
 }

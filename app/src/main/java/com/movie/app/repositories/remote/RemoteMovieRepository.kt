@@ -35,7 +35,7 @@ class RemoteMovieRepository(private val apiInterface: ApiInterface) : MovieDataS
         TODO("not implemented")
     }
 
-    override fun getFavMovieIds(): Observable<HashSet<Long>> {
+    override fun getFavMovieIds(): HashSet<Long> {
         TODO("not implemented")
     }
 }

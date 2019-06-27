@@ -11,8 +11,6 @@ import com.movie.app.modules.MovieSortType
 import com.movie.app.repositories.MovieRepository
 import com.movie.app.util.PaginationLiveDataResult
 import com.movie.app.util.schedulers.BaseSchedulerProvider
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -22,12 +20,11 @@ class MainViewModel(
     private val searchFilter: MovieSearchFilter
 ) : ViewModel() {
 
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private var favStatusLiveData: MutableLiveData<HashSet<Long>> = MutableLiveData()
+    private var _favStatus: MutableLiveData<HashSet<Long>> = MutableLiveData()
     private var _result: MutableLiveData<PaginationLiveDataResult<MoviesResult>> = MutableLiveData()
 
     fun getResultLiveData(): LiveData<PaginationLiveDataResult<MoviesResult>> = _result
-    fun getFavStatusLiveData(): LiveData<HashSet<Long>> = favStatusLiveData
+    fun getFavStatusLiveData(): LiveData<HashSet<Long>> = _favStatus
 
     fun subscribe() {
         loadFirstPage()
@@ -76,27 +73,15 @@ class MainViewModel(
     }
 
     fun addRemoveFavMovie(movie: Movie) {
-        Observable.fromCallable {
+        viewModelScope.launch(Dispatchers.IO) {
             movieRepo.removeAddFavMovie(movie.id, movie.isFav)
         }
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
-            .ignoreElements()
-            .subscribe()
     }
 
     fun syncFavouritesStatues() {
-        compositeDisposable.add(movieRepo.getFavMovieIds()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
-            .subscribe {
-                favStatusLiveData.postValue(it)
-            })
+        viewModelScope.launch(Dispatchers.IO) {
+            val ids = movieRepo.getFavMovieIds()
+            _favStatus.postValue(ids)
+        }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.clear()
-    }
-
 }
