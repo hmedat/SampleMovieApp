@@ -2,14 +2,11 @@ package com.movie.app.util
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Observable
-import java.io.IOException
-import java.util.concurrent.TimeUnit
 
 fun ImageView.loadImage(url: String?, colorPlaceholder: Int) {
     GlideApp.with(context)
@@ -58,18 +55,3 @@ fun RecyclerView.notifyVisibleItems() {
     }
 }
 
-fun <T> Observable<T>.retryWhenBackoff(
-    initialDelay: Long,
-    numRetries: Int,
-    unit: TimeUnit
-): Observable<T> {
-    return retryWhen(
-        RXJavaUtil.exponentialBackoffForExceptions(
-            initialDelay, numRetries, unit, IOException::class.java
-        )
-    )
-}
-
-fun <T> Observable<T>.retryWhenBackoffDefault(): Observable<T> {
-    return retryWhenBackoff(200, 5, TimeUnit.MILLISECONDS)
-}

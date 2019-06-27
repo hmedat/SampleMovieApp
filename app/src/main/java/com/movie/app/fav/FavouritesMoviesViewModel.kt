@@ -7,12 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.repositories.MovieRepository
 import com.movie.app.util.LiveDataResult
-import com.movie.app.util.schedulers.BaseSchedulerProvider
+import com.movie.app.util.schedulers.BaseDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FavouritesMoviesViewModel(
-    private val schedulerProvider: BaseSchedulerProvider,
+    private val dispatcher: BaseDispatcher,
     private var repo: MovieRepository
 ) : ViewModel() {
 
@@ -26,7 +26,7 @@ class FavouritesMoviesViewModel(
 
     private fun loadData() {
         resultLiveData.postValue(LiveDataResult.loading())
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher.io()) {
             try {
                 val movies = repo.getFavMovies()
                 resultLiveData.postValue(LiveDataResult.success(movies))

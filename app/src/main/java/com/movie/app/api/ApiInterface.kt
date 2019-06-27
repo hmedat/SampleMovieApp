@@ -2,7 +2,6 @@ package com.movie.app.api
 
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
-import io.reactivex.Observable
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET
@@ -17,8 +16,8 @@ interface ApiInterface {
     ): Deferred<Response<MoviesResult>>
 
     @GET("movie/{movieId}/similar")
-    fun getSimilarMovies(@Path("movieId") id: Long): Observable<MoviesResult>
+    fun getSimilarMoviesAsync(@Path("movieId") id: Long): Deferred<Response<MoviesResult>>
 
     @GET("movie/{movieId}?append_to_response=videos,reviews")
-    fun findMovie(@Path("movieId") id: Long): Observable<Movie>
+    fun findMovieAsync(@Path("movieId") id: Long): Deferred<Response<Movie>>
 }

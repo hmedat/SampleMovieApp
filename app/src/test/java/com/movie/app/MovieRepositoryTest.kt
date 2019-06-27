@@ -1,26 +1,8 @@
 package com.movie.app
 
-import com.movie.app.api.result.MoviesResult
-import com.movie.app.modules.Movie
-import com.movie.app.modules.MovieSearchFilter
-import com.movie.app.repositories.MovieDataSource
-import com.movie.app.repositories.MovieRepository
-import com.movie.app.repositories.remote.RemoteMovieRepository
-import com.movie.app.rx.TestHelper
-import com.nhaarman.mockito_kotlin.whenever
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.observers.TestObserver
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
-import java.io.IOException
-
 class MovieRepositoryTest {
 
-    @Mock
+  /*  @Mock
     private lateinit var localRep: MovieDataSource
     @Mock
     private lateinit var remoteRep: RemoteMovieRepository
@@ -144,5 +126,5 @@ class MovieRepositoryTest {
         // Check there are no errors
         testSubscriber.assertNoErrors()
         Assert.assertEquals(testSubscriber.errorCount(), 0)
-    }
+    }*/
 }

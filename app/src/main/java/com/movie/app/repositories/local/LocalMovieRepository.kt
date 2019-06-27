@@ -10,7 +10,6 @@ import com.movie.app.repositories.MovieDataSource
 import com.movie.app.room.AppDatabase
 import com.movie.app.room.entities.MovieGenreJoin
 import com.movie.app.util.DateUtil
-import io.reactivex.Observable
 import timber.log.Timber
 
 class LocalMovieRepository(private val database: AppDatabase) : MovieDataSource {
@@ -64,17 +63,11 @@ class LocalMovieRepository(private val database: AppDatabase) : MovieDataSource 
         return result
     }
 
-    override fun getMovie(movieId: Long): Observable<Movie> {
-        return Observable.fromCallable {
-            var movie = database.movieDao().getMovie(movieId)
-            if (movie == null) {
-                movie = Movie(Movie.ID_NOT_SET)
-            } else {
-                movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
-                movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
-            }
-            movie
-        }
+    override suspend fun getMovie(movieId: Long): Movie? {
+        val movie: Movie = database.movieDao().getMovie(movieId) ?: return null
+        movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
+        movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
+        return movie
     }
 
     override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean {

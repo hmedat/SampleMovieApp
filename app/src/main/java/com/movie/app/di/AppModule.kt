@@ -4,11 +4,10 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.movie.app.api.ApiInterface
 import com.movie.app.api.RequestInterceptor
-import com.movie.app.util.schedulers.BaseSchedulerProvider
-import com.movie.app.util.schedulers.SchedulerProvider
+import com.movie.app.util.schedulers.BaseDispatcher
+import com.movie.app.util.schedulers.MainDispatcher
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,7 +31,6 @@ fun provideApiService(gson: Gson, okHttpClient: OkHttpClient): ApiInterface {
         .baseUrl("https://api.themoviedb.org/3/")
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .client(okHttpClient)
         .build().create(ApiInterface::class.java)
 }
@@ -61,6 +59,6 @@ fun provideOkHttpClient(context: Context): OkHttpClient {
         .build()
 }
 
-fun provideRxSchedulers(): BaseSchedulerProvider {
-    return SchedulerProvider()
+fun provideRxSchedulers(): BaseDispatcher {
+    return MainDispatcher()
 }

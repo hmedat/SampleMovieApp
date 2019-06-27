@@ -6,7 +6,6 @@ import com.movie.app.mapper.MovieMapper
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.repositories.MovieDataSource
-import io.reactivex.Observable
 
 class RemoteMovieRepository(private val apiInterface: ApiInterface) : MovieDataSource {
 
@@ -20,10 +19,9 @@ class RemoteMovieRepository(private val apiInterface: ApiInterface) : MovieDataS
         return result
     }
 
-    override fun getMovie(movieId: Long): Observable<Movie> {
-        return apiInterface.findMovie(movieId).map {
-            MovieMapper.map(it)
-            it
+    override suspend fun getMovie(movieId: Long): Movie? {
+        return apiInterface.findMovieAsync(movieId).await().body()?.apply {
+            MovieMapper.map(this)
         }
     }
 
