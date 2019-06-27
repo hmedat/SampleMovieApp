@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.movie.app.api.ApiInterface
 import com.movie.app.repositories.MovieRepository
-import com.movie.app.repositories.local.LocalMovieRepository
-import com.movie.app.repositories.remote.RemoteMovieRepository
+import com.movie.app.repositories.LocalMovieDataSource
+import com.movie.app.repositories.RemoteMovieDataSource
 import com.movie.app.room.AppDatabase
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -23,15 +23,15 @@ fun provideDatabase(context: Context): AppDatabase {
         .build()
 }
 
-fun provideLocalMovieRepository(database: AppDatabase): LocalMovieRepository {
-    return LocalMovieRepository(database)
+fun provideLocalMovieRepository(database: AppDatabase): LocalMovieDataSource {
+    return LocalMovieDataSource(database)
 }
 
-fun provideRemoteMovieRepository(apiInterface: ApiInterface): RemoteMovieRepository {
-    return RemoteMovieRepository(apiInterface)
+fun provideRemoteMovieRepository(apiInterface: ApiInterface): RemoteMovieDataSource {
+    return RemoteMovieDataSource(apiInterface)
 }
 
-fun provideMovieRepository(local: LocalMovieRepository, remote: RemoteMovieRepository):
+fun provideMovieRepository(local: LocalMovieDataSource, remote: RemoteMovieDataSource):
     MovieRepository {
     return MovieRepository(local, remote)
 }

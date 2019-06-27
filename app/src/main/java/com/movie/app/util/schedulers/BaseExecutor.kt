@@ -2,7 +2,7 @@ package com.movie.app.util.schedulers
 
 import kotlinx.coroutines.CoroutineDispatcher
 
-interface BaseDispatcher {
+interface BaseExecutor {
 
     fun computation(): CoroutineDispatcher
 

@@ -7,31 +7,31 @@ import androidx.lifecycle.viewModelScope
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.repositories.MovieRepository
 import com.movie.app.util.LiveDataResult
-import com.movie.app.util.schedulers.BaseDispatcher
+import com.movie.app.util.schedulers.BaseExecutor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FavouritesMoviesViewModel(
-    private val dispatcher: BaseDispatcher,
+    private val executor: BaseExecutor,
     private var repo: MovieRepository
 ) : ViewModel() {
 
-    private var resultLiveData: MutableLiveData<LiveDataResult<MoviesResult>> = MutableLiveData()
+    private var _result: MutableLiveData<LiveDataResult<MoviesResult>> = MutableLiveData()
 
-    fun getResultLiveData(): LiveData<LiveDataResult<MoviesResult>> = resultLiveData
+    fun getResultLiveData(): LiveData<LiveDataResult<MoviesResult>> = _result
 
     fun subscribe() {
         loadData()
     }
 
     private fun loadData() {
-        resultLiveData.postValue(LiveDataResult.loading())
-        viewModelScope.launch(dispatcher.io()) {
+        _result.postValue(LiveDataResult.loading())
+        viewModelScope.launch(executor.io()) {
             try {
                 val movies = repo.getFavMovies()
-                resultLiveData.postValue(LiveDataResult.success(movies))
+                _result.postValue(LiveDataResult.success(movies))
             } catch (e: Exception) {
-                resultLiveData.postValue(LiveDataResult.error(e))
+                _result.postValue(LiveDataResult.error(e))
             }
         }
     }

@@ -5,7 +5,7 @@ class MovieRepositoryTest {
   /*  @Mock
     private lateinit var localRep: MovieDataSource
     @Mock
-    private lateinit var remoteRep: RemoteMovieRepository
+    private lateinit var remoteRep: RemoteMovieDataSource
 
     private lateinit var movieRep: MovieRepository
 

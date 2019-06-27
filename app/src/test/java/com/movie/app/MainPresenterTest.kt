@@ -2,7 +2,7 @@ package com.movie.app
 
 class MainPresenterTest {
 
-    /*private lateinit var dispatcher: BaseDispatcher
+    /*private lateinit var dispatcher: BaseExecutor
     @Mock
     private lateinit var view: MainActivityContractor.View
     @Mock
@@ -15,7 +15,7 @@ class MainPresenterTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        dispatcher = ImmediateDispatcher()
+        dispatcher = ImmediateExecutor()
         presenter = MainPresenter(dispatcher, movieDataSource, view, movieSearchFilter)
     }
 

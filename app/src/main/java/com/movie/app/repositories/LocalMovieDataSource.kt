@@ -1,4 +1,4 @@
-package com.movie.app.repositories.local
+package com.movie.app.repositories
 
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Genre
@@ -6,13 +6,12 @@ import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.modules.MovieSortType
 import com.movie.app.modules.Video
-import com.movie.app.repositories.MovieDataSource
 import com.movie.app.room.AppDatabase
 import com.movie.app.room.entities.MovieGenreJoin
 import com.movie.app.util.DateUtil
 import timber.log.Timber
 
-class LocalMovieRepository(private val database: AppDatabase) : MovieDataSource {
+class LocalMovieDataSource(private val database: AppDatabase) : MovieDataSource {
 
     override fun insertMovies(movies: List<Movie>) {
         val movieGenreJoinList = ArrayList<MovieGenreJoin>()
@@ -88,5 +87,9 @@ class LocalMovieRepository(private val database: AppDatabase) : MovieDataSource 
 
     override fun getFavMovieIds(): HashSet<Long> {
         return database.movieDao().getFavMovieIds().toHashSet()
+    }
+
+    override suspend fun getSimilarMovies(movieId: Long): MoviesResult? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

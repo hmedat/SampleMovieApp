@@ -10,14 +10,14 @@ import kotlinx.coroutines.launch
 
 class SplashViewModel : ViewModel() {
 
-    private var subscribeLiveData: MutableLiveData<Any> = MutableLiveData()
+    private var _subscribe: MutableLiveData<Any> = MutableLiveData()
 
-    fun getSubscribeLiveData(): LiveData<Any> = subscribeLiveData
+    fun getSubscribeLiveData(): LiveData<Any> = _subscribe
 
     fun subscribe() {
         viewModelScope.launch(Dispatchers.Main) {
             delay(1000)
-            subscribeLiveData.postValue(true)
+            _subscribe.postValue(true)
         }
     }
 }

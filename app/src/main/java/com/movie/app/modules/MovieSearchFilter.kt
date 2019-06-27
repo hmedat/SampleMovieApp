@@ -10,7 +10,7 @@ open class MovieSearchFilter(
 
     fun isFirstPage(): Boolean = pageNumber == First_PAGE
 
-    fun increamentPage() {
+    fun incrementPage() {
         ++pageNumber
     }
 }

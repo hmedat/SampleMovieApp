@@ -10,12 +10,12 @@ import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.modules.MovieSortType
 import com.movie.app.repositories.MovieRepository
 import com.movie.app.util.PaginationLiveDataResult
-import com.movie.app.util.schedulers.BaseDispatcher
+import com.movie.app.util.schedulers.BaseExecutor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val dispatcher: BaseDispatcher,
+    private val executor: BaseExecutor,
     private val movieRepo: MovieRepository,
     private val searchFilter: MovieSearchFilter
 ) : ViewModel() {
@@ -44,7 +44,7 @@ class MainViewModel(
         if (isFirstPage) {
             _result.postValue(PaginationLiveDataResult.loading())
         }
-        viewModelScope.launch(dispatcher.io()) {
+        viewModelScope.launch(executor.io()) {
             try {
                 if (searchFilter.isFirstPage()) {
                     val localMovies = movieRepo.getLocalMovies(searchFilter)
@@ -59,7 +59,7 @@ class MainViewModel(
                 if (result?.isEmptyData() == true && !result.isLoadMore()) {
                     _result.postValue(PaginationLiveDataResult.noData())
                 }
-                searchFilter.increamentPage()
+                searchFilter.incrementPage()
             } catch (e: Exception) {
                 _result.postValue(PaginationLiveDataResult.error(e))
             }
@@ -79,7 +79,7 @@ class MainViewModel(
     }
 
     fun syncFavouritesStatues() {
-        viewModelScope.launch(dispatcher.io()) {
+        viewModelScope.launch(executor.io()) {
             val ids = movieRepo.getFavMovieIds()
             _favStatus.postValue(ids)
         }

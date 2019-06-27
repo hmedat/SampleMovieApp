@@ -1,13 +1,12 @@
-package com.movie.app.repositories.remote
+package com.movie.app.repositories
 
 import com.movie.app.api.ApiInterface
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.mapper.MovieMapper
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
-import com.movie.app.repositories.MovieDataSource
 
-class RemoteMovieRepository(private val apiInterface: ApiInterface) : MovieDataSource {
+class RemoteMovieDataSource(private val apiInterface: ApiInterface) : MovieDataSource {
 
     override fun insertMovies(movies: List<Movie>) {
     }
@@ -23,6 +22,13 @@ class RemoteMovieRepository(private val apiInterface: ApiInterface) : MovieDataS
         return apiInterface.findMovieAsync(movieId).await().body()?.apply {
             MovieMapper.map(this)
         }
+    }
+
+    override suspend fun getSimilarMovies(movieId: Long): MoviesResult? {
+        val deferred = apiInterface.getSimilarMoviesAsync(movieId)
+        val result = deferred.await().body()
+        MovieMapper.map(result?.results ?: listOf())
+        return result
     }
 
     override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean {

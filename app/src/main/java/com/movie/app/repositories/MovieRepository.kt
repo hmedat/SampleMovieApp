@@ -40,7 +40,11 @@ class MovieRepository(private val local: MovieDataSource, private var remote: Mo
         return local.getFavMovieIds()
     }
 
-    fun insertMovies(list: List<Movie>) {
-        local.insertMovies(list)
+    suspend fun getSimilarMovies(movieId: Long): MoviesResult? {
+        val result = remote.getSimilarMovies(movieId)
+        result?.results?.let {
+            local.insertMovies(it)
+        }
+        return result
     }
 }

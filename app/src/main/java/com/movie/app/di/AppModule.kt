@@ -6,8 +6,8 @@ import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.movie.app.api.ApiInterface
 import com.movie.app.api.RequestInterceptor
-import com.movie.app.util.schedulers.BaseDispatcher
-import com.movie.app.util.schedulers.MainDispatcher
+import com.movie.app.util.schedulers.BaseExecutor
+import com.movie.app.util.schedulers.MainExecutor
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -59,6 +59,6 @@ fun provideOkHttpClient(context: Context): OkHttpClient {
         .build()
 }
 
-fun provideRxSchedulers(): BaseDispatcher {
-    return MainDispatcher()
+fun provideRxSchedulers(): BaseExecutor {
+    return MainExecutor()
 }

@@ -72,15 +72,15 @@ class FavouritesActivity : BaseActivity() {
     private fun initRecyclerView() {
         adapter = MovieAdapter().apply {
             openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
-            setOnItemClickListener { _, _, position ->
-                DetailsMovieActivity.startActivity(context, adapter.data[position].id)
-            }
-            setOnItemChildClickListener { _, _, position ->
-                viewModel.removeFromList(adapter.data[position].id)
-                adapter.remove(position)
-                if (adapter.itemCount == 0) {
-                    this@FavouritesActivity.emptyView.showEmpty()
-                }
+        }
+        adapter.setOnItemClickListener { _, _, position ->
+            DetailsMovieActivity.startActivity(context, adapter.data[position].id)
+        }
+        adapter.setOnItemChildClickListener { _, _, position ->
+            viewModel.removeFromList(adapter.data[position].id)
+            adapter.remove(position)
+            if (adapter.itemCount == 0) {
+                this@FavouritesActivity.emptyView.showEmpty()
             }
         }
         rvMovies.apply {

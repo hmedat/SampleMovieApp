@@ -39,7 +39,7 @@ class MovieDataSourceTest {
             InstrumentationRegistry.getContext(),
             AppDatabase::class.java
         ).build()
-        movieDataSource = LocalMovieRepository(database)
+        movieDataSource = LocalMovieDataSource(database)
     }
 
     @After

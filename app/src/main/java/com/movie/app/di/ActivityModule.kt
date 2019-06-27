@@ -11,6 +11,6 @@ import org.koin.dsl.module
 val activityModule = module {
     viewModel { SplashViewModel() }
     viewModel { MainViewModel(get(), get(), MovieSearchFilter()) }
-    viewModel { DetailsMovieViewModel(get(), get(), get()) }
+    viewModel { DetailsMovieViewModel(get(), get()) }
     viewModel { FavouritesMoviesViewModel(get(), get()) }
 }

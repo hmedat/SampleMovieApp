@@ -25,7 +25,7 @@ class DetailsMovieActivity : BaseActivity() {
     private val viewModel: DetailsMovieViewModel by viewModel()
 
     companion object {
-        const val EXTRA_MOVIE_ID: String = "Extra.Movie.Id"
+        private const val EXTRA_MOVIE_ID: String = "Extra.Movie.Id"
         fun startActivity(context: Context, movieId: Long) {
             val intent = Intent(context, DetailsMovieActivity::class.java)
             intent.putExtra(EXTRA_MOVIE_ID, movieId)
@@ -36,12 +36,12 @@ class DetailsMovieActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details_movie)
-        val movieId: Long = intent?.extras?.getLong(EXTRA_MOVIE_ID) ?: 0
-        viewModel.setMovieId(movieId)
         setToolbar(detailsToolbar)
         enableToolbarBack()
-        emptyViewDetails.error().setOnClickListener { viewModel.subscribe() }
-        viewModel.getMovieDetailsLiveData().observe(this, Observer {
+        emptyViewDetails.error().setOnClickListener {
+            viewModel.subscribe()
+        }
+        viewModel.movieDetails.observe(this, Observer {
             when (it.status) {
                 ResultState.LOADING -> {
                     emptyViewDetails.showLoading()
@@ -56,9 +56,12 @@ class DetailsMovieActivity : BaseActivity() {
                 }
             }
         })
-        viewModel.getSimilarMoviesLiveData().observe(this, Observer {
+        viewModel.similarMovies.observe(this, Observer {
             showSimilarMovies(it)
         })
+        intent?.extras?.getLong(EXTRA_MOVIE_ID)?.let {
+            viewModel.setMovieId(it)
+        }
         viewModel.subscribe()
     }
 
@@ -75,11 +78,8 @@ class DetailsMovieActivity : BaseActivity() {
     }
 
     private fun handleVideoData(movie: Movie) {
-        if (movie.videosList == null || movie.videosList!!.isEmpty()) {
-            return
-        }
+        val video = movie.videosList?.firstOrNull() ?: return
         youtubePlayerView.visibility = View.VISIBLE
-        val video = movie.videosList!![0]
         youtubePlayerView.initialize({ player ->
             player.addListener(object : AbstractYouTubePlayerListener() {
                 override fun onReady() {

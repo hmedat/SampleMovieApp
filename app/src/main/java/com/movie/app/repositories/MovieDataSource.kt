@@ -14,6 +14,8 @@ interface MovieDataSource {
 
     suspend fun getFavMovies(): MoviesResult
 
+    suspend fun getSimilarMovies(movieId: Long): MoviesResult?
+
     fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean
 
     fun getFavMovieIds(): HashSet<Long>

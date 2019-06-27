@@ -6,20 +6,19 @@ import kotlinx.coroutines.Dispatchers
 /**
  * Provides various threading schedulers.
  */
-
-class ImmediateDispatcher : BaseDispatcher {
+class MainExecutor : BaseExecutor {
     /**
      * IO thread pool scheduler
      */
     override fun io(): CoroutineDispatcher {
-        return Dispatchers.Main
+        return Dispatchers.IO
     }
 
     /**
      * Computation thread pool scheduler
      */
     override fun computation(): CoroutineDispatcher {
-        return Dispatchers.Main
+        return Dispatchers.Default
     }
 
     /**

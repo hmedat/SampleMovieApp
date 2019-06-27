@@ -13,11 +13,11 @@ object MovieMapper {
 
     fun map(movie: Movie) {
         movie.apply {
-            posterPath?.let {
-                posterPath = IMAGE_URL + it
+            posterPath = posterPath?.let {
+                IMAGE_URL + it
             }
-            backdropPath?.let {
-                backdropPath = IMAGE_URL + it
+            backdropPath = backdropPath?.let {
+                IMAGE_URL + it
             }
             videosList = videoResult?.videos
         }

@@ -3,7 +3,7 @@ package com.movie.app
 class DetailsMoviePresenterTest {
 /*
     private lateinit var presenter: DetailsActivityContractor.Presenter
-    private lateinit var dispatcher: BaseDispatcher
+    private lateinit var dispatcher: BaseExecutor
     @Mock
     private lateinit var view: DetailsActivityContractor.View
     @Mock
@@ -12,7 +12,7 @@ class DetailsMoviePresenterTest {
     @Mock
     private lateinit var localRep: MovieDataSource
     @Mock
-    private lateinit var remoteRep: RemoteMovieRepository
+    private lateinit var remoteRep: RemoteMovieDataSource
 
     private lateinit var movieRep: MovieRepository
 
@@ -24,7 +24,7 @@ class DetailsMoviePresenterTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        dispatcher = ImmediateDispatcher()
+        dispatcher = ImmediateExecutor()
         movieRep = MovieRepository(localRep, remoteRep)
         presenter = DetailsMovieViewModel(dispatcher, movieRep, apiInterface, view)
         movie = Movie().apply {
