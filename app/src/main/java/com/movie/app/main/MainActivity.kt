@@ -44,7 +44,7 @@ class MainActivity : BaseActivity() {
             }
             rvMovies.notifyVisibleItems()
         })
-        viewModel.getSearchResultLiveData().observe(this, Observer {
+        viewModel.getResultLiveData().observe(this, Observer {
             val result = it?.data
             when (it.status) {
                 PaginationResultState.LOADING -> {
@@ -129,6 +129,7 @@ class MainActivity : BaseActivity() {
         val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, MovieSortType.values())
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         toolbarSpinner.adapter = adapter
+        toolbarSpinner.setSelection(0,false)
         toolbarSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
                 viewModel.onSearchFilterChanged(MovieSortType.values()[i])

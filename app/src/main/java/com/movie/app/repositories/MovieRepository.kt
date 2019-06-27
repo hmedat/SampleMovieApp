@@ -6,40 +6,22 @@ import com.movie.app.modules.MovieSearchFilter
 import io.reactivex.Observable
 import timber.log.Timber
 
-class MovieRepository (
-    private val local: MovieDataSource,
-    private var remote: MovieDataSource
-) : MovieDataSource {
+class MovieRepository(private val local: MovieDataSource, private var remote: MovieDataSource) {
 
-    override fun insertMovies(movies: List<Movie>) {
-        local.insertMovies(movies)
-    }
-
-    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
-        if (searchFilter.pageNumber > 1) {
-            return getAndSaveRemoteMovies(searchFilter)
+    suspend fun getRemoteMovies(searchFilter: MovieSearchFilter): MoviesResult? {
+        val result = remote.getMovies(searchFilter)
+        result?.results?.let {
+            local.insertMovies(it)
+            Timber.d("Dispatching ${it.size} users from API...")
         }
-        return Observable.concatArray(local.getMovies(searchFilter)
-            .onErrorReturn {
-                val moviesResult = MoviesResult()
-                moviesResult
-            },
-            getAndSaveRemoteMovies(searchFilter)
-        )
+        return result
     }
 
-    private fun getAndSaveRemoteMovies(searchFilter: MovieSearchFilter):
-            Observable<MoviesResult> {
-        return remote.getMovies(searchFilter)
-            .doOnNext {
-                it.results?.let {
-                    insertMovies(it)
-                    Timber.d("Dispatching ${it.size} users from API...")
-                }
-            }
+    suspend fun getLocalMovies(searchFilter: MovieSearchFilter): MoviesResult? {
+        return local.getMovies(searchFilter)
     }
 
-    override fun getMovie(movieId: Long): Observable<Movie> {
+    fun getMovie(movieId: Long): Observable<Movie> {
         return Observable.concatArray(local.getMovie(movieId)
             .onErrorReturn {
                 Movie(Movie.ID_NOT_SET)
@@ -48,15 +30,15 @@ class MovieRepository (
         )
     }
 
-    override suspend fun getFavMovies(): MoviesResult {
+    suspend fun getFavMovies(): MoviesResult {
         return local.getFavMovies()
     }
 
-    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean {
+    fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean {
         return local.removeAddFavMovie(movieId, isFav)
     }
 
-    override fun getFavMovieIds(): Observable<HashSet<Long>> {
+    fun getFavMovieIds(): Observable<HashSet<Long>> {
         return local.getFavMovieIds()
     }
 }

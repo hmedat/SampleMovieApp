@@ -3,29 +3,30 @@ package com.movie.app.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.modules.MovieSortType
-import com.movie.app.repositories.MovieDataSource
+import com.movie.app.repositories.MovieRepository
 import com.movie.app.util.PaginationLiveDataResult
 import com.movie.app.util.schedulers.BaseSchedulerProvider
 import io.reactivex.Observable
-import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val schedulerProvider: BaseSchedulerProvider,
-    private val movieRepository: MovieDataSource,
+    private val movieRepo: MovieRepository,
     private val searchFilter: MovieSearchFilter
 ) : ViewModel() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private var favStatusLiveData: MutableLiveData<HashSet<Long>> = MutableLiveData()
-    private var searchResultLiveData: MutableLiveData<PaginationLiveDataResult<MoviesResult>> = MutableLiveData()
+    private var _result: MutableLiveData<PaginationLiveDataResult<MoviesResult>> = MutableLiveData()
 
-    fun getSearchResultLiveData(): LiveData<PaginationLiveDataResult<MoviesResult>> = searchResultLiveData
+    fun getResultLiveData(): LiveData<PaginationLiveDataResult<MoviesResult>> = _result
     fun getFavStatusLiveData(): LiveData<HashSet<Long>> = favStatusLiveData
 
     fun subscribe() {
@@ -44,38 +45,28 @@ class MainViewModel(
     private fun loadData() {
         val isFirstPage = searchFilter.isFirstPage()
         if (isFirstPage) {
-            searchResultLiveData.postValue(PaginationLiveDataResult.loading())
+            _result.postValue(PaginationLiveDataResult.loading())
         }
-        movieRepository.getMovies(searchFilter)
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui(), true)
-            .subscribe(object : Observer<MoviesResult> {
-                override fun onSubscribe(d: Disposable) {
-                    compositeDisposable.add(d)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (searchFilter.isFirstPage()) {
+                    val localMovies = movieRepo.getLocalMovies(searchFilter)
+                    _result.postValue(PaginationLiveDataResult.firstData(localMovies))
                 }
-
-                override fun onNext(result: MoviesResult) {
-                    if (result.isEmptyData()) {
-                        if (!result.isLoadMore()) {
-                            searchResultLiveData.postValue(PaginationLiveDataResult.noData())
-                        }
-                        return
-                    }
-                    if (result.isLoadMore()) {
-                        searchResultLiveData.postValue(PaginationLiveDataResult.moreData(result))
-                    } else {
-                        searchResultLiveData.postValue(PaginationLiveDataResult.firstData(result))
-                    }
+                val result = movieRepo.getRemoteMovies(searchFilter)
+                if (result?.isLoadMore() == true) {
+                    _result.postValue(PaginationLiveDataResult.moreData(result))
+                } else {
+                    _result.postValue(PaginationLiveDataResult.firstData(result))
                 }
-
-                override fun onError(throwable: Throwable) {
-                    searchResultLiveData.postValue(PaginationLiveDataResult.error(throwable))
+                if (result?.isEmptyData() == true && !result.isLoadMore()) {
+                    _result.postValue(PaginationLiveDataResult.noData())
                 }
-
-                override fun onComplete() {
-                    searchFilter.pageNumber = searchFilter.pageNumber + 1
-                }
-            })
+                searchFilter.increamentPage()
+            } catch (e: Exception) {
+                _result.postValue(PaginationLiveDataResult.error(e))
+            }
+        }
     }
 
     fun onSearchFilterChanged(movieSortType: MovieSortType) {
@@ -86,7 +77,7 @@ class MainViewModel(
 
     fun addRemoveFavMovie(movie: Movie) {
         Observable.fromCallable {
-            movieRepository.removeAddFavMovie(movie.id, movie.isFav)
+            movieRepo.removeAddFavMovie(movie.id, movie.isFav)
         }
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
@@ -95,7 +86,7 @@ class MainViewModel(
     }
 
     fun syncFavouritesStatues() {
-        compositeDisposable.add(movieRepository.getFavMovieIds()
+        compositeDisposable.add(movieRepo.getFavMovieIds()
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
             .subscribe {

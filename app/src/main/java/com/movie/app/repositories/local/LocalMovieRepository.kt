@@ -46,27 +46,22 @@ class LocalMovieRepository(private val database: AppDatabase) : MovieDataSource 
         database.movieGenreDao().insert(movieGenreJoinList)
     }
 
-    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
-        return Observable.fromCallable {
-            val latestMoviesResult = MoviesResult()
-            val limit = 20
-            val movies = when (searchFilter.sortBy) {
-                MovieSortType.POPULARITY -> database.movieDao().getMoviesOrderByPopularity(limit)
-                MovieSortType.RELEASE_DATE -> database.movieDao().getMoviesOrderByReleaseDate(limit)
-            }
-            Timber.i("Movies ${movies.size} users from DB...")
-            for (movie in movies) {
-                movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
-                movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
-            }
-            latestMoviesResult.results = movies
-            latestMoviesResult.page = MovieSearchFilter.First_PAGE
-            latestMoviesResult.totalPages = MovieSearchFilter.First_PAGE
-            latestMoviesResult
-        }.filter { it.results?.isNotEmpty()!! }
-            .doOnNext {
-                Timber.i("Dispa tching ${it.results?.size} users from DB...")
-            }
+    override suspend fun getMovies(searchFilter: MovieSearchFilter): MoviesResult? {
+        val result = MoviesResult()
+        val limit = 20
+        val movies = when (searchFilter.sortBy) {
+            MovieSortType.POPULARITY -> database.movieDao().getMoviesOrderByPopularity(limit)
+            MovieSortType.RELEASE_DATE -> database.movieDao().getMoviesOrderByReleaseDate(limit)
+        }
+        Timber.i("Movies ${movies.size} users from DB...")
+        for (movie in movies) {
+            movie.genres = database.movieGenreDao().getGenresForMovie(movieId = movie.id)
+            movie.videosList = database.videoDao().getVideosForMovies(movieId = movie.id)
+        }
+        result.results = movies
+        result.page = MovieSearchFilter.First_PAGE
+        result.totalPages = MovieSearchFilter.First_PAGE
+        return result
     }
 
     override fun getMovie(movieId: Long): Observable<Movie> {

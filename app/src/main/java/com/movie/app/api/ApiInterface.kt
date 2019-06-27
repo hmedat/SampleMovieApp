@@ -2,18 +2,19 @@ package com.movie.app.api
 
 import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
-
 import io.reactivex.Observable
+import kotlinx.coroutines.Deferred
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiInterface {
     @GET("discover/movie")
-    fun getLatestMovies(
+    fun getLatestMoviesAsync(
         @Query("page") pageNumber: Int,
         @Query("sort_by") sortBy: String
-    ): Observable<MoviesResult>
+    ): Deferred<Response<MoviesResult>>
 
     @GET("movie/{movieId}/similar")
     fun getSimilarMovies(@Path("movieId") id: Long): Observable<MoviesResult>

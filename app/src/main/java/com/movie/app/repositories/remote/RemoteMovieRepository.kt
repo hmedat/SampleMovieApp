@@ -13,13 +13,11 @@ class RemoteMovieRepository(private val apiInterface: ApiInterface) : MovieDataS
     override fun insertMovies(movies: List<Movie>) {
     }
 
-    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
-        return apiInterface.getLatestMovies(
-            searchFilter.pageNumber, searchFilter.sortBy.apiSearchName
-        ).map {
-            MovieMapper.map(it.results!!)
-            it
-        }
+    override suspend fun getMovies(searchFilter: MovieSearchFilter): MoviesResult? {
+        val deferred = apiInterface.getLatestMoviesAsync(searchFilter.pageNumber, searchFilter.sortBy.apiSearchName)
+        val result = deferred.await().body()
+        MovieMapper.map(result?.results ?: listOf())
+        return result
     }
 
     override fun getMovie(movieId: Long): Observable<Movie> {

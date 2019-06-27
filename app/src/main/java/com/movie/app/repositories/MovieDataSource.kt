@@ -9,7 +9,7 @@ interface MovieDataSource {
 
     fun insertMovies(movies: List<Movie>)
 
-    fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult>
+    suspend fun getMovies(searchFilter: MovieSearchFilter): MoviesResult?
 
     fun getMovie(movieId: Long): Observable<Movie>
 

@@ -3,7 +3,6 @@ package com.movie.app.di
 import android.content.Context
 import androidx.room.Room
 import com.movie.app.api.ApiInterface
-import com.movie.app.repositories.MovieDataSource
 import com.movie.app.repositories.MovieRepository
 import com.movie.app.repositories.local.LocalMovieRepository
 import com.movie.app.repositories.remote.RemoteMovieRepository
@@ -33,6 +32,6 @@ fun provideRemoteMovieRepository(apiInterface: ApiInterface): RemoteMovieReposit
 }
 
 fun provideMovieRepository(local: LocalMovieRepository, remote: RemoteMovieRepository):
-    MovieDataSource {
+    MovieRepository {
     return MovieRepository(local, remote)
 }
