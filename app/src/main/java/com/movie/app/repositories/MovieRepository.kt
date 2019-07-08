@@ -1,8 +1,8 @@
 package com.movie.app.repositories
 
-import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
+import com.movie.app.modules.MoviesResult
 import timber.log.Timber
 
 class MovieRepository(private val local: MovieDataSource, private var remote: MovieDataSource) {

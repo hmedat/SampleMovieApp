@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.modules.MovieSortType
+import com.movie.app.modules.MoviesResult
 import com.movie.app.repositories.MovieRepository
 import com.movie.app.util.Result
 import com.movie.app.util.schedulers.BaseExecutor

@@ -1,10 +1,10 @@
 package com.movie.app.repositories
 
 import com.movie.app.api.ApiInterface
-import com.movie.app.api.result.MoviesResult
 import com.movie.app.mapper.MovieMapper
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
+import com.movie.app.modules.MoviesResult
 
 class RemoteMovieDataSource(private val apiInterface: ApiInterface) : MovieDataSource {
 

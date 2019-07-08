@@ -1,7 +1,7 @@
 package com.movie.app.api
 
-import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
+import com.movie.app.modules.MoviesResult
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

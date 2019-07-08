@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
-import com.movie.app.api.result.MoviesResult
 import com.movie.app.details.DetailsMovieActivity
 import com.movie.app.modules.MovieSortType
+import com.movie.app.modules.MoviesResult
 import com.movie.app.util.Result
 import com.movie.app.util.notifyVisibleItems
 import com.movie.app.util.setDefaultColor

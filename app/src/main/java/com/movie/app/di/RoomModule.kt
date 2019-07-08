@@ -3,8 +3,8 @@ package com.movie.app.di
 import android.content.Context
 import androidx.room.Room
 import com.movie.app.api.ApiInterface
-import com.movie.app.repositories.MovieRepository
 import com.movie.app.repositories.LocalMovieDataSource
+import com.movie.app.repositories.MovieRepository
 import com.movie.app.repositories.RemoteMovieDataSource
 import com.movie.app.room.AppDatabase
 import org.koin.android.ext.koin.androidContext
@@ -19,8 +19,7 @@ val roomModule = module {
 }
 
 fun provideDatabase(context: Context): AppDatabase {
-    return Room.databaseBuilder(context, AppDatabase::class.java, "movie-database")
-        .build()
+    return Room.databaseBuilder(context, AppDatabase::class.java, "movie-database").build()
 }
 
 fun provideLocalMovieRepository(database: AppDatabase): LocalMovieDataSource {
@@ -31,7 +30,6 @@ fun provideRemoteMovieRepository(apiInterface: ApiInterface): RemoteMovieDataSou
     return RemoteMovieDataSource(apiInterface)
 }
 
-fun provideMovieRepository(local: LocalMovieDataSource, remote: RemoteMovieDataSource):
-    MovieRepository {
+fun provideMovieRepository(local: LocalMovieDataSource, remote: RemoteMovieDataSource): MovieRepository {
     return MovieRepository(local, remote)
 }

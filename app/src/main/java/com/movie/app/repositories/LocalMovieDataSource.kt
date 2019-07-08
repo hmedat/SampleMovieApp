@@ -1,10 +1,10 @@
 package com.movie.app.repositories
 
-import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Genre
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
 import com.movie.app.modules.MovieSortType
+import com.movie.app.modules.MoviesResult
 import com.movie.app.modules.Video
 import com.movie.app.room.AppDatabase
 import com.movie.app.room.entities.MovieGenreJoin
