@@ -8,7 +8,7 @@ interface MovieDataSource {
 
     fun insertMovies(movies: List<Movie>)
 
-    suspend fun getMovies(searchFilter: MovieSearchFilter): MoviesResult?
+    suspend fun getMovies(filter: MovieSearchFilter): MoviesResult?
 
     suspend fun getMovie(movieId: Long): Movie?
 

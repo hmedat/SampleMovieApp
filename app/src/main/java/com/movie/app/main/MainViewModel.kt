@@ -24,7 +24,7 @@ class MainViewModel(
     private var _result: MutableLiveData<Result<MoviesResult>> = MutableLiveData()
 
     val result: LiveData<Result<MoviesResult>> = _result
-    fun getFavStatusLiveData(): LiveData<HashSet<Long>> = _favStatus
+    val favStatuses: LiveData<HashSet<Long>> = _favStatus
 
     init {
         loadFirstPage()
@@ -55,21 +55,6 @@ class MainViewModel(
                     _result.postValue(Result.success(it))
                 }
                 searchFilter.incrementPage()
-
-                /*   if (searchFilter.isFirstPage()) {
-                       val localMovies = movieRepo.getLocalMovies(searchFilter)
-                       _result.postValue(Result.success(localMovies))
-                   }
-                   val result = movieRepo.getRemoteMovies(searchFilter)
-                   if (result?.isLoadMore() == true) {
-                       _result.postValue(Result.success(result))
-                   } else {
-                       _result.postValue(Result.success(result))
-                   }
-                   if (result?.isEmptyData() == true && !result.isLoadMore()) {
-                       _result.postValue(PaginationLiveDataResult.noData())
-                   }
-                   searchFilter.incrementPage()*/
             } catch (e: Exception) {
                 _result.postValue(Result.failure(e))
             }

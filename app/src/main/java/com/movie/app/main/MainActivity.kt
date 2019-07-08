@@ -39,7 +39,7 @@ class MainActivity : BaseActivity() {
         emptyView.error().setOnClickListener {
             viewModel.loadFirstPage()
         }
-        viewModel.getFavStatusLiveData().observe(this, Observer {
+        viewModel.favStatuses.observe(this, Observer {
             for (movie in adapter.data) {
                 movie.isFav = it.contains(movie.id)
             }

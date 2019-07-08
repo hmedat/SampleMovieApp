@@ -11,23 +11,21 @@ class RemoteMovieDataSource(private val apiInterface: ApiInterface) : MovieDataS
     override fun insertMovies(movies: List<Movie>) {
     }
 
-    override suspend fun getMovies(searchFilter: MovieSearchFilter): MoviesResult? {
-        val deferred = apiInterface.getLatestMoviesAsync(searchFilter.pageNumber, searchFilter.sortBy.apiSearchName)
-        val result = deferred.await().body()
-        MovieMapper.map(result?.results ?: listOf())
-        return result
+    override suspend fun getMovies(filter: MovieSearchFilter): MoviesResult? {
+        return apiInterface.getLatestMoviesAsync(filter.pageNumber, filter.sortBy.apiSearchName).apply {
+            MovieMapper.map(results ?: listOf())
+        }
     }
 
     override suspend fun getMovie(movieId: Long): Movie? {
-        return apiInterface.findMovieAsync(movieId).await().body()?.apply {
+        return apiInterface.findMovieAsync(movieId).apply {
             MovieMapper.map(this)
         }
     }
 
     override suspend fun getSimilarMovies(movieId: Long): MoviesResult? {
-        val deferred = apiInterface.getSimilarMoviesAsync(movieId)
-        val result = deferred.await().body()
-        MovieMapper.map(result?.results ?: listOf())
+        val result = apiInterface.getSimilarMoviesAsync(movieId)
+        MovieMapper.map(result.results ?: listOf())
         return result
     }
 

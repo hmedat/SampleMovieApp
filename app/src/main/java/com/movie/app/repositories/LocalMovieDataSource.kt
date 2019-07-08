@@ -44,10 +44,10 @@ class LocalMovieDataSource(private val database: AppDatabase) : MovieDataSource 
         database.movieGenreDao().insert(movieGenreJoinList)
     }
 
-    override suspend fun getMovies(searchFilter: MovieSearchFilter): MoviesResult? {
+    override suspend fun getMovies(filter: MovieSearchFilter): MoviesResult? {
         val result = MoviesResult()
         val limit = 20
-        val movies = when (searchFilter.sortBy) {
+        val movies = when (filter.sortBy) {
             MovieSortType.POPULARITY -> database.movieDao().getMoviesOrderByPopularity(limit)
             MovieSortType.RELEASE_DATE -> database.movieDao().getMoviesOrderByReleaseDate(limit)
         }
