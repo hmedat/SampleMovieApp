@@ -20,8 +20,8 @@ class DetailsMovieViewModel(
     private var _movieDetails: MutableLiveData<Result<Movie>> = MutableLiveData()
     val movieDetails: LiveData<Result<Movie>> = _movieDetails
 
-    private var _similarMovies: MutableLiveData<List<Movie>> = MutableLiveData()
-    val similarMovies: LiveData<List<Movie>> = _similarMovies
+    private var _similarMovies: MutableLiveData<Result<List<Movie>>> = MutableLiveData()
+    val similarMovies: LiveData<Result<List<Movie>>> = _similarMovies
 
     fun setMovieId(movieId: Long) {
         this.movieId = movieId
@@ -50,8 +50,12 @@ class DetailsMovieViewModel(
 
     private fun getSimilarMovies() {
         viewModelScope.launch(executor.io()) {
-            movieRepo.getSimilarMovies(movieId)?.let {
-                _similarMovies.postValue(it.results)
+            try {
+                movieRepo.getSimilarMovies(movieId)?.results?.let {
+                    _similarMovies.postValue(Result.success(it))
+                }
+            } catch (e: Exception) {
+                _similarMovies.postValue(Result.failure(e))
             }
         }
     }

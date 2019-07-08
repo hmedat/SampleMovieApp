@@ -56,7 +56,11 @@ class DetailsMovieActivity : BaseActivity() {
             }
         })
         viewModel.similarMovies.observe(this, Observer {
-            showSimilarMovies(it)
+            when (it) {
+                is Result.Success -> {
+                    showSimilarMovies(it.data)
+                }
+            }
         })
         intent?.extras?.getLong(EXTRA_MOVIE_ID)?.let {
             viewModel.setMovieId(it)
