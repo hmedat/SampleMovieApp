@@ -1,46 +1,35 @@
 package com.movie.app.di
 
-import android.arch.persistence.room.Room
-import com.movie.app.MyApp
+import android.content.Context
+import androidx.room.Room
 import com.movie.app.api.ApiInterface
-import com.movie.app.repositories.MovieDataSource
+import com.movie.app.repositories.LocalMovieDataSource
 import com.movie.app.repositories.MovieRepository
-import com.movie.app.repositories.local.LocalMovieRepository
-import com.movie.app.repositories.remote.RemoteMovieRepository
+import com.movie.app.repositories.RemoteMovieDataSource
 import com.movie.app.room.AppDatabase
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
-@Module
-class RoomModule {
 
-    @Provides
-    @Singleton
-    fun provideDatabase(application: MyApp): AppDatabase {
-        return Room.databaseBuilder(application, AppDatabase::class.java, "movie-database")
-                // allow queries on the main thread.
-                // Don't do this on a real app! See PersistenceBasicSample for an example.
-                .allowMainThreadQueries()
-                .build()
-    }
+val roomModule = module {
+    single { provideDatabase(androidContext()) }
+    single { provideLocalMovieRepository(get()) }
+    single { provideRemoteMovieRepository(get()) }
+    single { provideMovieRepository(get(), get()) }
+}
 
-    @Provides
-    @Singleton
-    fun provideLocalMovieRepository(database: AppDatabase): LocalMovieRepository {
-        return LocalMovieRepository(database)
-    }
+fun provideDatabase(context: Context): AppDatabase {
+    return Room.databaseBuilder(context, AppDatabase::class.java, "movie-database").build()
+}
 
-    @Provides
-    @Singleton
-    fun provideRemoteMovieRepository(apiInterface: ApiInterface): RemoteMovieRepository {
-        return RemoteMovieRepository(apiInterface)
-    }
+fun provideLocalMovieRepository(database: AppDatabase): LocalMovieDataSource {
+    return LocalMovieDataSource(database)
+}
 
-    @Provides
-    @Singleton
-    fun provideMovieRepository(local: LocalMovieRepository, remote: RemoteMovieRepository):
-            MovieDataSource {
-        return MovieRepository(local, remote)
-    }
+fun provideRemoteMovieRepository(apiInterface: ApiInterface): RemoteMovieDataSource {
+    return RemoteMovieDataSource(apiInterface)
+}
+
+fun provideMovieRepository(local: LocalMovieDataSource, remote: RemoteMovieDataSource): MovieRepository {
+    return MovieRepository(local, remote)
 }

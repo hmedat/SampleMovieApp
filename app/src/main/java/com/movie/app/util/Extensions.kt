@@ -2,15 +2,11 @@ package com.movie.app.util
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.widget.ImageView
-import io.reactivex.Observable
-import java.io.IOException
-import java.util.concurrent.TimeUnit
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 fun ImageView.loadImage(url: String?, colorPlaceholder: Int) {
     GlideApp.with(context)
@@ -43,7 +39,7 @@ fun AppCompatActivity.enableToolbarBack() {
     supportActionBar?.setHomeButtonEnabled(true)
 }
 
-fun SwipeRefreshLayout.setDefaultColor() {
+fun androidx.swiperefreshlayout.widget.SwipeRefreshLayout.setDefaultColor() {
     setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
 }
 
@@ -55,22 +51,7 @@ fun RecyclerView.notifyVisibleItems() {
     val firstPos = layoutManager.findFirstVisibleItemPosition()
     val lastPos = layoutManager.findLastVisibleItemPosition()
     for (i in firstPos..lastPos) {
-        adapter.notifyItemChanged(i)
+        adapter?.notifyItemChanged(i)
     }
 }
 
-fun <T> Observable<T>.retryWhenBackoff(
-    initialDelay: Long,
-    numRetries: Int,
-    unit: TimeUnit
-): Observable<T> {
-    return retryWhen(
-        RXJavaUtil.exponentialBackoffForExceptions(
-            initialDelay, numRetries, unit, IOException::class.java
-        )
-    )
-}
-
-fun <T> Observable<T>.retryWhenBackoffDefault(): Observable<T> {
-    return retryWhenBackoff(200, 5, TimeUnit.MILLISECONDS)
-}

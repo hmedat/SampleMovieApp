@@ -1,8 +1,8 @@
 package com.movie.app.main
 
 import android.graphics.Color
-import android.support.v7.util.DiffUtil
 import android.widget.ImageView
+import androidx.recyclerview.widget.DiffUtil
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.movie.app.R

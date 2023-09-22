@@ -1,63 +1,50 @@
 package com.movie.app.repositories
 
-import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
-import io.reactivex.Observable
+import com.movie.app.modules.MoviesResult
 import timber.log.Timber
-import javax.inject.Inject
 
-class MovieRepository @Inject constructor(
-    private val local: MovieDataSource,
-    private var remote: MovieDataSource
-) : MovieDataSource {
+class MovieRepository(private val local: MovieDataSource, private var remote: MovieDataSource) {
 
-    override fun insertMovies(movies: List<Movie>) {
-        local.insertMovies(movies)
-    }
-
-    override fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult> {
-        if (searchFilter.pageNumber > 1) {
-            return getAndSaveRemoteMovies(searchFilter)
+    suspend fun getRemoteMovies(searchFilter: MovieSearchFilter): MoviesResult? {
+        val result = remote.getMovies(searchFilter)
+        result?.results?.let {
+            local.insertMovies(it)
+            Timber.d("Dispatching ${it.size} users from API...")
         }
-        return Observable.concatArray(local.getMovies(searchFilter)
-            .onErrorReturn {
-                val moviesResult = MoviesResult()
-                moviesResult
-            },
-            getAndSaveRemoteMovies(searchFilter)
-        )
+        return result
     }
 
-    private fun getAndSaveRemoteMovies(searchFilter: MovieSearchFilter):
-            Observable<MoviesResult> {
-        return remote.getMovies(searchFilter)
-            .doOnNext {
-                it.results?.let {
-                    insertMovies(it)
-                    Timber.d("Dispatching ${it.size} users from API...")
-                }
-            }
+    suspend fun getRemoteMovie(movieId: Long): Movie? {
+        return remote.getMovie(movieId)
     }
 
-    override fun getMovie(movieId: Long): Observable<Movie> {
-        return Observable.concatArray(local.getMovie(movieId)
-            .onErrorReturn {
-                Movie(Movie.ID_NOT_SET)
-            }.filter { it.id != Movie.ID_NOT_SET },
-            remote.getMovie(movieId)
-        )
+    suspend fun getLocalMovies(searchFilter: MovieSearchFilter): MoviesResult? {
+        return local.getMovies(searchFilter)
     }
 
-    override fun getFavMovies(): Observable<MoviesResult> {
+    suspend fun getLocalMovie(movieId: Long): Movie? {
+        return local.getMovie(movieId)
+    }
+
+    suspend fun getFavMovies(): MoviesResult {
         return local.getFavMovies()
     }
 
-    override fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean> {
+    fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean {
         return local.removeAddFavMovie(movieId, isFav)
     }
 
-    override fun getFavMovieIds(): Observable<HashSet<Long>> {
+    fun getFavMovieIds(): HashSet<Long> {
         return local.getFavMovieIds()
+    }
+
+    suspend fun getSimilarMovies(movieId: Long): MoviesResult? {
+        val result = remote.getSimilarMovies(movieId)
+        result?.results?.let {
+            local.insertMovies(it)
+        }
+        return result
     }
 }

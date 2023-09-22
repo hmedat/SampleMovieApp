@@ -1,29 +1,30 @@
 package com.movie.app.main
 
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.details.DetailsMovieActivity
-import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSortType
+import com.movie.app.modules.MoviesResult
+import com.movie.app.util.Result
 import com.movie.app.util.notifyVisibleItems
 import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar_main_activity.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
-import javax.inject.Inject
 
-class MainActivity : BaseActivity(), MainActivityContractor.View {
+class MainActivity : BaseActivity() {
 
-    @Inject
-    lateinit var presenter: MainActivityContractor.Presenter
+    val viewModel: MainViewModel  by viewModel()
     private lateinit var adapter: MovieAdapter
     private lateinit var homeDrawer: HomeDrawer
 
@@ -35,27 +36,57 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         initToolbarSpinner()
         setToolbar(mainToolbar, R.string.app_name)
         homeDrawer = HomeDrawer(this, mainToolbar)
-        emptyView.error().setOnClickListener { presenter.subscribe() }
-        presenter.subscribe()
+        emptyView.error().setOnClickListener {
+            viewModel.loadFirstPage()
+        }
+        viewModel.favStatuses.observe(this, Observer {
+            for (movie in adapter.data) {
+                movie.isFav = it.contains(movie.id)
+            }
+            rvMovies.notifyVisibleItems()
+        })
+
+        viewModel.result.observe(this, Observer {
+            when (it) {
+                is Result.Loading -> emptyView.showLoading()
+                is Result.Success -> {
+                    val result = it.data
+                    if (result.isFirstPage()) {
+                        initData(result)
+                    } else {
+                        updateData(result)
+                    }
+                    onDataCompleted(result.isFinished())
+                }
+                is Result.Failure -> {
+                    if (adapter.itemCount == 0) {
+                        emptyView.showError()
+                    } else {
+                        adapter.loadMoreFail()
+                    }
+                    swipeLayoutMovies.isRefreshing = false
+                }
+            }
+        })
     }
 
     override fun onResume() {
         super.onResume()
         if (adapter.itemCount > 0) {
-            presenter.syncFavouritesStatues()
+            viewModel.syncFavouritesStatues()
         }
     }
 
     private fun initRecyclerView() {
         adapter = MovieAdapter().apply {
-            openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
+            openLoadAnimation(BaseQuickAdapter.ALPHAIN)
             setOnItemClickListener { _, _, position ->
                 DetailsMovieActivity.startActivity(context, adapter.data[position].id)
             }
             setOnItemChildClickListener { _, _, position ->
                 val movie = adapter.data[position]
                 movie.isFav = !movie.isFav
-                presenter.addRemoveFavMovie(movie)
+                viewModel.addRemoveFavMovie(movie)
                 adapter.notifyItemChanged(position)
             }
         }
@@ -68,26 +99,25 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
     }
 
     private fun setLoadMore() {
-        adapter.setOnLoadMoreListener({ presenter.loadNextPage() }, rvMovies)
+        adapter.setOnLoadMoreListener({ viewModel.loadNextPage() }, rvMovies)
     }
 
     private fun initRefreshLayout() {
         swipeLayoutMovies.setDefaultColor()
         swipeLayoutMovies.setOnRefreshListener {
             adapter.setEnableLoadMore(false)
-            presenter.loadFirstPage()
+            viewModel.loadFirstPage()
         }
     }
 
     private fun initToolbarSpinner() {
-        val adapter = ArrayAdapter(
-            this, R.layout.simple_spinner_item, MovieSortType.values()
-        )
+        val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, MovieSortType.values())
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         toolbarSpinner.adapter = adapter
+        toolbarSpinner.setSelection(0, false)
         toolbarSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-                presenter.onSearchFilterChanged(MovieSortType.values()[i])
+                viewModel.onSearchFilterChanged(MovieSortType.values()[i])
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>) {
@@ -95,33 +125,7 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         }
     }
 
-    override fun showProgressBar() {
-        emptyView.showLoading()
-    }
-
-    override fun hideProgressBar() {
-        swipeLayoutMovies.isRefreshing = false
-    }
-
-    override fun showNoData() {
-        Timber.i("showNoData")
-        emptyView.showEmpty()
-    }
-
-    override fun showFirstData(data: List<Movie>) {
-        Timber.i("showFirstData size:%s", data.size)
-        emptyView.showContent()
-        adapter.setNewData(data)
-        rvMovies.smoothScrollToPosition(0)
-        setLoadMore()
-    }
-
-    override fun showLoadMoreData(data: List<Movie>) {
-        Timber.i("showLoadMoreData size:%s", data.size)
-        adapter.addData(data)
-    }
-
-    override fun onDataCompleted(finished: Boolean) {
+    private fun onDataCompleted(finished: Boolean) {
         Timber.i("onDataCompleted isFinished:%s", finished)
         if (finished) {
             adapter.loadMoreEnd(true)
@@ -129,23 +133,25 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
             adapter.loadMoreComplete()
             adapter.setEnableLoadMore(true)
         }
+        swipeLayoutMovies.isRefreshing = false
     }
 
-    override fun showError(isFirstPage: Boolean, throwable: Throwable) {
-        Timber.e(throwable, "isFirstPage: %s, AdapterItemsSize: %s", isFirstPage, adapter.itemCount)
-        if (isFirstPage) {
-            if (adapter.itemCount == 0) {
-                emptyView.showError()
-            }
-        } else {
-            adapter.loadMoreFail()
+    private fun initData(result: MoviesResult) {
+        if (result.isEmptyData()) {
+            emptyView.showEmpty()
+            return
         }
+        emptyView.showContent()
+        adapter.setNewData(result.results)
+        rvMovies.smoothScrollToPosition(0)
+        setLoadMore()
+        onDataCompleted(result.isFinished())
     }
 
-    override fun updateFavouritesStatues(list: HashSet<Long>) {
-        for (movie in adapter.data) {
-            movie.isFav = list.contains(movie.id)
-        }
+    private fun updateData(result: MoviesResult) {
+        adapter.addData(result.results ?: listOf())
+        swipeLayoutMovies.isRefreshing = false
+        onDataCompleted(result.isFinished())
     }
 
     override fun onBackPressed() {
@@ -155,12 +161,4 @@ class MainActivity : BaseActivity(), MainActivityContractor.View {
         super.onBackPressed()
     }
 
-    override fun notifyVisibleItems() {
-        rvMovies.notifyVisibleItems()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        presenter.unSubscribe()
-    }
 }

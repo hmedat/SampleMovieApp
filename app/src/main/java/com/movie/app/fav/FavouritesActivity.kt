@@ -3,24 +3,24 @@ package com.movie.app.fav
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.movie.app.BaseActivity
 import com.movie.app.R
 import com.movie.app.details.DetailsMovieActivity
 import com.movie.app.main.MovieAdapter
-import com.movie.app.modules.Movie
+import com.movie.app.util.Result
 import com.movie.app.util.enableToolbarBack
 import com.movie.app.util.setDefaultColor
 import com.movie.app.util.setToolbar
 import kotlinx.android.synthetic.main.activity_favourites.*
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
+class FavouritesActivity : BaseActivity() {
 
-    @Inject
-    lateinit var presenter: FavouritesActivityContractor.Presenter
+    private val viewModel: FavouritesMoviesViewModel  by viewModel()
     private lateinit var adapter: MovieAdapter
 
     companion object {
@@ -37,29 +37,49 @@ class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
         enableToolbarBack()
         initRecyclerView()
         initRefreshLayout()
-        emptyView.error().setOnClickListener { presenter.subscribe() }
-        presenter.subscribe()
+        emptyView.error().setOnClickListener {
+            viewModel.loadData()
+        }
+        viewModel.result.observe(this, Observer {
+            when (it) {
+                is Result.Loading -> emptyView.showLoading()
+                is Result.Success -> {
+                    val list = it.data.results ?: listOf()
+                    swipeLayoutMovies.isRefreshing = false
+                    if (list.isEmpty()) {
+                        emptyView.showEmpty()
+                    } else {
+                        emptyView.showContent()
+                        adapter.setNewData(list)
+                    }
+                }
+                is Result.Failure -> {
+                    emptyView.showError()
+                    swipeLayoutMovies.isRefreshing = false
+                }
+            }
+        })
     }
 
     private fun initRefreshLayout() {
         swipeLayoutMovies.setDefaultColor()
         swipeLayoutMovies.setOnRefreshListener {
-            presenter.subscribe()
+            viewModel.loadData()
         }
     }
 
     private fun initRecyclerView() {
         adapter = MovieAdapter().apply {
             openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT)
-            setOnItemClickListener { _, _, position ->
-                DetailsMovieActivity.startActivity(context, adapter.data[position].id)
-            }
-            setOnItemChildClickListener { _, _, position ->
-                presenter.removeFromList(adapter.data[position].id)
-                adapter.remove(position)
-                if (adapter.itemCount == 0) {
-                    showNoData()
-                }
+        }
+        adapter.setOnItemClickListener { _, _, position ->
+            DetailsMovieActivity.startActivity(context, adapter.data[position].id)
+        }
+        adapter.setOnItemChildClickListener { _, _, position ->
+            viewModel.removeMovie(adapter.data[position].id)
+            adapter.remove(position)
+            if (adapter.itemCount == 0) {
+                emptyView.showEmpty()
             }
         }
         rvMovies.apply {
@@ -69,24 +89,4 @@ class FavouritesActivity : BaseActivity(), FavouritesActivityContractor.View {
         rvMovies.adapter = adapter
     }
 
-    override fun showProgressBar() {
-        emptyView.showLoading()
-    }
-
-    override fun hideProgressBar() {
-        swipeLayoutMovies.isRefreshing = false
-    }
-
-    override fun showNoData() {
-        emptyView.showEmpty()
-    }
-
-    override fun showData(movies: List<Movie>) {
-        emptyView.showContent()
-        adapter.setNewData(movies)
-    }
-
-    override fun showError(throwable: Throwable) {
-        emptyView.showError()
-    }
 }

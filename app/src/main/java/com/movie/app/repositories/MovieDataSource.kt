@@ -1,21 +1,22 @@
 package com.movie.app.repositories
 
-import com.movie.app.api.result.MoviesResult
 import com.movie.app.modules.Movie
 import com.movie.app.modules.MovieSearchFilter
-import io.reactivex.Observable
+import com.movie.app.modules.MoviesResult
 
 interface MovieDataSource {
 
     fun insertMovies(movies: List<Movie>)
 
-    fun getMovies(searchFilter: MovieSearchFilter): Observable<MoviesResult>
+    suspend fun getMovies(filter: MovieSearchFilter): MoviesResult?
 
-    fun getMovie(movieId: Long): Observable<Movie>
+    suspend fun getMovie(movieId: Long): Movie?
 
-    fun getFavMovies(): Observable<MoviesResult>
+    suspend fun getFavMovies(): MoviesResult
 
-    fun removeAddFavMovie(movieId: Long, isFav: Boolean): Observable<Boolean>
+    suspend fun getSimilarMovies(movieId: Long): MoviesResult?
 
-    fun getFavMovieIds(): Observable<HashSet<Long>>
+    fun removeAddFavMovie(movieId: Long, isFav: Boolean): Boolean
+
+    fun getFavMovieIds(): HashSet<Long>
 }
